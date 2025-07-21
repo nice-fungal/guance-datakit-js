@@ -23,7 +23,7 @@ import {
 } from '@cloudcare/browser-core'
 
 import { trackInitialViewMetrics } from './trackInitialViewTimings'
-import { trackCommonViewMetrics } from './trackCommonViewMetrics'
+// import { trackCommonViewMetrics } from './trackCommonViewMetrics'
 import { trackViewEventCounts } from './trackViewEventCounts'
 export var THROTTLE_VIEW_UPDATE_PERIOD = 3000
 export var SESSION_KEEP_ALIVE_INTERVAL = 5 * ONE_MINUTE
@@ -194,22 +194,22 @@ function newView(
   var throttled = _scheduleViewUpdate.throttled
   var cancelScheduleViewUpdate = _scheduleViewUpdate.cancel
 
-  var _trackCommonViewMetrics = trackCommonViewMetrics(
-    lifeCycle,
-    domMutationObservable,
-    configuration,
-    scheduleViewUpdate,
-    loadingType,
-    startClocks
-  )
-  var setLoadEvent = _trackCommonViewMetrics.setLoadEvent
-  var stopCommonViewMetricsTracking = _trackCommonViewMetrics.stop
-  var getCommonViewMetrics = _trackCommonViewMetrics.getCommonViewMetrics
-  var stopINPTracking = _trackCommonViewMetrics.stopINPTracking
-  var setViewEnd = _trackCommonViewMetrics.setViewEnd
+  // var _trackCommonViewMetrics = trackCommonViewMetrics(
+  //   lifeCycle,
+  //   domMutationObservable,
+  //   configuration,
+  //   scheduleViewUpdate,
+  //   loadingType,
+  //   startClocks
+  // )
+  // var setLoadEvent = _trackCommonViewMetrics.setLoadEvent
+  // var stopCommonViewMetricsTracking = _trackCommonViewMetrics.stop
+  // var getCommonViewMetrics = _trackCommonViewMetrics.getCommonViewMetrics
+  // var stopINPTracking = _trackCommonViewMetrics.stopINPTracking
+  // var setViewEnd = _trackCommonViewMetrics.setViewEnd
   var _trackInitialViewTimings =
     loadingType === ViewLoadingType.INITIAL_LOAD
-      ? trackInitialViewMetrics(configuration, setLoadEvent, scheduleViewUpdate)
+      ? trackInitialViewMetrics(configuration, function(){}, scheduleViewUpdate)
       : {
           stop: noop,
           initialViewMetrics: {}
@@ -271,7 +271,7 @@ function newView(
       loadingType: loadingType,
       location: location,
       startClocks: startClocks,
-      commonViewMetrics: getCommonViewMetrics(),
+      commonViewMetrics: {},
       initialViewMetrics: initialViewMetrics,
       duration: elapsed(startClocks.timeStamp, currentEnd),
       isActive: endClocks === undefined,
@@ -314,7 +314,7 @@ function newView(
     stop: function () {
       stopInitialViewMetricsTracking()
       stopEventCountsTracking()
-      stopINPTracking()
+      // stopINPTracking()
       stopObservable.notify()
     },
     addTiming: function (name, time) {
