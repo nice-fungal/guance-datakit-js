@@ -12,12 +12,12 @@ import {
   // TelemetryService,
   // drainPreStartTelemetry
 } from '@cloudcare/browser-core'
-import { createDOMMutationObservable } from '../domain/domMutationObservable.js'
+// import { createDOMMutationObservable } from '../domain/domMutationObservable.js'
 import { createLocationChangeObservable } from '../domain/locationChangeObservable'
 // import { startLongTaskCollection } from '../domain/rumEventsCollection/longTask/longTaskCollection'
 // import { startLongAnimationFrameCollection } from '../domain/rumEventsCollection/longTask/longAnimationFrameCollection'
 // import { RumPerformanceEntryType } from '../domain/performanceObservable'
-import { startActionCollection } from '../domain/rumEventsCollection/actions/actionCollection'
+// import { startActionCollection } from '../domain/rumEventsCollection/actions/actionCollection'
 import { startRumBatch } from '../transport/startRumBatch'
 // import { startRumEventBridge } from '../transport/startRumEventBridge'
 import { startRumAssembly } from '../domain/assembly'
@@ -74,7 +74,7 @@ export function startRum(
   }
 
   var userSession = startCacheUsrCache(configuration)
-  var domMutationObservable = createDOMMutationObservable()
+  // var domMutationObservable = createDOMMutationObservable()
   var locationChangeObservable = createLocationChangeObservable(location)
   var pageStateHistory = startPageStateHistory()
   var _startRumEventCollection = startRumEventCollection(
@@ -85,13 +85,13 @@ export function startRum(
     userSession,
     pageStateHistory,
     locationChangeObservable,
-    domMutationObservable,
+    'domMutationObservable',
     getCommonContext,
     reportError
   )
   var viewContexts = _startRumEventCollection.viewContexts
   var urlContexts = _startRumEventCollection.urlContexts
-  var actionContexts = _startRumEventCollection.actionContexts
+  // var actionContexts = _startRumEventCollection.actionContexts
   var stopRumEventCollection = _startRumEventCollection.stop
   var addAction = _startRumEventCollection.addAction
   cleanupTasks.push(stopRumEventCollection)
@@ -126,7 +126,7 @@ export function startRum(
     lifeCycle,
     configuration,
     location,
-    domMutationObservable,
+    'domMutationObservable',
     locationChangeObservable,
     pageStateHistory,
     recorderApi,
@@ -168,7 +168,7 @@ export function startRum(
     configuration.applicationId,
     session,
     viewContexts,
-    actionContexts,
+    'actionContexts',
     urlContexts
   )
   return {
@@ -226,14 +226,14 @@ export function startRumEventCollection(
     location
   )
 
-  var _startActionCollection = startActionCollection(
-    lifeCycle,
-    domMutationObservable,
-    configuration,
-    pageStateHistory
-  )
-  var actionContexts = _startActionCollection.actionContexts
-  var addAction = _startActionCollection.addAction
+  // var _startActionCollection = startActionCollection(
+  //   lifeCycle,
+  //   domMutationObservable,
+  //   configuration,
+  //   pageStateHistory
+  // )
+  // var actionContexts = _startActionCollection.actionContexts
+  // var addAction = _startActionCollection.addAction
 
   var displayContext = startDisplayContext()
   startRumAssembly(
@@ -243,7 +243,7 @@ export function startRumEventCollection(
     userSessionManager,
     viewContexts,
     urlContexts,
-    actionContexts,
+    'actionContexts',
     displayContext,
     getCommonContext,
     reportError
@@ -252,8 +252,8 @@ export function startRumEventCollection(
     viewContexts: viewContexts,
     urlContexts: urlContexts,
     pageStateHistory: pageStateHistory,
-    addAction: addAction,
-    actionContexts: actionContexts,
+    addAction: function () {}, // addAction,
+    actionContexts: 'actionContexts',
     stop: function () {
       displayContext.stop()
       pageStateHistory.stop()

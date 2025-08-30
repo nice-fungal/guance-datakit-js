@@ -15,8 +15,8 @@ export function startInternalContext(
       var urlContext = urlContexts.findUrl(startTime)
       var session = sessionManager.findTrackedSession(startTime)
       if (session && viewContext && urlContext) {
-        var actionId = actionContexts.findActionId(startTime)
-        var actionIds = actionContexts.findAllActionId(startTime)
+        // var actionId = actionContexts.findActionId(startTime)
+        // var actionIds = actionContexts.findAllActionId(startTime)
         return {
           application: {
             id: applicationId
@@ -24,12 +24,12 @@ export function startInternalContext(
           session: {
             id: session.id
           },
-          userAction: actionId
-            ? {
-                id: actionId,
-                ids: actionIds
-              }
-            : undefined,
+          // userAction: actionId
+          //   ? {
+          //       id: actionId,
+          //       ids: actionIds
+          //     }
+          //   : undefined,
           view: {
             id: viewContext.id,
             name: viewContext.name || urlContext.path,

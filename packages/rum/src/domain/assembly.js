@@ -102,8 +102,8 @@ export function startRumAssembly(
       var session = sessionManager.findTrackedSession(startTime)
       if (session && session.isErrorSession && !session.sessionHasError) return
       if (session && viewContext && urlContext) {
-        var actionId = actionContexts.findActionId(startTime)
-        var actionIds = actionContexts.findAllActionId(startTime)
+        // var actionId = actionContexts.findActionId(startTime)
+        // var actionIds = actionContexts.findAllActionId(startTime)
         var commonContext = savedCommonContext || getCommonContext()
         var rumContext = {
           _gc: {
@@ -159,10 +159,10 @@ export function startRumAssembly(
             pathGroup: urlContext.pathGroup,
             urlQuery: urlContext.urlQuery
           },
-          action:
-            needToAssembleWithAction(rawRumEvent) && actionId
-              ? { id: actionId, ids: actionIds }
-              : undefined,
+          // action:
+          //   needToAssembleWithAction(rawRumEvent) && actionId
+          //     ? { id: actionId, ids: actionIds }
+          //     : undefined,
           display: displayContext.get()
         }
         var rumEvent = extend2Lev(rumContext, viewContext, rawRumEvent)
@@ -253,13 +253,13 @@ function shouldSend(event, beforeSend, domainContext, eventRateLimiters) {
   }
   return !rateLimitReached
 }
-function needToAssembleWithAction(event) {
-  return (
-    [RumEventType.ERROR, RumEventType.RESOURCE, RumEventType.LONG_TASK].indexOf(
-      event.type
-    ) !== -1
-  )
-}
+// function needToAssembleWithAction(event) {
+//   return (
+//     [RumEventType.ERROR, RumEventType.RESOURCE, RumEventType.LONG_TASK].indexOf(
+//       event.type
+//     ) !== -1
+//   )
+// }
 
 function getSessionType() {
   return window._DATAFLUX_SYNTHETICS_BROWSER === undefined
