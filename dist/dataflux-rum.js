@@ -19,17 +19,6 @@
 /******/ 	__webpack_require__.o = function(obj, prop) { return Object.prototype.hasOwnProperty.call(obj, prop); }
 /******/ }();
 /******/ 
-/******/ /* webpack/runtime/make namespace object */
-/******/ !function() {
-/******/ 	// define __esModule on exports
-/******/ 	__webpack_require__.r = function(exports) {
-/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
-/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
-/******/ 		}
-/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
-/******/ 	};
-/******/ }();
-/******/ 
 /************************************************************************/
 var __webpack_exports__ = {};
 
@@ -38,135 +27,8 @@ __webpack_require__.d(__webpack_exports__, {
   E: function() { return /* reexport */ datafluxRum; }
 });
 
-// NAMESPACE OBJECT: ../core/esm/index.js
-var esm_namespaceObject = {};
-__webpack_require__.r(esm_namespaceObject);
-__webpack_require__.d(esm_namespaceObject, {
-  X2v: function() { return ActionType; },
-  ocs: function() { return BridgeCapability; },
-  bP2: function() { return ConsoleApiName; },
-  vA8: function() { return CustomerDataCompressionStatus; },
-  Ln0: function() { return CustomerDataType; },
-  gXe: function() { return DOM_EVENT; },
-  WAb: function() { return DefaultPrivacyLevel; },
-  aCz: function() { return enums_ErrorHandling; },
-  gfb: function() { return errorTools_ErrorSource; },
-  $ur: function() { return LifeCycle; },
-  Rgl: function() { return LifeCycleEventType; },
-  O7y: function() { return NonErrorPrefix; },
-  MAX: function() { return ONE_HOUR; },
-  iW2: function() { return ONE_MINUTE; },
-  cPK: function() { return observable_Observable; },
-  y58: function() { return PageExitReason; },
-  V5S: function() { return RawReportType; },
-  YwH: function() { return RequestType; },
-  vtl: function() { return ResourceType; },
-  bbP: function() { return enums_RumEventType; },
-  AQQ: function() { return SESSION_TIME_OUT_DELAY; },
-  WVP: function() { return enums_TraceType; },
-  kk2: function() { return UUID; },
-  uWe: function() { return ViewLoadingType; },
-  xjZ: function() { return polyfills_WeakSet; },
-  GwG: function() { return addDuration; },
-  q2B: function() { return addEventListener_addEventListener; },
-  lQ7: function() { return addEventListeners; },
-  kpz: function() { return tools_assign; },
-  Wwr: function() { return bridgeSupports; },
-  umf: function() { return callMonitored; },
-  d0M: function() { return canUseEventBridge; },
-  yMr: function() { return catchUserErrors_catchUserErrors; },
-  OgU: function() { return checkUser; },
-  vGk: function() { return timer_clearInterval; },
-  DJ6: function() { return timer_clearTimeout; },
-  M8y: function() { return tools_clocksNow; },
-  Oc9: function() { return clocksOrigin; },
-  AsP: function() { return computeRawError; },
-  Tec: function() { return computeStackTrace; },
-  O6V: function() { return boundedBuffer_createBoundedBuffer; },
-  DMq: function() { return createContextManager; },
-  qRW: function() { return createCustomerDataTrackerManager; },
-  $s4: function() { return createEventRateLimiter; },
-  uCJ: function() { return createHandlingStack; },
-  NgY: function() { return createIdentityEncoder; },
-  hLm: function() { return createPageExitObservable; },
-  JLg: function() { return createTaskQueue; },
-  qjj: function() { return createValueHistory; },
-  jGy: function() { return cssEscape; },
-  TP$: function() { return currentDrift; },
-  x3b: function() { return dateNow; },
-  Go6: function() { return deepClone; },
-  lpk: function() { return deviceInfo; },
-  KVX: function() { return discardNegativeDuration; },
-  Vy8: function() { return display_display; },
-  $g0: function() { return displayAlreadyInitializedError; },
-  __1: function() { return tools_each; },
-  vk4: function() { return tools_elapsed; },
-  Y9B: function() { return tools_extend2Lev; },
-  QR9: function() { return fetchAndApplyRemoteConfiguration; },
-  pbD: function() { return filter; },
-  I6j: function() { return find; },
-  sVp: function() { return findByPath; },
-  UkB: function() { return findLast; },
-  Ri8: function() { return cookie_getCookie; },
-  Y9c: function() { return getEventBridge; },
-  MVd: function() { return getPathFromHash; },
-  L2t: function() { return getPathName; },
-  aGs: function() { return getQueryParamsFromUrl; },
-  gs_: function() { return getRelativeTime; },
-  eEm: function() { return getStatusGroup; },
-  mKk: function() { return includes; },
-  liq: function() { return initConsoleObservable; },
-  iC7: function() { return initFetchObservable; },
-  uIr: function() { return initReportObservable; },
-  H7c: function() { return instrumentMethod_instrumentMethod; },
-  cyL: function() { return tools_isArray; },
-  nSH: function() { return isElementNode; },
-  RIy: function() { return isEmptyObject; },
-  Vdz: function() { return isHashAnAnchor; },
-  wiA: function() { return isIntakeRequest; },
-  SNg: function() { return tools_isNullUndefinedDefaultValue; },
-  EtT: function() { return isNumber; },
-  fpP: function() { return isPercentage; },
-  AYU: function() { return isValidUrl; },
-  gBh: function() { return limitModification; },
-  puL: function() { return looksLikeRelativeTime; },
-  mL_: function() { return makePublicApi; },
-  LGi: function() { return mapValues; },
-  dmy: function() { return monitor; },
-  TEX: function() { return msToNs; },
-  lQ1: function() { return tools_noop; },
-  Rj5: function() { return objectHasValue; },
-  ic6: function() { return tools_performDraw; },
-  k4M: function() { return preferredNow; },
-  PGs: function() { return processedMessageByDataMap; },
-  $Sd: function() { return relativeNow; },
-  FRh: function() { return relativeToClocks; },
-  E3r: function() { return replaceNumberCharByPath; },
-  LIG: function() { return round; },
-  HkA: function() { return runOnReadyState; },
-  ajW: function() { return sanitize; },
-  x8A: function() { return sanitizeUser; },
-  TVt: function() { return setCookie; },
-  ybh: function() { return timer_setInterval; },
-  wgQ: function() { return timer_setTimeout; },
-  yGp: function() { return tools_shallowClone; },
-  ZZb: function() { return startBatchWithReplica; },
-  oxf: function() { return startSessionManager; },
-  Cki: function() { return storeContextManager; },
-  nFR: function() { return throttle; },
-  nx2: function() { return tools_timeStampNow; },
-  $rL: function() { return toArray; },
-  ZjH: function() { return toServerDuration; },
-  mj3: function() { return trackRuntimeError; },
-  Ru: function() { return urlParse; },
-  SzE: function() { return validateAndBuildConfiguration; },
-  Twb: function() { return validatePostRequestRequireParamsConfiguration; },
-  aoq: function() { return willSyntheticsInjectRum; },
-  d5Q: function() { return withSnakeCaseKeys; }
-});
-
 ;// CONCATENATED MODULE: ../core/esm/helper/display.js
-var ConsoleApiName = {
+var display_ConsoleApiName = {
   log: 'log',
   debug: 'debug',
   info: 'info',
@@ -175,7 +37,7 @@ var ConsoleApiName = {
 };
 var globalConsole = console;
 var originalConsoleMethods = {};
-Object.keys(ConsoleApiName).forEach(function (name) {
+Object.keys(display_ConsoleApiName).forEach(function (name) {
   originalConsoleMethods[name] = globalConsole[name];
 });
 var PREFIX = 'GUANCE Browser SDK:';
@@ -190,7 +52,7 @@ var display_display = {
 
 var onMonitorErrorCollected;
 var debugMode = false;
-function monitor_startMonitorErrorCollection(newOnMonitorErrorCollected) {
+function startMonitorErrorCollection(newOnMonitorErrorCollected) {
   onMonitorErrorCollected = newOnMonitorErrorCollected;
 }
 function setDebugMode(newDebugMode) {
@@ -200,26 +62,26 @@ function resetMonitor() {
   onMonitorErrorCollected = undefined;
   debugMode = false;
 }
-function monitor(fn) {
+function monitor_monitor(fn) {
   return function () {
-    return callMonitored(fn, this, arguments);
+    return monitor_callMonitored(fn, this, arguments);
   };
 }
-function callMonitored(fn, context, args) {
+function monitor_callMonitored(fn, context, args) {
   try {
     return fn.apply(context, args);
   } catch (e) {
-    monitor_displayIfDebugEnabled(e);
+    displayIfDebugEnabled(e);
     if (onMonitorErrorCollected) {
       try {
         onMonitorErrorCollected(e);
       } catch (e) {
-        monitor_displayIfDebugEnabled(e);
+        displayIfDebugEnabled(e);
       }
     }
   }
 }
-function monitor_displayIfDebugEnabled() {
+function displayIfDebugEnabled() {
   var args = [].slice.call(arguments);
   //   display.error.apply(null, ['[MONITOR]'].concat(args))
   if (debugMode) {
@@ -335,13 +197,13 @@ function getZoneJsOriginalValue(target, name) {
 
 
 function timer_setTimeout(callback, delay) {
-  return getZoneJsOriginalValue(getGlobalObject(), 'setTimeout')(monitor(callback), delay);
+  return getZoneJsOriginalValue(getGlobalObject(), 'setTimeout')(monitor_monitor(callback), delay);
 }
 function timer_clearTimeout(timeoutId) {
   getZoneJsOriginalValue(getGlobalObject(), 'clearTimeout')(timeoutId);
 }
 function timer_setInterval(callback, delay) {
-  return getZoneJsOriginalValue(getGlobalObject(), 'setInterval')(monitor(callback), delay);
+  return getZoneJsOriginalValue(getGlobalObject(), 'setInterval')(monitor_monitor(callback), delay);
 }
 function timer_clearInterval(timeoutId) {
   getZoneJsOriginalValue(getGlobalObject(), 'clearInterval')(timeoutId);
@@ -356,7 +218,7 @@ function tools_typeof(o) {
     return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o;
   }, tools_typeof(o);
 }
-
+// import { display } from './display'
 
 var ArrayProto = Array.prototype;
 // var FuncProto = Function.prototype
@@ -410,7 +272,7 @@ var extend = function extend(obj) {
   });
   return obj;
 };
-var tools_extend2Lev = function extend2Lev(obj) {
+var extend2Lev = function extend2Lev(obj) {
   tools_each(slice.call(arguments, 1), function (source) {
     for (var prop in source) {
       if (source[prop] !== void 0) {
@@ -503,7 +365,7 @@ var keys = function keys(obj) {
 //     return !!(ele.attributes[attr] && ele.attributes[attr].specified)
 //   }
 // }
-var filter = function filter(arr, fn, self) {
+var tools_filter = function filter(arr, fn, self) {
   if (arr.filter) {
     return arr.filter(fn);
   }
@@ -533,7 +395,7 @@ var tools_map = function map(arr, fn, self) {
   }
   return ret;
 };
-var some = function some(arr, fn, self) {
+var tools_some = function some(arr, fn, self) {
   if (arr.some) {
     return arr.some(fn);
   }
@@ -622,7 +484,7 @@ var isObject = function isObject(obj) {
   if (obj === null) return false;
   return tools_toString.call(obj) === '[object Object]';
 };
-var isEmptyObject = function isEmptyObject(obj) {
+var tools_isEmptyObject = function isEmptyObject(obj) {
   if (isObject(obj)) {
     for (var key in obj) {
       if (tools_hasOwnProperty.call(obj, key)) {
@@ -718,7 +580,7 @@ var _encodeDates = function encodeDates(obj) {
 //     return new Date().getTime()
 //   }
 
-var throttle = function throttle(fn, wait, options) {
+var tools_throttle = function throttle(fn, wait, options) {
   var needLeadingExecution = options && options.leading !== undefined ? options.leading : true;
   var needTrailingExecution = options && options.trailing !== undefined ? options.trailing : true;
   var inWaitPeriod = false;
@@ -1321,7 +1183,7 @@ function createCircularReferenceChecker() {
 /**
  * Similar to `typeof`, but distinguish plain objects from `null` and arrays
  */
-function getType(value) {
+function tools_getType(value) {
   if (value === null) {
     return 'null';
   }
@@ -1363,7 +1225,7 @@ function mergeInto(destination, source, circularReferenceChecker) {
     }
     return merged;
   }
-  var merged = getType(destination) === 'object' ? destination : {};
+  var merged = tools_getType(destination) === 'object' ? destination : {};
   for (var key in source) {
     if (Object.prototype.hasOwnProperty.call(source, key)) {
       merged[key] = mergeInto(merged[key], source[key], circularReferenceChecker);
@@ -1548,8 +1410,8 @@ function getStatusGroup(status) {
 // }
 
 function tools_noop() {}
-var ONE_SECOND = 1000;
-var ONE_MINUTE = 60 * ONE_SECOND;
+var tools_ONE_SECOND = 1000;
+var ONE_MINUTE = 60 * tools_ONE_SECOND;
 var ONE_HOUR = 60 * ONE_MINUTE;
 var ONE_DAY = 24 * ONE_HOUR;
 var ONE_YEAR = 365 * ONE_DAY;
@@ -1558,7 +1420,7 @@ var ONE_YEAR = 365 * ONE_DAY;
  * Return true if the draw is successful
  * @param threshold between 0 and 100
  */
-function tools_performDraw(threshold) {
+function performDraw(threshold) {
   return threshold !== 0 && Math.random() * 100 <= threshold;
 }
 function round(num, decimals) {
@@ -1602,12 +1464,12 @@ function tools_clocksNow() {
   };
 }
 function tools_timeStampNow() {
-  return dateNow();
+  return tools_dateNow();
 }
 function looksLikeRelativeTime(time) {
   return time < ONE_YEAR;
 }
-function dateNow() {
+function tools_dateNow() {
   // Do not use `Date.now` because sometimes websites are wrongly "polyfilling" it. For example, we
   // had some users using a very old version of `datejs`, which patched `Date.now` to return a Date
   // instance instead of a timestamp[1]. Those users are unlikely to fix this, so let's handle this
@@ -1638,13 +1500,13 @@ function relativeToClocks(relative) {
 }
 function currentDrift() {
   // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-  return Math.round(dateNow() - (getNavigationStart() + performance.now()));
+  return Math.round(tools_dateNow() - (getNavigationStart() + performance.now()));
 }
 function addDuration(a, b) {
   return a + b;
 }
 function getCorrectedTimeStamp(relativeTime) {
-  var correctedOrigin = dateNow() - performance.now();
+  var correctedOrigin = tools_dateNow() - performance.now();
   // apply correction only for positive drift
   if (correctedOrigin > getNavigationStart()) {
     return Math.round(correctedOrigin + relativeTime);
@@ -1676,21 +1538,20 @@ function findCommaSeparatedValue(rawString, name) {
     }
   }
 }
-
-// export function findCommaSeparatedValues(rawString) {
-//   var result = new Map()
-//   COMMA_SEPARATED_KEY_VALUE.lastIndex = 0
-//   // eslint-disable-next-line no-constant-condition
-//   while (true) {
-//     var match = COMMA_SEPARATED_KEY_VALUE.exec(rawString)
-//     if (match) {
-//       result.set(match[1], match[2])
-//     } else {
-//       break
-//     }
-//   }
-//   return result
-// }
+function tools_findCommaSeparatedValues(rawString) {
+  var result = new Map();
+  COMMA_SEPARATED_KEY_VALUE.lastIndex = 0;
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    var match = COMMA_SEPARATED_KEY_VALUE.exec(rawString);
+    if (match) {
+      result.set(match[1], match[2]);
+    } else {
+      break;
+    }
+  }
+  return result;
+}
 function findByPath(source, path) {
   var pathArr = path.split('.');
   while (pathArr.length) {
@@ -1703,7 +1564,7 @@ function findByPath(source, path) {
   }
   return source;
 }
-function safeTruncate(candidate, length) {
+function tools_safeTruncate(candidate, length) {
   var lastChar = candidate.charCodeAt(length - 1);
   // check if it is the high part of a surrogate pair
   if (lastChar >= 0xd800 && lastChar <= 0xdbff) {
@@ -1712,14 +1573,14 @@ function safeTruncate(candidate, length) {
   return candidate.slice(0, length);
 }
 function tools_isMatchOption(item) {
-  var itemType = getType(item);
+  var itemType = tools_getType(item);
   return itemType === 'string' || itemType === 'function' || item instanceof RegExp;
 }
-function includes(candidate, search) {
+function tools_includes(candidate, search) {
   // tslint:disable-next-line: no-unsafe-any
   return candidate.indexOf(search) !== -1;
 }
-function find(array, predicate) {
+function tools_find(array, predicate) {
   for (var i = 0; i < array.length; i += 1) {
     var item = array[i];
     if (predicate(item, i, array)) {
@@ -1842,7 +1703,7 @@ function tools_isNullUndefinedDefaultValue(data, defaultValue) {
   }
 }
 function objectHasValue(object, value) {
-  return some(keys(object), function (key) {
+  return tools_some(keys(object), function (key) {
     return object[key] === value;
   });
 }
@@ -1889,7 +1750,7 @@ function discardNegativeDuration(duration) {
 ;// CONCATENATED MODULE: ../core/esm/helper/boundedBuffer.js
 
 var BUFFER_LIMIT = 500;
-function boundedBuffer_createBoundedBuffer() {
+function createBoundedBuffer() {
   var buffer = [];
   var add = function add(callback) {
     var length = buffer.push(callback);
@@ -2045,7 +1906,7 @@ var VariableLibrary = {
 // 方法库
 var MethodLibrary = {
   // 获取匹配库
-  getMatchMap: monitor(function (u) {
+  getMatchMap: monitor_monitor(function (u) {
     return {
       // 内核
       Trident: u.indexOf('Trident') > -1 || u.indexOf('NET CLR') > -1,
@@ -2117,7 +1978,7 @@ var MethodLibrary = {
     };
   }),
   // 在信息map和匹配库中进行匹配
-  matchInfoMap: monitor(function (_this) {
+  matchInfoMap: monitor_monitor(function (_this) {
     var u = VariableLibrary.navigator.userAgent || '';
     var match = MethodLibrary.getMatchMap(u);
     for (var s in VariableLibrary.infoMap) {
@@ -2130,13 +1991,13 @@ var MethodLibrary = {
     }
   }),
   // 获取当前操作系统
-  getOS: monitor(function () {
+  getOS: monitor_monitor(function () {
     var _this = this;
     MethodLibrary.matchInfoMap(_this);
     return _this.os || 'Unknown';
   }),
   // 获取操作系统版本
-  getOSVersion: monitor(function () {
+  getOSVersion: monitor_monitor(function () {
     var _this = this;
     var u = VariableLibrary.navigator.userAgent || '';
     _this.osVersion = '';
@@ -2191,7 +2052,7 @@ var MethodLibrary = {
     };
   }),
   // 获取横竖屏状态
-  getOrientationStatu: monitor(function () {
+  getOrientationStatu: monitor_monitor(function () {
     var orientationStatus = '';
     var orientation = window.matchMedia('(orientation: portrait)');
     if (orientation.matches) {
@@ -2202,14 +2063,14 @@ var MethodLibrary = {
     return orientationStatus;
   }),
   // 获取设备类型
-  getDeviceType: monitor(function () {
+  getDeviceType: monitor_monitor(function () {
     var _this = this;
     _this.device = 'PC';
     MethodLibrary.matchInfoMap(_this);
     return _this.device;
   }),
   // 获取网络状态
-  getNetwork: monitor(function () {
+  getNetwork: monitor_monitor(function () {
     var connection = window.navigator.connection || window.navigator.mozConnection || window.navigator.webkitConnection;
     var result = 'unknown';
     var type = connection ? connection.type || connection.effectiveType : null;
@@ -2248,7 +2109,7 @@ var MethodLibrary = {
     return result;
   }),
   // 获取当前语言
-  getLanguage: monitor(function () {
+  getLanguage: monitor_monitor(function () {
     var _this = this;
     _this.language = function () {
       var language = VariableLibrary.navigator.browserLanguage || VariableLibrary.navigator.language || '';
@@ -2260,12 +2121,12 @@ var MethodLibrary = {
     }();
     return _this.language;
   }),
-  getTimeZone: monitor(function () {
+  getTimeZone: monitor_monitor(function () {
     var timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     return timeZone;
   }),
   // 浏览器信息
-  getBrowserInfo: monitor(function () {
+  getBrowserInfo: monitor_monitor(function () {
     var _this = this;
     MethodLibrary.matchInfoMap(_this);
     var u = VariableLibrary.navigator.userAgent || '';
@@ -2538,7 +2399,7 @@ var MethodLibrary = {
     };
   }),
   // 获取地理位置
-  getGeoPostion: monitor(function (callback) {
+  getGeoPostion: monitor_monitor(function (callback) {
     navigator && navigator.geolocation && navigator.geolocation.getCurrentPosition(
     // 位置获取成功
     function (position) {
@@ -2567,7 +2428,7 @@ if (typeof window !== 'undefined') {
 }
 var deviceInfo = _deviceInfo;
 ;// CONCATENATED MODULE: ../core/esm/helper/enums.js
-var DOM_EVENT = {
+var enums_DOM_EVENT = {
   BEFORE_UNLOAD: 'beforeunload',
   CLICK: 'click',
   DBL_CLICK: 'dblclick',
@@ -2624,7 +2485,7 @@ var FrustrationType = {
   ERROR_CLICK: 'error_click',
   DEAD_CLICK: 'dead_click'
 };
-var enums_RumEventType = {
+var RumEventType = {
   ACTION: 'action',
   ERROR: 'error',
   LONG_TASK: 'long_task',
@@ -2657,7 +2518,7 @@ var enums_ErrorHandling = {
   HANDLED: 'handled',
   UNHANDLED: 'unhandled'
 };
-var NonErrorPrefix = {
+var enums_NonErrorPrefix = {
   UNCAUGHT: 'Uncaught',
   PROVIDED: 'Provided'
 };
@@ -2730,7 +2591,7 @@ var UNKNOWN_FUNCTION = '?';
 /**
  * Computes a stack trace for an exception.
  */
-function computeStackTrace(ex) {
+function computeStackTrace_computeStackTrace(ex) {
   var stack = [];
   var stackProperty = tryToGetString(ex, 'stack');
   var exString = String(ex);
@@ -2877,7 +2738,7 @@ var ERROR_TYPES_RE = /^(?:[Uu]ncaught (?:exception: )?)?(?:((?:Eval|Internal|Ran
  * @namespace
  */
 
-function startUnhandledErrorCollection(callback) {
+function tracekit_startUnhandledErrorCollection(callback) {
   var _instrumentOnError = instrumentOnError(callback);
   var _instrumentUnhandledRejection = instrumentUnhandledRejection(callback);
   return {
@@ -2892,7 +2753,7 @@ function startUnhandledErrorCollection(callback) {
  * Install a global onerror handler
  */
 function instrumentOnError(callback) {
-  return instrumentMethod_instrumentMethod(window, 'onerror', function (params) {
+  return instrumentMethod(window, 'onerror', function (params) {
     var parameters = params.parameters;
     var messageObj = parameters[0];
     var url = parameters[1];
@@ -2915,7 +2776,7 @@ function instrumentOnError(callback) {
         stack: [location]
       };
     }
-    callback(stackTrace, tools_isNullUndefinedDefaultValue(errorObj, messageObj));
+    callback(stackTrace, isNullUndefinedDefaultValue(errorObj, messageObj));
   });
 }
 function tryToParseMessage(messageObj) {
@@ -2937,7 +2798,7 @@ function tryToParseMessage(messageObj) {
  * Install a global onunhandledrejection handler
  */
 function instrumentUnhandledRejection(callback) {
-  return instrumentMethod_instrumentMethod(window, 'onunhandledrejection', function (params) {
+  return instrumentMethod(window, 'onunhandledrejection', function (params) {
     var parameters = params.parameters;
     var e = parameters[0];
     var reason = e.reason || 'Empty reason';
@@ -2949,11 +2810,11 @@ function instrumentUnhandledRejection(callback) {
 
 
 ;// CONCATENATED MODULE: ../core/esm/helper/byteUtils.js
-var ONE_KIBI_BYTE = 1024;
-var ONE_MEBI_BYTE = 1024 * ONE_KIBI_BYTE;
+var byteUtils_ONE_KIBI_BYTE = 1024;
+var ONE_MEBI_BYTE = 1024 * byteUtils_ONE_KIBI_BYTE;
 // eslint-disable-next-line no-control-regex
 var HAS_MULTI_BYTES_CHARACTERS = /[^\u0000-\u007F]/;
-function computeBytesCount(candidate) {
+function byteUtils_computeBytesCount(candidate) {
   // Accurate bytes count computations can degrade performances when there is a lot of events to process
   if (!HAS_MULTI_BYTES_CHARACTERS.test(candidate)) {
     return candidate.length;
@@ -2992,7 +2853,7 @@ function sanitize_typeof(o) {
 
 // The maximum size of a single event is 256KiB. By default, we ensure that user-provided data
 // going through sanitize fits inside our events, while leaving room for other contexts, metadata, ...
-var SANITIZE_DEFAULT_MAX_CHARACTER_COUNT = 220 * ONE_KIBI_BYTE;
+var SANITIZE_DEFAULT_MAX_CHARACTER_COUNT = 220 * byteUtils_ONE_KIBI_BYTE;
 
 // Symbol for the root element of the JSONPath used for visited objects
 var JSON_PATH_ROOT_ELEMENT = '$';
@@ -3016,7 +2877,7 @@ var KEY_DECORATION_LENGTH = 3;
  * @param maxCharacterCount   Maximum number of characters allowed in serialized form
  */
 
-function sanitize(source, maxCharacterCount) {
+function sanitize_sanitize(source, maxCharacterCount) {
   if (maxCharacterCount === undefined) {
     maxCharacterCount = SANITIZE_DEFAULT_MAX_CHARACTER_COUNT;
   }
@@ -3217,7 +3078,7 @@ var errorTools_ErrorSource = {
   LOGGER: 'logger',
   CUSTOM: 'custom'
 };
-function computeRawError(data) {
+function errorTools_computeRawError(data) {
   var stackTrace = data.stackTrace;
   var originalError = data.originalError;
   var handlingStack = data.handlingStack;
@@ -3227,8 +3088,8 @@ function computeRawError(data) {
   var handling = data.handling;
   var isErrorInstance = originalError instanceof Error;
   var message = computeMessage(stackTrace, isErrorInstance, nonErrorPrefix, originalError);
-  var stack = hasUsableStack(isErrorInstance, stackTrace) ? toStackTraceString(stackTrace) : NO_ERROR_STACK_PRESENT_MESSAGE;
-  var causes = isErrorInstance ? flattenErrorCauses(originalError, source) : undefined;
+  var stack = hasUsableStack(isErrorInstance, stackTrace) ? errorTools_toStackTraceString(stackTrace) : NO_ERROR_STACK_PRESENT_MESSAGE;
+  var causes = isErrorInstance ? errorTools_flattenErrorCauses(originalError, source) : undefined;
   var type = stackTrace && stackTrace.name;
   return {
     startClocks: startClocks,
@@ -3245,7 +3106,7 @@ function computeRawError(data) {
 function computeMessage(stackTrace, isErrorInstance, nonErrorPrefix, originalError) {
   // Favor stackTrace message only if tracekit has really been able to extract something meaningful (message + name)
   // TODO rework tracekit integration to avoid scattering error building logic
-  return stackTrace && stackTrace.message && stackTrace && stackTrace.name ? stackTrace.message : !isErrorInstance ? nonErrorPrefix + ' ' + jsonStringify_jsonStringify(sanitize(originalError)) : 'Empty message';
+  return stackTrace && stackTrace.message && stackTrace && stackTrace.name ? stackTrace.message : !isErrorInstance ? nonErrorPrefix + ' ' + jsonStringify(sanitize(originalError)) : 'Empty message';
 }
 function hasUsableStack(isErrorInstance, stackTrace) {
   if (stackTrace === undefined) {
@@ -3269,7 +3130,7 @@ function formatUnknownError(stackTrace, errorObject, nonErrorPrefix, handlingSta
   }
   return {
     message: stackTrace.message || 'Empty message',
-    stack: toStackTraceString(stackTrace),
+    stack: errorTools_toStackTraceString(stackTrace),
     handlingStack: handlingStack,
     type: stackTrace.name
   };
@@ -3281,7 +3142,7 @@ function formatUnknownError(stackTrace, errorObject, nonErrorPrefix, handlingSta
  - Has to be called at the utmost position of the call stack.
  - No internal monitoring should encapsulate the function, that is why we need to use callMonitored inside of it.
  */
-function createHandlingStack() {
+function errorTools_createHandlingStack() {
   /**
    * Skip the two internal frames:
    * - SDK API (console.error, ...)
@@ -3300,15 +3161,15 @@ function createHandlingStack() {
       tools_noop();
     }
   }
-  callMonitored(function () {
-    var stackTrace = computeStackTrace(error);
+  monitor_callMonitored(function () {
+    var stackTrace = computeStackTrace_computeStackTrace(error);
     stackTrace.stack = stackTrace.stack.slice(internalFramesToSkip);
-    formattedStack = toStackTraceString(stackTrace);
+    formattedStack = errorTools_toStackTraceString(stackTrace);
   });
   return formattedStack;
 }
-function toStackTraceString(stack) {
-  var result = formatErrorMessage(stack);
+function errorTools_toStackTraceString(stack) {
+  var result = errorTools_formatErrorMessage(stack);
   tools_each(stack.stack, function (frame) {
     var func = frame.func === '?' ? '<anonymous>' : frame.func;
     var args = frame.args && frame.args.length > 0 ? '(' + frame.args.join(', ') + ')' : '';
@@ -3318,14 +3179,14 @@ function toStackTraceString(stack) {
   });
   return result;
 }
-function formatErrorMessage(stack) {
+function errorTools_formatErrorMessage(stack) {
   return (stack.name || 'Error') + ': ' + stack.message;
 }
 function getFileFromStackTraceString(stack) {
   var execResult = /@ (.+)/.exec(stack);
   return execResult && execResult[1];
 }
-function flattenErrorCauses(error, parentSource) {
+function errorTools_flattenErrorCauses(error, parentSource) {
   var currentError = error;
   var causes = [];
   while (currentError && currentError.cause instanceof Error && causes.length < 10) {
@@ -3334,7 +3195,7 @@ function flattenErrorCauses(error, parentSource) {
       message: currentError.cause.message,
       source: parentSource,
       type: stackTrace && stackTrace.name,
-      stack: stackTrace && toStackTraceString(stackTrace)
+      stack: stackTrace && errorTools_toStackTraceString(stackTrace)
     });
     currentError = currentError.cause;
   }
@@ -3365,17 +3226,17 @@ function instrumentMethod_instrumentMethod(targetPrototype, method, onPreCall, o
     }
     var parameters = arrayFrom(arguments);
     var postCallCallback;
-    callMonitored(onPreCall, null, [{
+    monitor_callMonitored(onPreCall, null, [{
       target: this,
       parameters: parameters,
       onPostCall: function onPostCall(callback) {
         postCallCallback = callback;
       },
-      handlingStack: computeHandlingStack ? createHandlingStack() : undefined
+      handlingStack: computeHandlingStack ? errorTools_createHandlingStack() : undefined
     }]);
     var result = original.apply(this, parameters);
     if (postCallCallback) {
-      callMonitored(postCallCallback, null, [result]);
+      monitor_callMonitored(postCallCallback, null, [result]);
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
@@ -3434,10 +3295,10 @@ function trackRuntimeError(errorObservable) {
     errorObservable.notify(computeRawError({
       stackTrace: stackTrace,
       originalError: originalError,
-      startClocks: tools_clocksNow(),
+      startClocks: clocksNow(),
       nonErrorPrefix: NonErrorPrefix.UNCAUGHT,
-      source: errorTools_ErrorSource.SOURCE,
-      handling: enums_ErrorHandling.UNHANDLED
+      source: ErrorSource.SOURCE,
+      handling: ErrorHandling.UNHANDLED
     }));
   });
 }
@@ -3457,7 +3318,7 @@ _Observable.prototype = {
     var _this = this;
     return {
       unsubscribe: function unsubscribe() {
-        _this.observers = filter(_this.observers, function (other) {
+        _this.observers = tools_filter(_this.observers, function (other) {
           return f !== other;
         });
         if (!_this.observers.length && _this.onLastUnsubscribe) {
@@ -3473,16 +3334,16 @@ _Observable.prototype = {
   }
 };
 var observable_Observable = _Observable;
-function mergeObservables() {
+function observable_mergeObservables() {
   var observables = [].slice.call(arguments);
   return new observable_Observable(function (globalObservable) {
-    var subscriptions = tools_map(observables, function (observable) {
+    var subscriptions = map(observables, function (observable) {
       return observable.subscribe(function (data) {
         return globalObservable.notify(data);
       });
     });
     return function () {
-      return tools_each(subscriptions, function (subscription) {
+      return each(subscriptions, function (subscription) {
         return subscription.unsubscribe();
       });
     };
@@ -3500,7 +3361,7 @@ function mergeObservables() {
 
 var consoleObservablesByApi = {};
 function initConsoleObservable(apis) {
-  var consoleObservables = tools_map(apis, function (api) {
+  var consoleObservables = map(apis, function (api) {
     if (!consoleObservablesByApi[api]) {
       consoleObservablesByApi[api] = createConsoleObservable(api);
     }
@@ -3513,7 +3374,7 @@ function resetConsoleObservable() {
 }
 /* eslint-disable no-console */
 function createConsoleObservable(api) {
-  return new observable_Observable(function (observable) {
+  return new Observable(function (observable) {
     var originalConsoleApi = console[api];
     console[api] = function () {
       var params = [].slice.call(arguments);
@@ -3529,7 +3390,7 @@ function createConsoleObservable(api) {
   });
 }
 function buildConsoleLog(params, api, handlingStack) {
-  var message = tools_map(params, function (param) {
+  var message = map(params, function (param) {
     return formatConsoleParameters(param);
   }).join(' ');
   var error;
@@ -3540,10 +3401,10 @@ function buildConsoleLog(params, api, handlingStack) {
     error = {
       stack: firstErrorParam ? toStackTraceString(computeStackTrace(firstErrorParam)) : undefined,
       causes: firstErrorParam ? flattenErrorCauses(firstErrorParam, 'console') : undefined,
-      startClocks: tools_clocksNow(),
+      startClocks: clocksNow(),
       message: message,
-      source: errorTools_ErrorSource.CONSOLE,
-      handling: enums_ErrorHandling.HANDLED,
+      source: ErrorSource.CONSOLE,
+      handling: ErrorHandling.HANDLED,
       handlingStack: handlingStack
     };
   }
@@ -3561,7 +3422,7 @@ function formatConsoleParameters(param) {
   if (param instanceof Error) {
     return formatErrorMessage(computeStackTrace(param));
   }
-  return jsonStringify_jsonStringify(param, undefined, 2);
+  return jsonStringify(param, undefined, 2);
 }
 ;// CONCATENATED MODULE: ../core/esm/browser/addEventListener.js
 
@@ -3588,7 +3449,7 @@ function addEventListener_addEventListener(eventTarget, event, listener, options
  */
 
 function addEventListeners(eventTarget, eventNames, listener, options) {
-  var wrappedListener = monitor(options && options.once ? function (event) {
+  var wrappedListener = monitor_monitor(options && options.once ? function (event) {
     stop();
     listener(event);
   } : listener);
@@ -3638,12 +3499,12 @@ function initReportObservable(configuration, apis) {
   return mergeObservables.apply(this, observables);
 }
 function createReportObservable(reportTypes) {
-  return new observable_Observable(function (observable) {
+  return new Observable(function (observable) {
     if (!window.ReportingObserver) {
       return;
     }
     var handleReports = monitor(function (reports) {
-      tools_each(reports, function (report) {
+      each(reports, function (report) {
         observable.notify(buildRawReportErrorFromReport(report));
       });
     });
@@ -3658,8 +3519,8 @@ function createReportObservable(reportTypes) {
   });
 }
 function createCspViolationReportObservable(configuration) {
-  return new observable_Observable(function (observable) {
-    var _addEventListener = addEventListener_addEventListener(document, DOM_EVENT.SECURITY_POLICY_VIOLATION, function (event) {
+  return new Observable(function (observable) {
+    var _addEventListener = addEventListener(document, DOM_EVENT.SECURITY_POLICY_VIOLATION, function (event) {
       observable.notify(buildRawReportErrorFromCspViolation(event));
     });
     return _addEventListener.stop;
@@ -3676,8 +3537,8 @@ function buildRawReportErrorFromReport(report) {
   });
 }
 function buildRawReportError(partial) {
-  return tools_assign({
-    startClocks: tools_clocksNow(),
+  return assign({
+    startClocks: clocksNow(),
     source: ErrorSource.REPORT,
     handling: ErrorHandling.UNHANDLED
   }, partial);
@@ -3747,7 +3608,7 @@ LifeCycle.prototype = {
     var _this = this;
     return {
       unsubscribe: function unsubscribe() {
-        _this.callbacks[eventType] = filter(_this.callbacks[eventType], function (other) {
+        _this.callbacks[eventType] = tools_filter(_this.callbacks[eventType], function (other) {
           return other !== callback;
         });
       }
@@ -3846,15 +3707,15 @@ function setValueAtPath(object, clone, pathSegments, fieldType) {
   setNestedValue(object, field, clone[field], fieldType);
 }
 function setNestedValue(object, field, value, fieldType) {
-  var newType = getType(value);
+  var newType = tools_getType(value);
   if (newType === fieldType) {
-    object[field] = sanitize(value);
+    object[field] = sanitize_sanitize(value);
   } else if (fieldType === 'object' && (newType === 'undefined' || newType === 'null')) {
     object[field] = {};
   }
 }
 function isValidObject(object) {
-  return getType(object) === 'object';
+  return tools_getType(object) === 'object';
 }
 ;// CONCATENATED MODULE: ../core/esm/helper/createEventRateLimiter.js
 
@@ -3962,7 +3823,7 @@ function checkURLSupported() {
 /**
  * 'requestIdleCallback' with a shim.
  */
-function requestIdleCallback(callback, opts) {
+function requestIdleCallback_requestIdleCallback(callback, opts) {
   // Note: check both 'requestIdleCallback' and 'cancelIdleCallback' existence because some polyfills only implement 'requestIdleCallback'.
   if (window.requestIdleCallback && window.cancelIdleCallback) {
     var id = window.requestIdleCallback(monitor(callback), opts);
@@ -3980,7 +3841,7 @@ var MAX_TASK_TIME = 50;
  */
 function requestIdleCallbackShim(callback) {
   var start = dateNow();
-  var timeoutId = timer_setTimeout(function () {
+  var timeoutId = setTimeout(function () {
     callback({
       didTimeout: false,
       timeRemaining: function timeRemaining() {
@@ -3989,7 +3850,7 @@ function requestIdleCallbackShim(callback) {
     });
   }, 0);
   return function () {
-    return timer_clearTimeout(timeoutId);
+    return clearTimeout(timeoutId);
   };
 }
 ;// CONCATENATED MODULE: ../core/esm/helper/taskQueue.js
@@ -4002,7 +3863,7 @@ function requestIdleCallbackShim(callback) {
  * the opportunity to send some data). We also don't want to run tasks too often, as it might hurt
  * performance.
  */
-var IDLE_CALLBACK_TIMEOUT = ONE_SECOND;
+var IDLE_CALLBACK_TIMEOUT = (/* unused pure expression or super */ null && (ONE_SECOND));
 
 /**
  * Maximum amount of time allocated to running tasks when a timeout (`IDLE_CALLBACK_TIMEOUT`) is
@@ -4180,7 +4041,7 @@ function getCurrentSite() {
       domain: candidateDomain
     })) {
       candidateDomain = "".concat(domainLevels.pop(), ".").concat(candidateDomain);
-      setCookie(testCookieName, testCookieValue, ONE_SECOND, {
+      setCookie(testCookieName, testCookieValue, tools_ONE_SECOND, {
         domain: candidateDomain
       });
     }
@@ -4256,7 +4117,7 @@ function getExpiredSessionState() {
   };
 }
 function isSessionInNotStartedState(session) {
-  return isEmptyObject(session);
+  return tools_isEmptyObject(session);
 }
 function isSessionStarted(session) {
   return !isSessionInNotStartedState(session);
@@ -4265,10 +4126,10 @@ function isSessionInExpiredState(session) {
   return session.isExpired !== undefined || !isActiveSession(session);
 }
 function isActiveSession(sessionState) {
-  return (sessionState.created === undefined || dateNow() - Number(sessionState.created) < SESSION_TIME_OUT_DELAY) && (sessionState.expire === undefined || dateNow() < Number(sessionState.expire));
+  return (sessionState.created === undefined || tools_dateNow() - Number(sessionState.created) < SESSION_TIME_OUT_DELAY) && (sessionState.expire === undefined || tools_dateNow() < Number(sessionState.expire));
 }
 function expandSessionState(session) {
-  session.expire = String(dateNow() + SESSION_EXPIRATION_DELAY);
+  session.expire = String(tools_dateNow() + SESSION_EXPIRATION_DELAY);
 }
 function toSessionString(session) {
   return tools_map(objectEntries(session), function (item) {
@@ -4503,7 +4364,7 @@ function next(sessionStore) {
  * to the session state in another browser tab, or another window.
  * This value has been determined from our previous cookie-only implementation.
  */
-var STORAGE_POLL_DELAY = ONE_SECOND;
+var STORAGE_POLL_DELAY = tools_ONE_SECOND;
 
 /**
  * Checks if cookies are available as the preferred storage
@@ -4532,7 +4393,7 @@ function startSessionStore(sessionStoreStrategyType, productKey, computeSessionS
   var watchSessionTimeoutId = timer_setInterval(watchSession, STORAGE_POLL_DELAY);
   var sessionCache;
   startSession();
-  var _throttle = throttle(function () {
+  var _throttle = tools_throttle(function () {
       processSessionStoreOperations({
         process: function process(sessionState) {
           if (isSessionInNotStartedState(sessionState)) {
@@ -4613,7 +4474,7 @@ function startSessionStore(sessionStoreStrategyType, productKey, computeSessionS
     delete sessionState.isExpired;
     if (isTracked && !sessionState.id) {
       sessionState.id = UUID();
-      sessionState.created = String(dateNow());
+      sessionState.created = String(tools_dateNow());
     }
   }
   function hasSessionInCache() {
@@ -4699,20 +4560,20 @@ function validateAndBuildConfiguration(initConfiguration) {
      * beacon payload max queue size implementation is 64kb
      * ensure that we leave room for logs, rum and potential other users
      */
-    batchBytesLimit: 16 * ONE_KIBI_BYTE,
+    batchBytesLimit: 16 * byteUtils_ONE_KIBI_BYTE,
     eventRateLimiterThreshold: 3000,
     maxTelemetryEventsPerPage: 15,
     /**
      * flush automatically, aim to be lower than ALB connection timeout
      * to maximize connection reuse.
      */
-    flushTimeout: 30 * ONE_SECOND,
+    flushTimeout: 30 * tools_ONE_SECOND,
     /**
      * Logs intake limit
      */
     batchMessagesLimit: 50,
-    messageBytesLimit: 256 * ONE_KIBI_BYTE,
-    resourceUrlLimit: 5 * ONE_KIBI_BYTE,
+    messageBytesLimit: 256 * byteUtils_ONE_KIBI_BYTE,
+    resourceUrlLimit: 5 * byteUtils_ONE_KIBI_BYTE,
     storeContextsToLocal: !!initConfiguration.storeContextsToLocal,
     // 存储到localstorage key ，默认不填，自动生成
     storeContextsKey: initConfiguration.storeContextsKey,
@@ -4736,299 +4597,6 @@ function validatePostRequestRequireParamsConfiguration(initConfiguration) {
     return false;
   }
   return true;
-}
-;// CONCATENATED MODULE: ../core/esm/configuration/remoteConfiguration.js
-function remoteConfiguration_typeof(o) {
-  "@babel/helpers - typeof";
-
-  return remoteConfiguration_typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) {
-    return typeof o;
-  } : function (o) {
-    return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o;
-  }, remoteConfiguration_typeof(o);
-}
-function ownKeys(e, r) {
-  var t = Object.keys(e);
-  if (Object.getOwnPropertySymbols) {
-    var o = Object.getOwnPropertySymbols(e);
-    r && (o = o.filter(function (r) {
-      return Object.getOwnPropertyDescriptor(e, r).enumerable;
-    })), t.push.apply(t, o);
-  }
-  return t;
-}
-function _objectSpread(e) {
-  for (var r = 1; r < arguments.length; r++) {
-    var t = null != arguments[r] ? arguments[r] : {};
-    r % 2 ? ownKeys(Object(t), !0).forEach(function (r) {
-      _defineProperty(e, r, t[r]);
-    }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) {
-      Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r));
-    });
-  }
-  return e;
-}
-function _defineProperty(e, r, t) {
-  return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, {
-    value: t,
-    enumerable: !0,
-    configurable: !0,
-    writable: !0
-  }) : e[r] = t, e;
-}
-function _toPropertyKey(t) {
-  var i = _toPrimitive(t, "string");
-  return "symbol" == remoteConfiguration_typeof(i) ? i : i + "";
-}
-function _toPrimitive(t, r) {
-  if ("object" != remoteConfiguration_typeof(t) || !t) return t;
-  var e = t[Symbol.toPrimitive];
-  if (void 0 !== e) {
-    var i = e.call(t, r || "default");
-    if ("object" != remoteConfiguration_typeof(i)) return i;
-    throw new TypeError("@@toPrimitive must return a primitive value.");
-  }
-  return ("string" === r ? String : Number)(t);
-}
-function remoteConfiguration_slicedToArray(r, e) {
-  return remoteConfiguration_arrayWithHoles(r) || remoteConfiguration_iterableToArrayLimit(r, e) || remoteConfiguration_unsupportedIterableToArray(r, e) || remoteConfiguration_nonIterableRest();
-}
-function remoteConfiguration_nonIterableRest() {
-  throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
-}
-function remoteConfiguration_unsupportedIterableToArray(r, a) {
-  if (r) {
-    if ("string" == typeof r) return remoteConfiguration_arrayLikeToArray(r, a);
-    var t = {}.toString.call(r).slice(8, -1);
-    return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? remoteConfiguration_arrayLikeToArray(r, a) : void 0;
-  }
-}
-function remoteConfiguration_arrayLikeToArray(r, a) {
-  (null == a || a > r.length) && (a = r.length);
-  for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e];
-  return n;
-}
-function remoteConfiguration_iterableToArrayLimit(r, l) {
-  var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"];
-  if (null != t) {
-    var e,
-      n,
-      i,
-      u,
-      a = [],
-      f = !0,
-      o = !1;
-    try {
-      if (i = (t = t.call(r)).next, 0 === l) {
-        if (Object(t) !== t) return;
-        f = !1;
-      } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0);
-    } catch (r) {
-      o = !0, n = r;
-    } finally {
-      try {
-        if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return;
-      } finally {
-        if (o) throw n;
-      }
-    }
-    return a;
-  }
-}
-function remoteConfiguration_arrayWithHoles(r) {
-  if (Array.isArray(r)) return r;
-}
-
-
-
-
-function fetchAndApplyRemoteConfiguration(initConfiguration, callback) {
-  fetchRemoteConfiguration(initConfiguration, function (remoteInitConfiguration) {
-    callback(applyRemoteConfiguration(initConfiguration, remoteInitConfiguration));
-  });
-}
-/**
- * 数据上报采样率，100 表示全收集；0 表示不收集。默认 100
- */
-//   sessionSampleRate?: number | undefined
-//   telemetrySampleRate?: number | undefined
-//   silentMultipleInit?: boolean | undefined
-
-//   service?: string | undefined
-//   /** Web 应用当前环境，如 prod：线上环境；gray：灰度环境；pre：预发布环境；common：日常环境；local：本地环境。 */
-//   env?: string | undefined
-//   /** Web 应用的版本号。 */
-//   version?: string | undefined
-//   /** 链路数据采样百分比：100 表示全收集；0 表示不收集。 */
-//   tracingSampleRate?: number | undefined
-//   /**
-//    * @deprecated use usePartitionedCrossSiteSessionCookie instead
-//    */
-//   useCrossSiteSessionCookie?: boolean | undefined
-//   /**
-//    * 是否使用跨域 cookie，开启第三方 cookie 跨分区实现。默认不允许跨域，例如嵌套跨域 iframe 的情况。
-//    */
-//   usePartitionedCrossSiteSessionCookie?: boolean | undefined
-//   useSecureSessionCookie?: boolean | undefined
-//   trackSessionAcrossSubdomains?: boolean | undefined
-//   /**
-//    * 是否把公共数据存储到localstorage,默认不存储
-//    */
-//   storeContextsToLocal?: boolean | undefined
-//   /**
-//    * 定义存储到 localstorage 的 key ，默认不填，自动生成, 该参数主要是为了区分在同一个域名下，不同子路径共用store 的问题
-//    */
-//   storeContextsKey?: string | undefined
-//   /**
-//    * 数据以 application/json 的发送方式，默认text
-//    */
-//   sendContentTypeByJson?: boolean | undefined
-//   /**
-//    * 在 cookie 不可用的情况下，可以开启该选项，把数据储存到 localstorage
-//    */
-// allowFallbackToLocalStorage ?: boolean | undefined
-//   /**
-//    * 错误会话补偿采样率：
-//    * - 当会话未被 `sessionSampleRate` 采样时，若会话期间发生错误，则按此比例采集
-//    * 此类会话将在错误发生时开始记录事件，并持续记录直到会话结束。
-//    * - 取值范围 0-100，100 表示全采错误会话，0 表示忽略错误会话
-//    */
-//   sessionOnErrorSampleRate?: number | undefined
-
-//   /**
-//    * Session Replay 全量采集采样率：
-//    * - 用于控制所有会话重放的全量数据采集比例
-//    * - 取值范围 0-100，100 表示全量采集，0 表示不采集
-//    **/
-//   sessionReplaySampleRate?: number | undefined
-
-//   /** 错误会话重放补偿采样率：
-//    * - 当会话未被 `sessionReplaySampleRate` 采样时，若会话期间发生错误，则按此比例采集
-//    * 此类回放将记录错误发生前最多一分钟的事件，并持续记录直到会话结束。
-// 100 表示全收集；0 表示不收集。
-//      */
-//   sessionReplayOnErrorSampleRate?: number | undefined
-//   /**
-//    * 是否开启用户行为采集。
-//    */
-//   trackUserInteractions?: boolean | undefined
-//   /**
-//    * 指定 action 数据 name 获取方式，默认自动获取，可以指定元素特定属性名称,alt,name,title,aria-labelledby,aria-label,data-guance-action-name 这些属性
-//    */
-//   actionNameAttribute?: string | undefined
-//   trackViewsManually?: boolean | undefined
-//   /**
-//    * sessionReplay 和 compressIntakeRequests数据压缩都是在 webwork 线程中完成，所以默认情况下，需要在开启csp 安全访问的情况下，允许 worker-src blob:; workerUrl 配置允许自行托管 worker 地址
-//    */
-//   workerUrl?: string
-//   /**
-//    * 压缩 RUM 数据请求内容，以减少发送大量数据时的带宽使用量。压缩在 Worker 线程中完成。
-//    */
-// compressIntakeRequests ?: boolean | undefined
-//    /**
-//      * 配置链路追踪工具类型，如果不配置默认为 ddtrace。目前支持 ddtrace、zipkin、skywalking_v3、jaeger、zipkin_single_header、w3c_traceparent 6 种数据类型。
-//      */
-//     traceType?: TraceType
-
-var modifiableFieldPaths = {
-  sessionSampleRate: 'number',
-  telemetrySampleRate: 'number',
-  silentMultipleInit: 'boolean',
-  service: 'string',
-  env: 'string',
-  version: 'string',
-  tracingSampleRate: 'number',
-  useCrossSiteSessionCookie: 'boolean',
-  usePartitionedCrossSiteSessionCookie: 'boolean',
-  useSecureSessionCookie: 'boolean',
-  trackSessionAcrossSubdomains: 'boolean',
-  storeContextsToLocal: 'boolean',
-  storeContextsKey: 'string',
-  sendContentTypeByJson: 'boolean',
-  allowFallbackToLocalStorage: 'boolean',
-  sessionOnErrorSampleRate: 'number',
-  sessionReplaySampleRate: 'number',
-  sessionReplayOnErrorSampleRate: 'number',
-  trackUserInteractions: 'boolean',
-  trackInteractions: 'boolean',
-  actionNameAttribute: 'string',
-  trackViewsManually: 'boolean',
-  workerUrl: 'string',
-  compressIntakeRequests: 'boolean',
-  traceType: 'string'
-};
-function modificationByFieldsPath(remoteConfiguration, modifiableFieldPaths) {
-  var result = {};
-  objectEntries(modifiableFieldPaths).forEach(function (_ref) {
-    var _ref2 = remoteConfiguration_slicedToArray(_ref, 2),
-      fieldPath = _ref2[0],
-      fieldType = _ref2[1];
-    // const sourceValue = sourceConfiguration[fieldPath]
-    var remoteValue = remoteConfiguration[fieldPath];
-    if (getType(remoteValue) === fieldType) {
-      result[fieldPath] = remoteValue;
-    }
-  });
-  return result;
-}
-function applyRemoteConfiguration(initConfiguration, remoteInitConfiguration) {
-  var simpleRemoteInitConfiguration = {};
-  for (var key in remoteInitConfiguration) {
-    if (remoteInitConfiguration[key] !== undefined) {
-      //  ex
-      //        {
-      //     "R.d1b454d0_22eb_11ef_9b66_95ca11aa2c6c.sessionSampleRate": 80
-      // }
-      //  transform to
-      // {
-      //     "sessionSampleRate": 80
-      // }
-      var simpleKey = key.replace('R.' + initConfiguration.applicationId + '.', '');
-      simpleRemoteInitConfiguration[simpleKey] = remoteInitConfiguration[key];
-    }
-  }
-  return _objectSpread(_objectSpread({}, initConfiguration), modificationByFieldsPath(simpleRemoteInitConfiguration, modifiableFieldPaths));
-}
-function fetchRemoteConfiguration(configuration, callback) {
-  var xhr = new XMLHttpRequest();
-  addEventListener_addEventListener(xhr, 'load', function () {
-    if (xhr.status === 200) {
-      var remoteConfiguration = JSON.parse(xhr.responseText);
-      callback(remoteConfiguration.content);
-    } else {
-      callback({});
-      displayRemoteConfigurationFetchingError();
-    }
-  });
-  addEventListener_addEventListener(xhr, 'error', function () {
-    callback({});
-    displayRemoteConfigurationFetchingError();
-  });
-  xhr.open('GET', buildEndpoint(configuration));
-  xhr.send();
-}
-function buildEndpoint(configuration) {
-  var url = configuration.datakitOrigin || configuration.datakitUrl || configuration.site;
-  if (url.indexOf('/') === 0) {
-    // 绝对路径这种 /xxx
-    url = location.origin + trim(url);
-  }
-  var endpoint = url;
-  if (url.lastIndexOf('/') === url.length - 1) {
-    endpoint = trim(url) + 'v1/env_variable';
-  } else {
-    endpoint = trim(url) + '/v1/env_variable';
-  }
-  // 这里需要加上token和app_id
-  endpoint += '?app_id=' + configuration.applicationId;
-  //testing-openway.dataflux.cn/v1/env_variable?token=a47fb0cdddaa4561a90d941317cdbc0b&app_id=d1b454d0_22eb_11ef_9b66_95ca11aa2c6c&to_headless=true
-  if (configuration.site && configuration.clientToken) {
-    endpoint = endpoint + '&token=' + configuration.clientToken + '&to_headless=true';
-  }
-  return endpoint;
-}
-function displayRemoteConfigurationFetchingError() {
-  display_display.error('Error fetching the remote configuration.');
 }
 ;// CONCATENATED MODULE: ../core/esm/browser/fetchObservable.js
 
@@ -5119,7 +4687,7 @@ function afterSend(observable, responsePromise, startContext) {
     // }
     observable.notify(context);
   };
-  responsePromise.then(monitor(function (response) {
+  responsePromise.then(monitor_monitor(function (response) {
     var responseType = '';
     try {
       responseType = response.constructor === Response && response.type || ''; // issue The Response type getter can only be used on instances of Response
@@ -5132,7 +4700,7 @@ function afterSend(observable, responsePromise, startContext) {
       status: response.status,
       isAborted: false
     });
-  }), monitor(function (error) {
+  }), monitor_monitor(function (error) {
     reportFetch({
       status: 0,
       isAborted: context.init && context.init.signal && context.init.signal.aborted || error instanceof DOMException && error.code === DOMException.ABORT_ERR,
@@ -5243,8 +4811,8 @@ function createPageExitObservable() {
      * Only event that guarantee to fire on mobile devices when the page transitions to background state
      * (e.g. when user switches to a different application, goes to homescreen, etc), or is being unloaded.
      */
-    var visibilityChangeListener = addEventListeners(window, [DOM_EVENT.VISIBILITY_CHANGE, DOM_EVENT.FREEZE], function (event) {
-      if (event.type === DOM_EVENT.VISIBILITY_CHANGE && document.visibilityState === 'hidden') {
+    var visibilityChangeListener = addEventListeners(window, [enums_DOM_EVENT.VISIBILITY_CHANGE, enums_DOM_EVENT.FREEZE], function (event) {
+      if (event.type === enums_DOM_EVENT.VISIBILITY_CHANGE && document.visibilityState === 'hidden') {
         /**
          * Only event that guarantee to fire on mobile devices when the page transitions to background state
          * (e.g. when user switches to a different application, goes to homescreen, etc), or is being unloaded.
@@ -5252,7 +4820,7 @@ function createPageExitObservable() {
         observable.notify({
           reason: PageExitReason.HIDDEN
         });
-      } else if (event.type === DOM_EVENT.FREEZE) {
+      } else if (event.type === enums_DOM_EVENT.FREEZE) {
         /**
          * After transitioning in background a tab can be freezed to preserve resources. (cf: https://developer.chrome.com/blog/page-lifecycle-api)
          * Allow to collect events happening between hidden and frozen state.
@@ -5270,7 +4838,7 @@ function createPageExitObservable() {
      * - a visibility change during doc unload (cf: https://bugs.webkit.org/show_bug.cgi?id=194897)
      * - a page hide transition (cf: https://bugs.webkit.org/show_bug.cgi?id=188329)
      */
-    var beforeUnloadListener = addEventListener_addEventListener(window, DOM_EVENT.BEFORE_UNLOAD, function () {
+    var beforeUnloadListener = addEventListener_addEventListener(window, enums_DOM_EVENT.BEFORE_UNLOAD, function () {
       observable.notify({
         reason: PageExitReason.UNLOADING
       });
@@ -5282,47 +4850,7 @@ function createPageExitObservable() {
   });
 }
 function isPageExitReason(reason) {
-  return includes(values(PageExitReason), reason);
-}
-;// CONCATENATED MODULE: ../core/esm/browser/htmlDomUtils.js
-function isTextNode(node) {
-  return node.nodeType === Node.TEXT_NODE;
-}
-function isCommentNode(node) {
-  return node.nodeType === Node.COMMENT_NODE;
-}
-function isElementNode(node) {
-  return node.nodeType === Node.ELEMENT_NODE;
-}
-function isNodeShadowHost(node) {
-  return isElementNode(node) && Boolean(node.shadowRoot);
-}
-function isNodeShadowRoot(node) {
-  var shadowRoot = node;
-  return !!shadowRoot.host && shadowRoot.nodeType === Node.DOCUMENT_FRAGMENT_NODE && isElementNode(shadowRoot.host);
-}
-function hasChildNodes(node) {
-  return node.childNodes.length > 0 || isNodeShadowHost(node);
-}
-// export function getChildNodes(node) {
-//   return isNodeShadowHost(node) ? node.shadowRoot.childNodes : node.childNodes
-// }
-function forEachChildNodes(node, callback) {
-  // node.childNodes.forEach(callback)
-  var child = node.firstChild;
-  while (child) {
-    callback(child);
-    child = child.nextSibling;
-  }
-  if (isNodeShadowHost(node)) {
-    callback(node.shadowRoot);
-  }
-}
-/**
- * Return `host` in case if the current node is a shadow root otherwise will return the `parentNode`
- */
-function getParentNode(node) {
-  return isNodeShadowRoot(node) ? node.host : node.parentNode;
+  return tools_includes(values(PageExitReason), reason);
 }
 ;// CONCATENATED MODULE: ../core/esm/browser/runOnReadyState.js
 
@@ -5332,11 +4860,11 @@ function runOnReadyState(expectedReadyState, callback) {
   if (document.readyState === expectedReadyState || document.readyState === 'complete') {
     callback();
     return {
-      stop: tools_noop
+      stop: noop
     };
   } else {
     var eventName = expectedReadyState === 'complete' ? DOM_EVENT.LOAD : DOM_EVENT.DOM_CONTENT_LOADED;
-    return addEventListener_addEventListener(window, eventName, callback, {
+    return addEventListener(window, eventName, callback, {
       once: true
     });
   }
@@ -5395,7 +4923,7 @@ var commonFields = {
 // 需要用双引号将字符串类型的field value括起来， 这里有数组标示[string, path]
 var dataMap = {
   view: {
-    type: enums_RumEventType.VIEW,
+    type: RumEventType.VIEW,
     tags: {
       view_loading_type: 'view.loading_type',
       view_apdex_level: 'view.apdex_level',
@@ -5441,7 +4969,7 @@ var dataMap = {
     }
   },
   resource: {
-    type: enums_RumEventType.RESOURCE,
+    type: RumEventType.RESOURCE,
     tags: {
       trace_id: '_gc.trace_id',
       span_id: '_gc.span_id',
@@ -5481,7 +5009,7 @@ var dataMap = {
     }
   },
   error: {
-    type: enums_RumEventType.ERROR,
+    type: RumEventType.ERROR,
     tags: {
       error_id: 'error.id',
       trace_id: '_gc.trace_id',
@@ -5505,7 +5033,7 @@ var dataMap = {
     }
   },
   long_task: {
-    type: enums_RumEventType.LONG_TASK,
+    type: RumEventType.LONG_TASK,
     tags: {
       long_task_id: 'long_task.id'
     },
@@ -5520,7 +5048,7 @@ var dataMap = {
     }
   },
   action: {
-    type: enums_RumEventType.ACTION,
+    type: RumEventType.ACTION,
     tags: {
       action_type: 'action.type'
     },
@@ -5550,7 +5078,7 @@ var dataMap = {
     }
   },
   browser_log: {
-    type: enums_RumEventType.LOGGER,
+    type: RumEventType.LOGGER,
     tags: {
       error_source: 'error.source',
       error_type: 'error.type',
@@ -5643,7 +5171,7 @@ function stopSessionManager() {
   stopCallbacks = [];
 }
 function trackActivity(expandOrRenewSession) {
-  var _addEventListeners = addEventListeners(window, [DOM_EVENT.CLICK, DOM_EVENT.TOUCH_START, DOM_EVENT.KEY_DOWN, DOM_EVENT.SCROLL], expandOrRenewSession, {
+  var _addEventListeners = addEventListeners(window, [enums_DOM_EVENT.CLICK, enums_DOM_EVENT.TOUCH_START, enums_DOM_EVENT.KEY_DOWN, enums_DOM_EVENT.SCROLL], expandOrRenewSession, {
       capture: true,
       passive: true
     }),
@@ -5656,7 +5184,7 @@ function trackVisibility(expandSession) {
       expandSession();
     }
   };
-  var _addEventListener = addEventListener_addEventListener(document, DOM_EVENT.VISIBILITY_CHANGE, expandSessionWhenVisible),
+  var _addEventListener = addEventListener_addEventListener(document, enums_DOM_EVENT.VISIBILITY_CHANGE, expandSessionWhenVisible),
     stop = _addEventListener.stop;
   stopCallbacks.push(stop);
   var visibilityCheckInterval = timer_setInterval(expandSessionWhenVisible, VISIBILITY_CHECK_DELAY);
@@ -5665,7 +5193,7 @@ function trackVisibility(expandSession) {
   });
 }
 function trackResume(cb) {
-  var _addEventListener2 = addEventListener_addEventListener(window, DOM_EVENT.RESUME, cb, {
+  var _addEventListener2 = addEventListener_addEventListener(window, enums_DOM_EVENT.RESUME, cb, {
       capture: true
     }),
     stop = _addEventListener2.stop;
@@ -5676,11 +5204,11 @@ function trackResume(cb) {
 
 
 
-var MAX_ONGOING_BYTES_COUNT = 80 * ONE_KIBI_BYTE;
+var MAX_ONGOING_BYTES_COUNT = 80 * byteUtils_ONE_KIBI_BYTE;
 var MAX_ONGOING_REQUESTS = 32;
 var MAX_QUEUE_BYTES_COUNT = 3 * ONE_MEBI_BYTE;
-var MAX_BACKOFF_TIME = 256 * ONE_SECOND;
-var INITIAL_BACKOFF_TIME = ONE_SECOND;
+var MAX_BACKOFF_TIME = 256 * tools_ONE_SECOND;
+var INITIAL_BACKOFF_TIME = tools_ONE_SECOND;
 var TransportStatus = {
   UP: 0,
   FAILURE_DETECTED: 1,
@@ -5819,158 +5347,11 @@ function newBandwidthMonitor() {
     }
   };
 }
-;// CONCATENATED MODULE: ../core/esm/telemetry/types.js
-var types_TelemetryType = {
-  log: 'log',
-  configuration: 'configuration',
-  usage: 'usage'
-};
-var types_TelemetryStatusType = {
-  debug: 'debug',
-  error: 'error'
-};
-;// CONCATENATED MODULE: ../core/esm/telemetry/telemetry.js
-
-
-
-
-
-
-
-
-
-
-
-var ALLOWED_FRAME_URLS = ['https://static.guance.com', 'http://localhost', '<anonymous>'];
-var TelemetryService = {
-  LOGS: 'browser-logs-sdk',
-  RUM: 'browser-rum-sdk'
-};
-
-// eslint-disable-next-line local-rules/disallow-side-effects
-var preStartTelemetryBuffer = boundedBuffer_createBoundedBuffer();
-var _onRawTelemetryEventCollected2 = function onRawTelemetryEventCollected(event) {
-  preStartTelemetryBuffer.add(function () {
-    _onRawTelemetryEventCollected2(event);
-  });
-};
-function startTelemetry(telemetryService, configuration) {
-  var contextProvider;
-  var observable = new Observable();
-  var alreadySentEvents = new Set();
-  var telemetryEnabled = configuration.telemetryEnabled && performDraw(configuration.telemetrySampleRate);
-  var runtimeEnvInfo = getRuntimeEnvInfo();
-  _onRawTelemetryEventCollected2 = function _onRawTelemetryEventCollected(rawEvent) {
-    var stringifiedEvent = jsonStringify(rawEvent);
-    if (telemetryEnabled && alreadySentEvents.size < configuration.maxTelemetryEventsPerPage && !alreadySentEvents.has(stringifiedEvent)) {
-      var event = toTelemetryEvent(telemetryService, rawEvent, runtimeEnvInfo);
-      observable.notify(event);
-      alreadySentEvents.add(stringifiedEvent);
-    }
-  };
-  startMonitorErrorCollection(addTelemetryError);
-  function toTelemetryEvent(telemetryService, event, runtimeEnvInfo) {
-    return extend2Lev({
-      type: 'telemetry',
-      date: timeStampNow(),
-      service: telemetryService,
-      version: "3.2.24",
-      source: 'browser',
-      telemetry: extend2Lev(event, {
-        runtime_env: runtimeEnvInfo,
-        connectivity: getConnectivity()
-      })
-    }, contextProvider !== undefined ? contextProvider() : {});
-  }
-  return {
-    setContextProvider: function setContextProvider(provider) {
-      contextProvider = provider;
-    },
-    observable: observable,
-    enabled: telemetryEnabled
-  };
-}
-function getRuntimeEnvInfo() {
-  return {
-    is_local_file: window.location.protocol === 'file:',
-    is_worker: 'WorkerGlobalScope' in self
-  };
-}
-function startFakeTelemetry() {
-  var events = [];
-  _onRawTelemetryEventCollected2 = function _onRawTelemetryEventCollected(event) {
-    events.push(event);
-  };
-  return events;
-}
-function drainPreStartTelemetry() {
-  preStartTelemetryBuffer.drain();
-}
-function resetTelemetry() {
-  preStartTelemetryBuffer = createBoundedBuffer();
-  _onRawTelemetryEventCollected2 = function _onRawTelemetryEventCollected(event) {
-    preStartTelemetryBuffer.add(function () {
-      _onRawTelemetryEventCollected2(event);
-    });
-  };
-}
-function addTelemetryDebug(message, context) {
-  displayIfDebugEnabled(message, context);
-  _onRawTelemetryEventCollected2(assign({
-    type: TelemetryType.log,
-    message: message,
-    status: TelemetryStatusType.debug
-  }, context));
-}
-function addTelemetryError(e, context) {
-  _onRawTelemetryEventCollected2(tools_assign({
-    type: types_TelemetryType.log,
-    status: types_TelemetryStatusType.error
-  }, formatError(e), context));
-}
-function addTelemetryConfiguration(configuration) {
-  _onRawTelemetryEventCollected2({
-    type: TelemetryType.configuration,
-    configuration: configuration
-  });
-}
-function addTelemetryUsage(usage) {
-  _onRawTelemetryEventCollected2({
-    type: TelemetryType.usage,
-    usage: usage
-  });
-}
-function formatError(e) {
-  if (e instanceof Error) {
-    var stackTrace = computeStackTrace(e);
-    return {
-      error: {
-        kind: stackTrace.name,
-        stack: toStackTraceString(scrubCustomerFrames(stackTrace))
-      },
-      message: stackTrace.message
-    };
-  }
-  return {
-    error: {
-      stack: NO_ERROR_STACK_PRESENT_MESSAGE
-    },
-    message: NonErrorPrefix.UNCAUGHT + ' ' + jsonStringify_jsonStringify(e)
-  };
-}
-function scrubCustomerFrames(stackTrace) {
-  stackTrace.stack = stackTrace.stack.filter(function (frame) {
-    return !frame.url || ALLOWED_FRAME_URLS.some(function (allowedFrameUrl) {
-      return startsWith(frame.url, allowedFrameUrl);
-    });
-  });
-  return stackTrace;
-}
 ;// CONCATENATED MODULE: ../core/esm/transport/httpRequest.js
 
 
 
-
+// import { addTelemetryError } from '../telemetry/telemetry'
 /**
  * Use POST request without content type to:
  * - avoid CORS preflight requests
@@ -6037,7 +5418,7 @@ var hasReportedBeaconError = false;
 function reportBeaconError(e) {
   if (!hasReportedBeaconError) {
     hasReportedBeaconError = true;
-    addTelemetryError(e);
+    // addTelemetryError(e)
   }
 }
 function fetchKeepAliveStrategy(endpointUrl, bytesLimit, payload, onResponse) {
@@ -6057,14 +5438,14 @@ function fetchKeepAliveStrategy(endpointUrl, bytesLimit, payload, onResponse) {
         'Content-Type': payload.type
       };
     }
-    fetch(url, fetchOption).then(monitor(function (response) {
+    fetch(url, fetchOption).then(monitor_monitor(function (response) {
       if (typeof onResponse === 'function') {
         onResponse({
           status: response.status,
           type: response.type
         });
       }
-    }), monitor(function () {
+    }), monitor_monitor(function () {
       // failed to queue the request
       sendXHR(url, payload, onResponse);
     }));
@@ -6202,7 +5583,7 @@ var processedMessageByDataMap = function processedMessageByDataMap(message) {
           }
         }
       });
-      if (message.context && isObject(message.context) && !isEmptyObject(message.context)) {
+      if (message.context && isObject(message.context) && !tools_isEmptyObject(message.context)) {
         // 自定义tag， 存储成field
         var _tagKeys = [];
         tools_each(message.context, function (_value, _key) {
@@ -6220,7 +5601,7 @@ var processedMessageByDataMap = function processedMessageByDataMap(message) {
           fieldsStr.push(escapeRowData(CUSTOM_KEYS) + '=' + escapeRowField(_tagKeys));
         }
       }
-      if (message.type === enums_RumEventType.LOGGER) {
+      if (message.type === RumEventType.LOGGER) {
         // 这里处理日志类型数据自定义字段
         tools_each(message, function (value, key) {
           if (filterFileds.indexOf(key) === -1 && value !== undefined && value !== null) {
@@ -6337,7 +5718,7 @@ function createBatch(options) {
       if (pendingMessages) {
         send({
           data: pendingMessages,
-          bytesCount: computeBytesCount(pendingMessages)
+          bytesCount: byteUtils_computeBytesCount(pendingMessages)
         });
       }
     } else {
@@ -6545,7 +5926,7 @@ function getEventBridgeGlobal() {
   // return getGlobalObject().FTWebViewJavascriptBridge
   return null;
 }
-function getEventBridge() {
+function eventBridge_getEventBridge() {
   var eventBridgeGlobal = getEventBridgeGlobal();
   if (!eventBridgeGlobal) {
     return;
@@ -6576,7 +5957,7 @@ var BridgeCapability = {
   RECORDS: 'records'
 };
 function bridgeSupports(capability) {
-  var bridge = getEventBridge();
+  var bridge = eventBridge_getEventBridge();
   return !!bridge && bridge.getCapabilities().includes(capability);
 }
 function canUseEventBridge() {
@@ -6589,7 +5970,7 @@ function canUseEventBridge() {
   if (eventBridgeGlobal && eventBridgeGlobal.getAllowedWebViewHosts && eventBridgeGlobal.getAllowedWebViewHosts() === null) {
     return true;
   }
-  var bridge = getEventBridge();
+  var bridge = eventBridge_getEventBridge();
   return !!bridge && bridge.getAllowedWebViewHosts().some(function (allowedHost) {
     return currentHost === allowedHost || currentHost.endsWith(".".concat(allowedHost));
   });
@@ -6674,7 +6055,7 @@ function contextManager_iterableToArrayLimit(r, l) {
 function contextManager_arrayWithHoles(r) {
   if (Array.isArray(r)) return r;
 }
-function contextManager_ownKeys(e, r) {
+function ownKeys(e, r) {
   var t = Object.keys(e);
   if (Object.getOwnPropertySymbols) {
     var o = Object.getOwnPropertySymbols(e);
@@ -6684,30 +6065,30 @@ function contextManager_ownKeys(e, r) {
   }
   return t;
 }
-function contextManager_objectSpread(e) {
+function _objectSpread(e) {
   for (var r = 1; r < arguments.length; r++) {
     var t = null != arguments[r] ? arguments[r] : {};
-    r % 2 ? contextManager_ownKeys(Object(t), !0).forEach(function (r) {
-      contextManager_defineProperty(e, r, t[r]);
-    }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : contextManager_ownKeys(Object(t)).forEach(function (r) {
+    r % 2 ? ownKeys(Object(t), !0).forEach(function (r) {
+      _defineProperty(e, r, t[r]);
+    }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) {
       Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r));
     });
   }
   return e;
 }
-function contextManager_defineProperty(e, r, t) {
-  return (r = contextManager_toPropertyKey(r)) in e ? Object.defineProperty(e, r, {
+function _defineProperty(e, r, t) {
+  return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, {
     value: t,
     enumerable: !0,
     configurable: !0,
     writable: !0
   }) : e[r] = t, e;
 }
-function contextManager_toPropertyKey(t) {
-  var i = contextManager_toPrimitive(t, "string");
+function _toPropertyKey(t) {
+  var i = _toPrimitive(t, "string");
   return "symbol" == contextManager_typeof(i) ? i : i + "";
 }
-function contextManager_toPrimitive(t, r) {
+function _toPrimitive(t, r) {
   if ("object" != contextManager_typeof(t) || !t) return t;
   var e = t[Symbol.toPrimitive];
   if (void 0 !== e) {
@@ -6722,7 +6103,7 @@ function contextManager_toPrimitive(t, r) {
 
 
 function ensureProperties(context, propertiesConfig, name) {
-  var newContext = contextManager_objectSpread({}, context);
+  var newContext = _objectSpread({}, context);
   for (var _i = 0, _Object$entries = Object.entries(propertiesConfig); _i < _Object$entries.length; _i++) {
     var _Object$entries$_i = contextManager_slicedToArray(_Object$entries[_i], 2),
       key = _Object$entries$_i[0],
@@ -6754,8 +6135,8 @@ function createContextManager() {
       return deepClone(context);
     },
     setContext: function setContext(newContext) {
-      if (getType(newContext) === 'object') {
-        context = sanitize(ensureProperties(newContext, propertiesConfig, name));
+      if (tools_getType(newContext) === 'object') {
+        context = sanitize_sanitize(ensureProperties(newContext, propertiesConfig, name));
         customerDataTracker === null || customerDataTracker === void 0 || customerDataTracker.updateCustomerData(context);
       } else {
         contextManager.clearContext();
@@ -6763,7 +6144,7 @@ function createContextManager() {
       changeObservable.notify();
     },
     setContextProperty: function setContextProperty(key, property) {
-      context[key] = sanitize(ensureProperties(contextManager_defineProperty({}, key, property), propertiesConfig, name)[key]);
+      context[key] = sanitize_sanitize(ensureProperties(_defineProperty({}, key, property), propertiesConfig, name)[key]);
       customerDataTracker === null || customerDataTracker === void 0 || customerDataTracker.updateCustomerData(context);
       changeObservable.notify();
     },
@@ -6801,13 +6182,13 @@ var CONTEXT_STORE_KEY_PREFIX = '_gc_s';
 var storageListeners = [];
 function storeContextManager(configuration, contextManager, productKey, customerDataType) {
   var storageKey = buildStorageKey(configuration, productKey, customerDataType);
-  storageListeners.push(addEventListener_addEventListener(window, DOM_EVENT.STORAGE, function (params) {
+  storageListeners.push(addEventListener_addEventListener(window, enums_DOM_EVENT.STORAGE, function (params) {
     if (storageKey === params.key) {
       synchronizeWithStorage();
     }
   }));
   contextManager.changeObservable.subscribe(dumpToStorage);
-  contextManager.setContext(tools_extend2Lev(getFromStorage(), contextManager.getContext()));
+  contextManager.setContext(extend2Lev(getFromStorage(), contextManager.getContext()));
   function synchronizeWithStorage() {
     contextManager.setContext(getFromStorage());
   }
@@ -6842,13 +6223,13 @@ function removeStorageListeners() {
 // RUM and logs batch bytes limit is 16KB
 // ensure that we leave room for other event attributes and maintain a decent amount of event per batch
 // (3KB (customer data) + 1KB (other attributes)) * 4 (events per batch) = 16KB
-var CUSTOMER_DATA_BYTES_LIMIT = 3 * ONE_KIBI_BYTE;
+var CUSTOMER_DATA_BYTES_LIMIT = 3 * byteUtils_ONE_KIBI_BYTE;
 
 // We observed that the compression ratio is around 8 in general, but we also want to keep a margin
 // because some data might not be compressed (ex: last view update on page exit). We chose 16KiB
 // because it is also the limit of the 'batchBytesCount' that we use for RUM and Logs data, but this
 // is a bit arbitrary.
-var CUSTOMER_COMPRESSED_DATA_BYTES_LIMIT = 16 * ONE_KIBI_BYTE;
+var CUSTOMER_COMPRESSED_DATA_BYTES_LIMIT = 16 * byteUtils_ONE_KIBI_BYTE;
 var BYTES_COMPUTATION_THROTTLING_DELAY = 200;
 var CustomerDataCompressionStatus = {
   Unknown: 0,
@@ -6920,7 +6301,7 @@ function createCustomerDataTracker(checkCustomerDataLimit) {
   // Throttle the bytes computation to minimize the impact on performance.
   // Especially useful if the user call context APIs synchronously multiple times in a row
   var _throttle = throttle(function (context) {
-      bytesCountCache = computeBytesCount(jsonStringify_jsonStringify(context));
+      bytesCountCache = computeBytesCount(jsonStringify(context));
       checkCustomerDataLimit();
     }, BYTES_COMPUTATION_THROTTLING_DELAY),
     computeBytesCountThrottled = _throttle.throttled,
@@ -6947,7 +6328,7 @@ function createCustomerDataTracker(checkCustomerDataLimit) {
   };
 }
 function displayCustomerDataLimitReachedWarning(bytesCountLimit) {
-  display_display.warn("Customer data exceeds the recommended ".concat(bytesCountLimit / ONE_KIBI_BYTE, "KiB threshold."));
+  display.warn("Customer data exceeds the recommended ".concat(bytesCountLimit / ONE_KIBI_BYTE, "KiB threshold."));
 }
 ;// CONCATENATED MODULE: ../core/esm/helper/encoder.js
 
@@ -6960,7 +6341,7 @@ function createIdentityEncoder() {
       return !output;
     },
     write: function write(data, callback) {
-      var additionalEncodedBytesCount = computeBytesCount(data);
+      var additionalEncodedBytesCount = byteUtils_computeBytesCount(data);
       outputBytesCount += additionalEncodedBytesCount;
       output += data;
       if (callback) {
@@ -6996,9 +6377,9 @@ function createIdentityEncoder() {
  */
 function sanitizeUser(newUser) {
   // We shallow clone only to prevent mutation of user data.
-  var user = tools_assign({}, newUser);
+  var user = assign({}, newUser);
   var keys = ['id', 'name', 'email'];
-  tools_each(keys, function (key) {
+  each(keys, function (key) {
     if (key in user) {
       user[key] = String(user[key]);
     }
@@ -7012,7 +6393,7 @@ function sanitizeUser(newUser) {
 function checkUser(newUser) {
   var isValid = getType(newUser) === 'object';
   if (!isValid) {
-    display_display.error('Unsupported user:', newUser);
+    display.error('Unsupported user:', newUser);
   }
   return isValid;
 }
@@ -7075,7 +6456,7 @@ function displayAlreadyInitializedError(sdkName, initConfiguration) {
 
 
 
-
+// export * from './configuration/remoteConfiguration'
 
 
 
@@ -7211,10 +6592,10 @@ function computeSessionState(configuration, rawTrackingType) {
     sessionOnErrorSampleRate = configuration.sessionOnErrorSampleRate,
     sessionReplaySampleRate = configuration.sessionReplaySampleRate,
     sessionReplayOnErrorSampleRate = configuration.sessionReplayOnErrorSampleRate;
-  var isSession = tools_performDraw(sessionSampleRate);
-  var isErrorSession = tools_performDraw(sessionOnErrorSampleRate);
-  var isSessionReplay = tools_performDraw(sessionReplaySampleRate);
-  var isErrorSessionReplay = tools_performDraw(sessionReplayOnErrorSampleRate);
+  var isSession = performDraw(sessionSampleRate);
+  var isErrorSession = performDraw(sessionOnErrorSampleRate);
+  var isSessionReplay = performDraw(sessionReplaySampleRate);
+  var isErrorSessionReplay = performDraw(sessionReplayOnErrorSampleRate);
   var trackingType;
   if (hasValidRumSession(rawTrackingType)) {
     trackingType = rawTrackingType;
@@ -7329,7 +6710,7 @@ function trackHistory(onHistoryChange) {
     var onPostCall = params.onPostCall;
     onPostCall(onHistoryChange);
   });
-  var popState = addEventListener_addEventListener(window, DOM_EVENT.POP_STATE, onHistoryChange);
+  var popState = addEventListener_addEventListener(window, enums_DOM_EVENT.POP_STATE, onHistoryChange);
   return {
     stop: function stop() {
       pushState.stop();
@@ -7339,7 +6720,7 @@ function trackHistory(onHistoryChange) {
   };
 }
 function trackHash(onHashChange) {
-  return addEventListener_addEventListener(window, DOM_EVENT.HASH_CHANGE, onHashChange);
+  return addEventListener_addEventListener(window, enums_DOM_EVENT.HASH_CHANGE, onHashChange);
 }
 ;// CONCATENATED MODULE: ./src/transport/startRumBatch.js
 
@@ -7350,7 +6731,7 @@ function startRumBatch(configuration, lifeCycle, telemetryEventObservable, repor
     encoder: createEncoder(2) // DeflateEncoderStreamId.RUM
   }, reportError, pageExitObservable, sessionExpireObservable);
   lifeCycle.subscribe(LifeCycleEventType.RUM_EVENT_COLLECTED, function (serverRumEvent) {
-    if (serverRumEvent.type === enums_RumEventType.VIEW) {
+    if (serverRumEvent.type === RumEventType.VIEW) {
       batch.upsert(serverRumEvent, serverRumEvent.view.id);
     } else {
       batch.add(serverRumEvent);
@@ -7360,15 +6741,6 @@ function startRumBatch(configuration, lifeCycle, telemetryEventObservable, repor
   //   batch.add(event)
   // })
   return batch;
-}
-;// CONCATENATED MODULE: ./src/transport/startRumEventBridge.js
-
-function startRumEventBridge(lifeCycle) {
-  var bridge = getEventBridge();
-  lifeCycle.subscribe(LifeCycleEventType.RUM_EVENT_COLLECTED, function (serverRumEvent) {
-    var data = processedMessageByDataMap(serverRumEvent).rowData;
-    bridge.send('rum', data);
-  });
 }
 ;// CONCATENATED MODULE: ../../node_modules/@babel/runtime/helpers/esm/typeof.js
 function typeof_typeof(o) {
@@ -7435,22 +6807,22 @@ var ROOT_MODIFIABLE_FIELD_PATHS = {
 };
 var modifiableFieldPathsByEvent = {};
 function startRumAssembly(configuration, lifeCycle, sessionManager, userSessionManager, viewContexts, urlContexts, actionContexts, displayContext, getCommonContext, reportError) {
-  modifiableFieldPathsByEvent[enums_RumEventType.VIEW] = assembly_objectSpread(assembly_objectSpread({}, USER_CUSTOMIZABLE_FIELD_PATHS), VIEW_MODIFIABLE_FIELD_PATHS);
-  modifiableFieldPathsByEvent[enums_RumEventType.ERROR] = tools_assign({
+  modifiableFieldPathsByEvent[RumEventType.VIEW] = assembly_objectSpread(assembly_objectSpread({}, USER_CUSTOMIZABLE_FIELD_PATHS), VIEW_MODIFIABLE_FIELD_PATHS);
+  modifiableFieldPathsByEvent[RumEventType.ERROR] = tools_assign({
     'error.message': 'string',
     'error.stack': 'string',
     'error.resource.url': 'string'
   }, USER_CUSTOMIZABLE_FIELD_PATHS, VIEW_MODIFIABLE_FIELD_PATHS, ROOT_MODIFIABLE_FIELD_PATHS);
-  modifiableFieldPathsByEvent[enums_RumEventType.RESOURCE] = tools_assign({
+  modifiableFieldPathsByEvent[RumEventType.RESOURCE] = tools_assign({
     'resource.url': 'string'
   }, USER_CUSTOMIZABLE_FIELD_PATHS, VIEW_MODIFIABLE_FIELD_PATHS, ROOT_MODIFIABLE_FIELD_PATHS);
-  modifiableFieldPathsByEvent[enums_RumEventType.ACTION] = tools_assign({
+  modifiableFieldPathsByEvent[RumEventType.ACTION] = tools_assign({
     'action.target.name': 'string'
   }, USER_CUSTOMIZABLE_FIELD_PATHS, VIEW_MODIFIABLE_FIELD_PATHS, ROOT_MODIFIABLE_FIELD_PATHS);
-  modifiableFieldPathsByEvent[enums_RumEventType.LONG_TASK] = tools_assign({}, USER_CUSTOMIZABLE_FIELD_PATHS, VIEW_MODIFIABLE_FIELD_PATHS);
+  modifiableFieldPathsByEvent[RumEventType.LONG_TASK] = tools_assign({}, USER_CUSTOMIZABLE_FIELD_PATHS, VIEW_MODIFIABLE_FIELD_PATHS);
   var eventRateLimiters = {};
-  eventRateLimiters[enums_RumEventType.ERROR] = createEventRateLimiter(enums_RumEventType.ERROR, configuration.eventRateLimiterThreshold, reportError);
-  eventRateLimiters[enums_RumEventType.ACTION] = createEventRateLimiter(enums_RumEventType.ACTION, configuration.eventRateLimiterThreshold, reportError);
+  eventRateLimiters[RumEventType.ERROR] = createEventRateLimiter(RumEventType.ERROR, configuration.eventRateLimiterThreshold, reportError);
+  eventRateLimiters[RumEventType.ACTION] = createEventRateLimiter(RumEventType.ACTION, configuration.eventRateLimiterThreshold, reportError);
   lifeCycle.subscribe(LifeCycleEventType.RAW_RUM_EVENT_COLLECTED, function (data) {
     var startTime = data.startTime;
     var rawRumEvent = data.rawRumEvent;
@@ -7472,9 +6844,15 @@ function startRumAssembly(configuration, lifeCycle, sessionManager, userSessionM
           drift: currentDrift(),
           configuration: {
             session_sample_rate: round(configuration.sessionSampleRate, 3),
-            session_replay_sample_rate: round(configuration.sessionReplaySampleRate, 3),
-            session_on_error_sample_rate: round(configuration.sessionOnErrorSampleRate, 3),
-            session_replay_on_error_sample_rate: round(configuration.sessionReplayOnErrorSampleRate, 3)
+            // session_replay_sample_rate: round(
+            //   configuration.sessionReplaySampleRate,
+            //   3
+            // ),
+            session_on_error_sample_rate: round(configuration.sessionOnErrorSampleRate, 3)
+            // session_replay_on_error_sample_rate: round(
+            //   configuration.sessionReplayOnErrorSampleRate,
+            //   3
+            // )
           }
         },
         terminal: {
@@ -7516,10 +6894,10 @@ function startRumAssembly(configuration, lifeCycle, sessionManager, userSessionM
         //     : undefined,
         display: displayContext.get()
       };
-      var rumEvent = tools_extend2Lev(rumContext, viewContext, rawRumEvent);
+      var rumEvent = extend2Lev(rumContext, viewContext, rawRumEvent);
       var serverRumEvent = withSnakeCaseKeys(rumEvent);
-      var context = tools_extend2Lev({}, commonContext.context, viewContext.context, customerContext);
-      if (!isEmptyObject(context)) {
+      var context = extend2Lev({}, commonContext.context, viewContext.context, customerContext);
+      if (!tools_isEmptyObject(context)) {
         serverRumEvent.context = context;
       }
       if (!('has_replay' in serverRumEvent.session)) {
@@ -7533,16 +6911,16 @@ function startRumAssembly(configuration, lifeCycle, sessionManager, userSessionM
         serverRumEvent.session.sampled_for_error_session = session.isErrorSession;
         serverRumEvent.session.error_timestamp_for_session = session.sessionErrorTimestamp;
       }
-      if (!isEmptyObject(commonContext.user)) {
+      if (!tools_isEmptyObject(commonContext.user)) {
         // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-        serverRumEvent.user = tools_extend2Lev({
+        serverRumEvent.user = extend2Lev({
           // id: session.getAnonymousID(),
           is_signin: 'T',
           is_login: true
         }, commonContext.user);
       }
       if (shouldSend(serverRumEvent, configuration.beforeSend, domainContext, eventRateLimiters)) {
-        if (isEmptyObject(serverRumEvent.context)) {
+        if (tools_isEmptyObject(serverRumEvent.context)) {
           delete serverRumEvent.context;
         }
         lifeCycle.notify(LifeCycleEventType.RUM_EVENT_COLLECTED, serverRumEvent);
@@ -7555,7 +6933,7 @@ function shouldSend(event, beforeSend, domainContext, eventRateLimiters) {
     var result = limitModification(event, modifiableFieldPathsByEvent[event.type], function (event) {
       return beforeSend(event, domainContext);
     });
-    if (result === false && event.type !== enums_RumEventType.VIEW) {
+    if (result === false && event.type !== RumEventType.VIEW) {
       return false;
     }
     if (result === false) {
@@ -7568,9 +6946,14 @@ function shouldSend(event, beforeSend, domainContext, eventRateLimiters) {
   }
   return !rateLimitReached;
 }
-function needToAssembleWithAction(event) {
-  return [RumEventType.ERROR, RumEventType.RESOURCE, RumEventType.LONG_TASK].indexOf(event.type) !== -1;
-}
+// function needToAssembleWithAction(event) {
+//   return (
+//     [RumEventType.ERROR, RumEventType.RESOURCE, RumEventType.LONG_TASK].indexOf(
+//       event.type
+//     ) !== -1
+//   )
+// }
+
 function getSessionType() {
   return window._DATAFLUX_SYNTHETICS_BROWSER === undefined ? SessionType.USER : SessionType.SYNTHETICS;
 }
@@ -7585,11 +6968,11 @@ function initViewportObservable() {
 }
 function createViewportObservable() {
   return new observable_Observable(function (observable) {
-    var _throttledUpdateDimension = throttle(function () {
+    var _throttledUpdateDimension = tools_throttle(function () {
       observable.notify(getViewportDimension());
     }, 200);
     var updateDimension = _throttledUpdateDimension.throttled;
-    return addEventListener_addEventListener(window, DOM_EVENT.RESIZE, updateDimension, {
+    return addEventListener_addEventListener(window, enums_DOM_EVENT.RESIZE, updateDimension, {
       capture: true,
       passive: true
     }).stop;
@@ -7801,7 +7184,7 @@ function startPageStateHistory(maxPageStateEntriesSelectable) {
   });
   var currentPageState;
   addPageState(getPageState(), relativeNow());
-  var _addEventListeners = addEventListeners(window, [DOM_EVENT.PAGE_SHOW, DOM_EVENT.FOCUS, DOM_EVENT.BLUR, DOM_EVENT.VISIBILITY_CHANGE, DOM_EVENT.RESUME, DOM_EVENT.FREEZE, DOM_EVENT.PAGE_HIDE], function (event) {
+  var _addEventListeners = addEventListeners(window, [enums_DOM_EVENT.PAGE_SHOW, enums_DOM_EVENT.FOCUS, enums_DOM_EVENT.BLUR, enums_DOM_EVENT.VISIBILITY_CHANGE, enums_DOM_EVENT.RESUME, enums_DOM_EVENT.FREEZE, enums_DOM_EVENT.PAGE_HIDE], function (event) {
     // Only get events fired by the browser to avoid false currentPageState changes done with custom events
     addPageState(computePageState(event), event.timeStamp);
   }, {
@@ -7861,9 +7244,9 @@ function startPageStateHistory(maxPageStateEntriesSelectable) {
   return pageStateHistory;
 }
 function computePageState(event) {
-  if (event.type === DOM_EVENT.FREEZE) {
+  if (event.type === enums_DOM_EVENT.FREEZE) {
     return PageState.FROZEN;
-  } else if (event.type === DOM_EVENT.PAGE_HIDE) {
+  } else if (event.type === enums_DOM_EVENT.PAGE_HIDE) {
     return event.persisted ? PageState.FROZEN : PageState.TERMINATED;
   }
   return getPageState();
@@ -7877,1112 +7260,10 @@ function getPageState() {
   }
   return PageState.PASSIVE;
 }
-;// CONCATENATED MODULE: ./src/domain/rumEventsCollection/error/trackConsoleError.js
-
-function trackConsoleError(errorObservable) {
-  var subscription = initConsoleObservable([ConsoleApiName.error]).subscribe(function (consoleLog) {
-    errorObservable.notify(consoleLog.error);
-  });
-  return {
-    stop: function stop() {
-      subscription.unsubscribe();
-    }
-  };
-}
-;// CONCATENATED MODULE: ./src/domain/rumEventsCollection/error/trackReportError.js
-
-function trackReportError(configuration, errorObservable) {
-  var subscription = initReportObservable(configuration, [(RawReportType.cspViolation, RawReportType.intervention)]).subscribe(function (reportError) {
-    errorObservable.notify({
-      startClocks: tools_clocksNow(),
-      message: reportError.message,
-      stack: reportError.stack,
-      type: reportError.subtype,
-      source: errorTools_ErrorSource.REPORT,
-      handling: enums_ErrorHandling.UNHANDLED
-    });
-  });
-  return {
-    stop: function stop() {
-      subscription.unsubscribe();
-    }
-  };
-}
-;// CONCATENATED MODULE: ./src/domain/rumEventsCollection/error/errorCollection.js
-
-
-
-
-function startErrorCollection(lifeCycle, configuration, sessionManager, pageStateHistory) {
-  var errorObservable = new observable_Observable();
-  trackConsoleError(errorObservable);
-  trackRuntimeError(errorObservable);
-  trackReportError(configuration, errorObservable);
-  var session = sessionManager.findTrackedSession();
-  var hasError = session.isErrorSession && session.sessionHasError;
-  if (session.isErrorSession) {
-    lifeCycle.subscribe(LifeCycleEventType.SESSION_RENEWED, function () {
-      hasError = false;
-    });
-  }
-  errorObservable.subscribe(function (error) {
-    if (session.isErrorSession && !hasError) {
-      sessionManager.setErrorForSession();
-      hasError = true;
-    }
-    lifeCycle.notify(LifeCycleEventType.RAW_ERROR_COLLECTED, {
-      error: error
-    });
-  });
-  return doStartErrorCollection(lifeCycle, pageStateHistory);
-}
-function doStartErrorCollection(lifeCycle, pageStateHistory) {
-  lifeCycle.subscribe(LifeCycleEventType.RAW_ERROR_COLLECTED, function (error) {
-    lifeCycle.notify(LifeCycleEventType.RAW_RUM_EVENT_COLLECTED, tools_assign({
-      customerContext: error.customerContext,
-      savedCommonContext: error.savedCommonContext
-    }, processError(error.error, pageStateHistory)));
-  });
-  return {
-    addError: function addError(providedError, savedCommonContext) {
-      var error = providedError.error;
-      var stackTrace = error instanceof Error ? computeStackTrace(error) : undefined;
-      var rawError = computeRawError({
-        stackTrace: stackTrace,
-        originalError: error,
-        handlingStack: providedError.handlingStack,
-        startClocks: providedError.startClocks,
-        nonErrorPrefix: NonErrorPrefix.PROVIDED,
-        source: errorTools_ErrorSource.CUSTOM,
-        handling: enums_ErrorHandling.HANDLED
-      });
-      lifeCycle.notify(LifeCycleEventType.RAW_ERROR_COLLECTED, {
-        customerContext: providedError.context,
-        savedCommonContext: savedCommonContext,
-        error: rawError
-      });
-    }
-  };
-}
-function processError(error, pageStateHistory) {
-  var rawRumEvent = {
-    date: error.startClocks.timeStamp,
-    error: {
-      id: UUID(),
-      message: error.message,
-      source: error.source,
-      stack: error.stack,
-      handling_stack: error.handlingStack,
-      type: error.type,
-      handling: error.handling,
-      causes: error.causes,
-      source_type: 'browser'
-    },
-    type: enums_RumEventType.ERROR,
-    view: {
-      in_foreground: pageStateHistory.wasInPageStateAt(PageState.ACTIVE, error.startClocks.relative)
-    }
-  };
-  return {
-    rawRumEvent: rawRumEvent,
-    startTime: error.startClocks.relative,
-    domainContext: {
-      error: error.originalError
-    }
-  };
-}
-;// CONCATENATED MODULE: ./src/domain/rumEventsCollection/resource/resourceUtils.js
-
-var FAKE_INITIAL_DOCUMENT = 'initial_document';
-var RESOURCE_TYPES = [[ResourceType.DOCUMENT, function (initiatorType) {
-  return FAKE_INITIAL_DOCUMENT === initiatorType;
-}], [ResourceType.XHR, function (initiatorType) {
-  return 'xmlhttprequest' === initiatorType;
-}], [ResourceType.FETCH, function (initiatorType) {
-  return 'fetch' === initiatorType;
-}], [ResourceType.BEACON, function (initiatorType) {
-  return 'beacon' === initiatorType;
-}], [ResourceType.CSS, function (_, path) {
-  return path.match(/\.css$/i) !== null;
-}], [ResourceType.JS, function (_, path) {
-  return path.match(/\.js$/i) !== null;
-}], [ResourceType.IMAGE, function (initiatorType, path) {
-  return includes(['image', 'img', 'icon'], initiatorType) || path.match(/\.(gif|jpg|jpeg|tiff|png|svg|ico)$/i) !== null;
-}], [ResourceType.FONT, function (_, path) {
-  return path.match(/\.(woff|eot|woff2|ttf)$/i) !== null;
-}], [ResourceType.MEDIA, function (initiatorType, path) {
-  return includes(['audio', 'video'], initiatorType) || path.match(/\.(mp3|mp4)$/i) !== null;
-}]];
-function computeResourceEntryType(entry) {
-  var url = entry.name;
-  if (!isValidUrl(url)) {
-    return ResourceType.OTHER;
-  }
-  var path = getPathName(url);
-  var type = ResourceType.OTHER;
-  tools_each(RESOURCE_TYPES, function (res) {
-    var _type = res[0],
-      isType = res[1];
-    if (isType(entry.initiatorType, path)) {
-      type = _type;
-      return false;
-    }
-  });
-  return type;
-}
-function areInOrder() {
-  var numbers = toArray(arguments);
-  for (var i = 1; i < numbers.length; i += 1) {
-    if (numbers[i - 1] > numbers[i]) {
-      return false;
-    }
-  }
-  return true;
-}
-/**
- * Handles the 'deliveryType' property to distinguish between supported values ('cache', 'navigational-prefetch'),
- * undefined (unsupported in some browsers), and other cases ('other' for unknown or unrecognized values).
- * see: https://developer.mozilla.org/en-US/docs/Web/API/PerformanceResourceTiming/deliveryType
- */
-function computeResourceEntryDeliveryType(entry) {
-  return entry.deliveryType === '' ? 'other' : entry.deliveryType;
-}
-/**
- * The 'nextHopProtocol' is an empty string for cross-origin resources without CORS headers,
- * meaning the protocol is unknown, and we shouldn't report it.
- * https://developer.mozilla.org/en-US/docs/Web/API/PerformanceResourceTiming/nextHopProtocol#cross-origin_resources
- */
-function computeResourceEntryProtocol(entry) {
-  return entry.nextHopProtocol === '' ? undefined : entry.nextHopProtocol;
-}
-function isResourceEntryRequestType(entry) {
-  return entry.initiatorType === 'xmlhttprequest' || entry.initiatorType === 'fetch';
-}
-var resourceUtils_HAS_MULTI_BYTES_CHARACTERS = /[^\u0000-\u007F]/;
-function getStrSize(candidate) {
-  if (!resourceUtils_HAS_MULTI_BYTES_CHARACTERS.test(candidate)) {
-    return candidate.length;
-  }
-  if (window.TextEncoder !== undefined) {
-    return new TextEncoder().encode(candidate).length;
-  }
-  return new Blob([candidate]).size;
-}
-function isResourceUrlLimit(name, limitSize) {
-  return getStrSize(name) > limitSize;
-}
-function computeResourceEntryDuration(entry) {
-  // Safari duration is always 0 on timings blocked by cross origin policies.
-  if (entry.duration === 0 && entry.startTime < entry.responseEnd) {
-    return msToNs(entry.responseEnd - entry.startTime);
-  }
-  return msToNs(entry.duration);
-}
-function is304(entry) {
-  if (entry.encodedBodySize > 0 && entry.transferSize > 0 && entry.transferSize < entry.encodedBodySize) {
-    return true;
-  }
-
-  // unknown
-  return null;
-}
-function isCacheHit(entry) {
-  // if we transferred bytes, it must not be a cache hit
-  // (will return false for 304 Not Modified)
-  if (entry.transferSize > 0) return false;
-
-  // if the body size is non-zero, it must mean this is a
-  // ResourceTiming2 browser, this was same-origin or TAO,
-  // and transferSize was 0, so it was in the cache
-  if (entry.decodedBodySize > 0) return true;
-
-  // fall back to duration checking (non-RT2 or cross-origin)
-  return entry.duration < 30;
-}
-//  interface PerformanceResourceDetails {
-//   redirect?: PerformanceResourceDetailsElement
-//   dns?: PerformanceResourceDetailsElement
-//   connect?: PerformanceResourceDetailsElement
-//   ssl?: PerformanceResourceDetailsElement
-//   firstByte: PerformanceResourceDetailsElement
-//   download: PerformanceResourceDetailsElement
-//   fmp:
-// }
-// page_fmp	float		首屏时间(用于衡量用户什么时候看到页面的主要内容)，跟FCP的时长非常接近，这里我们就用FCP的时间作为首屏时间	firstPaintContentEnd - firstPaintContentStart
-// page_fpt	float		首次渲染时间，即白屏时间(从请求开始到浏览器开始解析第一批HTML文档字节的时间差。)	responseEnd - fetchStart
-// page_tti	float		首次可交互时间(浏览器完成所有HTML解析并且完成DOM构建，此时浏览器开始加载资源。)	domInteractive - fetchStart
-// page_firstbyte	float		首包时间	responseStart - domainLookupStart
-// page_dom_ready	float		DOM Ready时间(如果页面有同步执行的JS，则同步JS执行时间=ready-tti。)	domContentLoadEventEnd - fetchStart
-// page_load	float		页面完全加载时间(load=首次渲染时间+DOM解析耗时+同步JS执行+资源加载耗时。)	loadEventStart - fetchStart
-// page_dns	float		dns解析时间	domainLookupEnd - domainLookupStart
-// page_tcp	float		tcp连接时间	connectEnd - connectStart
-// page_ssl	float		ssl安全连接时间(仅适用于https)	connectEnd - secureConnectionStart
-// page_ttfb	float		请求响应耗时	responseStart - requestStart
-// page_trans	float		内容传输时间	responseEnd - responseStart
-// page_dom	float		DOM解析耗时	domInteractive - responseEnd
-// page_resource_load_time	float		资源加载时间	loadEventStart - domContentLoadedEventEnd
-
-//  navigationStart：当前浏览器窗口的前一个网页关闭，发生unload事件时的Unix毫秒时间戳。如果没有前一个网页，则等于fetchStart属性。
-
-// ·   unloadEventStart：如果前一个网页与当前网页属于同一个域名，则返回前一个网页的unload事件发生时的Unix毫秒时间戳。如果没有前一个网页，或者之前的网页跳转不是在同一个域名内，则返回值为0。
-
-// ·   unloadEventEnd：如果前一个网页与当前网页属于同一个域名，则返回前一个网页unload事件的回调函数结束时的Unix毫秒时间戳。如果没有前一个网页，或者之前的网页跳转不是在同一个域名内，则返回值为0。
-
-// ·   redirectStart：返回第一个HTTP跳转开始时的Unix毫秒时间戳。如果没有跳转，或者不是同一个域名内部的跳转，则返回值为0。
-
-// ·   redirectEnd：返回最后一个HTTP跳转结束时（即跳转回应的最后一个字节接受完成时）的Unix毫秒时间戳。如果没有跳转，或者不是同一个域名内部的跳转，则返回值为0。
-
-// ·   fetchStart：返回浏览器准备使用HTTP请求读取文档时的Unix毫秒时间戳。该事件在网页查询本地缓存之前发生。
-
-// ·   domainLookupStart：返回域名查询开始时的Unix毫秒时间戳。如果使用持久连接，或者信息是从本地缓存获取的，则返回值等同于fetchStart属性的值。
-
-// ·   domainLookupEnd：返回域名查询结束时的Unix毫秒时间戳。如果使用持久连接，或者信息是从本地缓存获取的，则返回值等同于fetchStart属性的值。
-
-// ·   connectStart：返回HTTP请求开始向服务器发送时的Unix毫秒时间戳。如果使用持久连接（persistent connection），则返回值等同于fetchStart属性的值。
-
-// ·   connectEnd：返回浏览器与服务器之间的连接建立时的Unix毫秒时间戳。如果建立的是持久连接，则返回值等同于fetchStart属性的值。连接建立指的是所有握手和认证过程全部结束。
-
-// ·   secureConnectionStart：返回浏览器与服务器开始安全链接的握手时的Unix毫秒时间戳。如果当前网页不要求安全连接，则返回0。
-
-// ·   requestStart：返回浏览器向服务器发出HTTP请求时（或开始读取本地缓存时）的Unix毫秒时间戳。
-
-// ·   responseStart：返回浏览器从服务器收到（或从本地缓存读取）第一个字节时的Unix毫秒时间戳。
-
-// ·   responseEnd：返回浏览器从服务器收到（或从本地缓存读取）最后一个字节时（如果在此之前HTTP连接已经关闭，则返回关闭时）的Unix毫秒时间戳。
-
-// ·   domLoading：返回当前网页DOM结构开始解析时（即Document.readyState属性变为“loading”、相应的readystatechange事件触发时）的Unix毫秒时间戳。
-
-// ·   domInteractive：返回当前网页DOM结构结束解析、开始加载内嵌资源时（即Document.readyState属性变为“interactive”、相应的readystatechange事件触发时）的Unix毫秒时间戳。
-
-// ·   domContentLoadedEventStart：返回当前网页DOMContentLoaded事件发生时（即DOM结构解析完毕、所有脚本开始运行时）的Unix毫秒时间戳。
-
-// ·   domContentLoadedEventEnd：返回当前网页所有需要执行的脚本执行完成时的Unix毫秒时间戳。
-
-// ·   domComplete：返回当前网页DOM结构生成时（即Document.readyState属性变为“complete”，以及相应的readystatechange事件发生时）的Unix毫秒时间戳。
-
-// ·   loadEventStart：返回当前网页load事件的回调函数开始时的Unix毫秒时间戳。如果该事件还没有发生，返回0。
-
-// ·   loadEventEnd：返回当前网页load事件的回调函数运行结束时的Unix毫秒时间戳。如果该事件还没有发生，返回0
-function computePerformanceResourceDetails(entry) {
-  if (!hasValidResourceEntryTimings(entry)) {
-    return undefined;
-  }
-  var startTime = entry.startTime,
-    fetchStart = entry.fetchStart,
-    redirectStart = entry.redirectStart,
-    redirectEnd = entry.redirectEnd,
-    domainLookupStart = entry.domainLookupStart,
-    domainLookupEnd = entry.domainLookupEnd,
-    connectStart = entry.connectStart,
-    secureConnectionStart = entry.secureConnectionStart,
-    connectEnd = entry.connectEnd,
-    requestStart = entry.requestStart,
-    responseStart = entry.responseStart,
-    responseEnd = entry.responseEnd;
-  var details = {
-    firstbyte: msToNs(responseStart - requestStart),
-    trans: msToNs(responseEnd - responseStart),
-    downloadTime: formatTiming(startTime, responseStart, responseEnd),
-    firstByteTime: formatTiming(startTime, requestStart, responseStart)
-  };
-  if (responseStart > 0 && responseStart <= preferredNow()) {
-    details.ttfb = msToNs(responseStart - requestStart);
-  }
-  // Make sure a connection occurred
-  if (connectEnd !== fetchStart) {
-    details.tcp = msToNs(connectEnd - connectStart);
-    details.connectTime = formatTiming(startTime, connectStart, connectEnd);
-    // Make sure a secure connection occurred
-    if (areInOrder(connectStart, secureConnectionStart, connectEnd)) {
-      details.ssl = msToNs(connectEnd - secureConnectionStart);
-      details.sslTime = formatTiming(startTime, secureConnectionStart, connectEnd);
-    }
-  }
-
-  // Make sure a domain lookup occurred
-  if (domainLookupEnd !== fetchStart) {
-    details.dns = msToNs(domainLookupEnd - domainLookupStart);
-    details.dnsTime = formatTiming(startTime, domainLookupStart, domainLookupEnd);
-  }
-  if (hasRedirection(entry)) {
-    details.redirect = msToNs(redirectEnd - redirectStart);
-    details.redirectTime = formatTiming(startTime, redirectStart, redirectEnd);
-  }
-  // renderBlockstatus
-  if (entry.renderBlockingStatus) {
-    details.renderBlockingStatus = entry.renderBlockingStatus;
-  }
-  return details;
-}
-function hasValidResourceEntryDuration(entry) {
-  return entry.duration >= 0;
-}
-function hasValidResourceEntryTimings(entry) {
-  var areCommonTimingsInOrder = areInOrder(entry.startTime, entry.fetchStart, entry.domainLookupStart, entry.domainLookupEnd, entry.connectStart, entry.connectEnd, entry.requestStart, entry.responseStart, entry.responseEnd);
-  var areRedirectionTimingsInOrder = hasRedirection(entry) ? areInOrder(entry.startTime, entry.redirectStart, entry.redirectEnd, entry.fetchStart) : true;
-  return areCommonTimingsInOrder && areRedirectionTimingsInOrder;
-}
-function hasRedirection(entry) {
-  return entry.redirectEnd > entry.startTime;
-}
-function formatTiming(origin, start, end) {
-  return {
-    duration: msToNs(end - start),
-    start: msToNs(start - origin)
-  };
-}
-function computeResourceEntrySize(entry) {
-  // Make sure a request actually occurred
-  if (entry.startTime < entry.responseStart) {
-    return {
-      size: entry.decodedBodySize,
-      encodedBodySize: entry.encodedBodySize,
-      decodedBodySize: entry.decodedBodySize,
-      transferSize: entry.transferSize
-    };
-    // return {
-    //   size: entry.decodedBodySize,
-    //   encodeSize:
-    //     Number.MAX_SAFE_INTEGER < entry.encodedBodySize
-    //       ? 0
-    //       : entry.encodedBodySize // max safe interger
-    // }
-  }
-  return {
-    size: undefined,
-    encodedBodySize: undefined,
-    decodedBodySize: undefined,
-    transferSize: undefined
-  };
-}
-function isAllowedRequestUrl(configuration, url) {
-  return url && !isIntakeRequest(url, configuration);
-}
-var DATA_URL_REGEX = /data:(.+)?(;base64)?,/g;
-var MAX_ATTRIBUTE_VALUE_CHAR_LENGTH = 24000;
-function isLongDataUrl(url) {
-  if (url.length <= MAX_ATTRIBUTE_VALUE_CHAR_LENGTH) {
-    return false;
-  } else if (url.substring(0, 5) === 'data:') {
-    // Avoid String.match RangeError: Maximum call stack size exceeded
-    url = url.substring(0, MAX_ATTRIBUTE_VALUE_CHAR_LENGTH);
-    return true;
-  }
-  return false;
-}
-function sanitizeDataUrl(url) {
-  return url.match(DATA_URL_REGEX)[0] + '[...]';
-}
-;// CONCATENATED MODULE: ./src/domain/firstInputPolyfill.js
-
-/**
- * first-input timing entry polyfill based on
- * https://github.com/GoogleChrome/web-vitals/blob/master/src/lib/polyfills/firstInputPolyfill.ts
- */
-function retrieveFirstInputTiming(configuration, callback) {
-  var startTimeStamp = dateNow();
-  var timingSent = false;
-  var _addEventListeners = addEventListeners(window, [DOM_EVENT.CLICK, DOM_EVENT.MOUSE_DOWN, DOM_EVENT.KEY_DOWN, DOM_EVENT.TOUCH_START, DOM_EVENT.POINTER_DOWN], function (evt) {
-    // Only count cancelable events, which should trigger behavior important to the user.
-    if (!evt.cancelable) {
-      return;
-    }
-
-    // This timing will be used to compute the "first Input delay", which is the delta between
-    // when the system received the event (e.g. evt.timeStamp) and when it could run the callback
-    // (e.g. performance.now()).
-    var timing = {
-      entryType: 'first-input',
-      processingStart: relativeNow(),
-      processingEnd: relativeNow(),
-      startTime: evt.timeStamp,
-      duration: 0,
-      // arbitrary value to avoid nullable duration and simplify INP logic
-      name: '',
-      cancelable: false,
-      target: null,
-      toJSON: function toJSON() {
-        return {};
-      }
-    };
-    if (evt.type === DOM_EVENT.POINTER_DOWN) {
-      sendTimingIfPointerIsNotCancelled(timing);
-    } else {
-      sendTiming(timing);
-    }
-  }, {
-    passive: true,
-    capture: true
-  });
-  var removeEventListeners = _addEventListeners.stop;
-  return {
-    stop: removeEventListeners
-  };
-
-  /**
-   * Pointer events are a special case, because they can trigger main or compositor thread behavior.
-   * We differentiate these cases based on whether or not we see a pointercancel event, which are
-   * fired when we scroll. If we're scrolling we don't need to report input delay since FID excludes
-   * scrolling and pinch/zooming.
-   */
-  function sendTimingIfPointerIsNotCancelled(timing) {
-    addEventListeners(window, [DOM_EVENT.POINTER_UP, DOM_EVENT.POINTER_CANCEL], function (event) {
-      if (event.type === DOM_EVENT.POINTER_UP) {
-        sendTiming(timing);
-      }
-    }, {
-      once: true
-    });
-  }
-  function sendTiming(timing) {
-    if (!timingSent) {
-      timingSent = true;
-      removeEventListeners();
-      // In some cases the recorded delay is clearly wrong, e.g. it's negative or it's larger than
-      // the time between now and when the page was loaded.
-      // - https://github.com/GoogleChromeLabs/first-input-delay/issues/4
-      // - https://github.com/GoogleChromeLabs/first-input-delay/issues/6
-      // - https://github.com/GoogleChromeLabs/first-input-delay/issues/7
-      var delay = timing.processingStart - timing.startTime;
-      if (delay >= 0 && delay < dateNow() - startTimeStamp) {
-        callback(timing);
-      }
-    }
-  }
-}
-;// CONCATENATED MODULE: ./src/domain/performanceObservable.js
-
-
-
-// We want to use a real enum (i.e. not a const enum) here, to be able to check whether an arbitrary
-// string is an expected performance entry
-// eslint-disable-next-line no-restricted-syntax
-var RumPerformanceEntryType = {
-  EVENT: 'event',
-  FIRST_INPUT: 'first-input',
-  LARGEST_CONTENTFUL_PAINT: 'largest-contentful-paint',
-  LAYOUT_SHIFT: 'layout-shift',
-  LONG_TASK: 'longtask',
-  LONG_ANIMATION_FRAME: 'long-animation-frame',
-  NAVIGATION: 'navigation',
-  PAINT: 'paint',
-  RESOURCE: 'resource',
-  VISIBILITY_STATE: 'visibility-state'
-};
-function createPerformanceObservable(configuration, options) {
-  return new observable_Observable(function (observable) {
-    if (!window.PerformanceObserver) {
-      return;
-    }
-    var handlePerformanceEntries = function handlePerformanceEntries(entries) {
-      var rumPerformanceEntries = filterRumPerformanceEntries(configuration, entries);
-      if (rumPerformanceEntries.length > 0) {
-        observable.notify(rumPerformanceEntries);
-      }
-    };
-    var timeoutId;
-    var isObserverInitializing = true;
-    var observer = new PerformanceObserver(monitor(function (entries) {
-      // In Safari the performance observer callback is synchronous.
-      // Because the buffered performance entry list can be quite large we delay the computation to prevent the SDK from blocking the main thread on init
-      if (isObserverInitializing) {
-        timeoutId = timer_setTimeout(function () {
-          handlePerformanceEntries(entries.getEntries());
-        });
-      } else {
-        handlePerformanceEntries(entries.getEntries());
-      }
-    }));
-    try {
-      observer.observe(options);
-    } catch (_unused) {
-      // Some old browser versions (<= chrome 74 ) don't support the PerformanceObserver type and buffered options
-      // In these cases, fallback to getEntriesByType and PerformanceObserver with entryTypes
-      // TODO: remove this fallback in the next major version
-      var fallbackSupportedEntryTypes = [RumPerformanceEntryType.RESOURCE, RumPerformanceEntryType.NAVIGATION, RumPerformanceEntryType.LONG_TASK, RumPerformanceEntryType.PAINT];
-      if (includes(fallbackSupportedEntryTypes, options.type)) {
-        if (options.buffered) {
-          timeoutId = timer_setTimeout(function () {
-            handlePerformanceEntries(performance.getEntriesByType(options.type));
-          });
-        }
-        try {
-          observer.observe({
-            entryTypes: [options.type]
-          });
-        } catch (_unused2) {
-          // Old versions of Safari are throwing "entryTypes contained only unsupported types"
-          // errors when observing only unsupported entry types.
-          //
-          // We could use `supportPerformanceTimingEvent` to make sure we don't invoke
-          // `observer.observe` with an unsupported entry type, but Safari 11 and 12 don't support
-          // `Performance.supportedEntryTypes`, so doing so would lose support for these versions
-          // even if they do support the entry type.
-          return;
-        }
-      }
-    }
-    isObserverInitializing = false;
-    manageResourceTimingBufferFull(configuration);
-    var stopFirstInputTiming;
-    if (!supportPerformanceTimingEvent(RumPerformanceEntryType.FIRST_INPUT) && options.type === RumPerformanceEntryType.FIRST_INPUT) {
-      var _retrieveFirstInputTiming = retrieveFirstInputTiming(configuration, function (timing) {
-        handlePerformanceEntries([timing]);
-      });
-      stopFirstInputTiming = _retrieveFirstInputTiming.stop;
-    }
-    return function () {
-      observer.disconnect();
-      if (stopFirstInputTiming) {
-        stopFirstInputTiming();
-      }
-      timer_clearTimeout(timeoutId);
-    };
-  });
-}
-var resourceTimingBufferFullListener;
-function manageResourceTimingBufferFull(configuration) {
-  if (!resourceTimingBufferFullListener && supportPerformanceObject() && 'addEventListener' in performance) {
-    // https://bugzilla.mozilla.org/show_bug.cgi?id=1559377
-    resourceTimingBufferFullListener = addEventListener_addEventListener(performance, 'resourcetimingbufferfull', function () {
-      performance.clearResourceTimings();
-    });
-  }
-  return function () {
-    resourceTimingBufferFullListener && resourceTimingBufferFullListener.stop();
-  };
-}
-function supportPerformanceObject() {
-  return window.performance !== undefined && 'getEntries' in performance;
-}
-function supportPerformanceTimingEvent(entryType) {
-  return window.PerformanceObserver && PerformanceObserver.supportedEntryTypes !== undefined && PerformanceObserver.supportedEntryTypes.includes(entryType);
-}
-function filterRumPerformanceEntries(configuration, entries) {
-  return entries.filter(function (entry) {
-    return !isForbiddenResource(configuration, entry);
-  });
-}
-function isForbiddenResource(configuration, entry) {
-  return entry.entryType === RumPerformanceEntryType.RESOURCE && (!isAllowedRequestUrl(configuration, entry.name) || !hasValidResourceEntryDuration(entry));
-}
-;// CONCATENATED MODULE: ./src/domain/rumEventsCollection/view/trackFirstContentfulPaint.js
-
-
-var TIMING_MAXIMUM_DELAY = 10 * ONE_MINUTE;
-function trackFirstContentfulPaint(configuration, firstHidden, callback) {
-  var performanceSubscription = createPerformanceObservable(configuration, {
-    type: RumPerformanceEntryType.PAINT,
-    buffered: true
-  }).subscribe(function (entries) {
-    var fcpEntry = find(entries, function (entry) {
-      return entry.entryType === RumPerformanceEntryType.PAINT && entry.name === 'first-contentful-paint' && entry.startTime < firstHidden.getTimeStamp() && entry.startTime < TIMING_MAXIMUM_DELAY;
-    });
-    if (fcpEntry) {
-      callback(fcpEntry.startTime);
-    }
-  });
-  return {
-    stop: performanceSubscription.unsubscribe
-  };
-}
-;// CONCATENATED MODULE: ./src/domain/rumEventsCollection/actions/__constants.js
-var DEFAULT_PROGRAMMATIC_ACTION_NAME_ATTRIBUTE = 'data-guance-action-name';
-
-/**
- * Stable attributes are attributes that are commonly used to identify parts of a UI (ex:
- * component). Those attribute values should not be generated randomly (hardcoded most of the time)
- * and stay the same across deploys. They are not necessarily unique across the document.
- */
-var STABLE_ATTRIBUTES = [DEFAULT_PROGRAMMATIC_ACTION_NAME_ATTRIBUTE,
-// Common test attributes (list provided by google recorder)
-'data-testid', 'data-test', 'data-qa', 'data-cy', 'data-test-id', 'data-qa-id', 'data-testing',
-// FullStory decorator attributes:
-'data-component', 'data-element', 'data-source-file'];
-;// CONCATENATED MODULE: ./src/domain/rumEventsCollection/actions/getSelectorsFromElement.js
-
-
-
-// Selectors to use if they target a single element on the whole document. Those selectors are
-// considered as "stable" and uniquely identify an element regardless of the page state. If we find
-// one, we should consider the selector "complete" and stop iterating over ancestors.
-var GLOBALLY_UNIQUE_SELECTOR_GETTERS = [getStableAttributeSelector, getIDSelector];
-
-// Selectors to use if they target a single element among an element descendants. Those selectors
-// are more brittle than "globally unique" selectors and should be combined with ancestor selectors
-// to improve specificity.
-var UNIQUE_AMONG_CHILDREN_SELECTOR_GETTERS = [getStableAttributeSelector, getClassSelector, getTagNameSelector];
-function getSelectorFromElement(targetElement, actionNameAttribute) {
-  if (!isConnected(targetElement)) {
-    // We cannot compute a selector for a detached element, as we don't have access to all of its
-    // parents, and we cannot determine if it's unique in the document.
-    return;
-  }
-  var targetElementSelector;
-  var currentElement = targetElement;
-  while (currentElement && currentElement.nodeName !== 'HTML') {
-    var globallyUniqueSelector = findSelector(currentElement, GLOBALLY_UNIQUE_SELECTOR_GETTERS, isSelectorUniqueGlobally, actionNameAttribute, targetElementSelector);
-    if (globallyUniqueSelector) {
-      return globallyUniqueSelector;
-    }
-    var uniqueSelectorAmongChildren = findSelector(currentElement, UNIQUE_AMONG_CHILDREN_SELECTOR_GETTERS, isSelectorUniqueAmongSiblings, actionNameAttribute, targetElementSelector);
-    targetElementSelector = uniqueSelectorAmongChildren || combineSelector(getPositionSelector(currentElement), targetElementSelector);
-    currentElement = currentElement.parentElement;
-  }
-  //   while (element && element.nodeName !== 'HTML') {
-  //     var globallyUniqueSelector = findSelector(
-  //       element,
-  //       GLOBALLY_UNIQUE_SELECTOR_GETTERS,
-  //       isSelectorUniqueGlobally,
-  //       actionNameAttribute,
-  //       targetElementSelector
-  //     )
-  //     if (globallyUniqueSelector) {
-  //       return globallyUniqueSelector
-  //     }
-
-  //     var uniqueSelectorAmongChildren = findSelector(
-  //       element,
-  //       UNIQUE_AMONG_CHILDREN_SELECTOR_GETTERS,
-  //       isSelectorUniqueAmongSiblings,
-  //       actionNameAttribute,
-  //       targetElementSelector
-  //     )
-  //     targetElementSelector =
-  //       uniqueSelectorAmongChildren ||
-  //       combineSelector(getPositionSelector(element), targetElementSelector)
-
-  //     element = element.parentElement
-  //   }
-
-  return targetElementSelector;
-}
-function isGeneratedValue(value) {
-  // To compute the "URL path group", the backend replaces every URL path parts as a question mark
-  // if it thinks the part is an identifier. The condition it uses is to checks whether a digit is
-  // present.
-  //
-  // Here, we use the same strategy: if a the value contains a digit, we consider it generated. This
-  // strategy might be a bit naive and fail in some cases, but there are many fallbacks to generate
-  // CSS selectors so it should be fine most of the time. We might want to allow customers to
-  // provide their own `isGeneratedValue` at some point.
-  return /[0-9]/.test(value);
-}
-function getIDSelector(element) {
-  if (element.id && !isGeneratedValue(element.id)) {
-    return '#' + cssEscape(element.id);
-  }
-}
-function getClassSelector(element) {
-  if (element.tagName === 'BODY') {
-    return;
-  }
-  if (element.classList.length > 0) {
-    for (var i = 0; i < element.classList.length; i += 1) {
-      var className = element.classList[i];
-      if (isGeneratedValue(className)) {
-        continue;
-      }
-      return cssEscape(element.tagName) + '.' + cssEscape(className);
-    }
-  }
-}
-function getTagNameSelector(element) {
-  return cssEscape(element.tagName);
-}
-function getStableAttributeSelector(element, actionNameAttribute) {
-  if (actionNameAttribute) {
-    var selector = getAttributeSelector(actionNameAttribute);
-    if (selector) {
-      return selector;
-    }
-  }
-  for (var i = 0; i < STABLE_ATTRIBUTES.length; i++) {
-    var attributeName = STABLE_ATTRIBUTES[i];
-    var selector = getAttributeSelector(attributeName);
-    if (selector) {
-      return selector;
-    }
-  }
-  function getAttributeSelector(attributeName) {
-    if (element.hasAttribute(attributeName)) {
-      return cssEscape(element.tagName) + '[' + attributeName + '="' + cssEscape(element.getAttribute(attributeName)) + '"]';
-    }
-  }
-}
-function getPositionSelector(element) {
-  var sibling = element.parentElement && element.parentElement.firstElementChild;
-  var elementIndex = 1;
-  while (sibling && sibling !== element) {
-    if (sibling.tagName === element.tagName) {
-      elementIndex += 1;
-    }
-    sibling = sibling.nextElementSibling;
-  }
-  var tagName = cssEscape(element.tagName);
-  // 伪元素需要做特殊处理，没有nth-of-type选择器
-  if (/^::/.test(tagName)) {
-    return tagName;
-  }
-  return tagName + ':nth-of-type(' + elementIndex + ')';
-}
-function findSelector(element, selectorGetters, predicate, actionNameAttribute, childSelector) {
-  for (var i = 0; i < selectorGetters.length; i++) {
-    var selectorGetter = selectorGetters[i];
-    var elementSelector = selectorGetter(element, actionNameAttribute);
-    if (!elementSelector) {
-      continue;
-    }
-    if (predicate(element, elementSelector, childSelector)) {
-      return combineSelector(elementSelector, childSelector);
-    }
-  }
-}
-function isSelectorUniqueGlobally(element, elementSelector, childSelector) {
-  return element.ownerDocument.querySelectorAll(combineSelector(elementSelector, childSelector)).length === 1;
-}
-/**
- * Check whether the selector is unique among the element siblings. In other words, it returns true
- * if "ELEMENT_PARENT > SELECTOR" returns a single element.
- *
- * The result will be less accurate on browsers that don't support :scope (i. e. IE): it will check
- * for any element matching the selector contained in the parent (in other words,
- * "ELEMENT_PARENT SELECTOR" returns a single element), regardless of whether the selector is a
- * direct descendent of the element parent. This should not impact results too much: if it
- * inaccurately returns false, we'll just fall back to another strategy.
- */
-function isSelectorUniqueAmongSiblings(currentElement, currentElementSelector, childSelector) {
-  var isSiblingMatching;
-  if (childSelector === undefined) {
-    // If the child selector is undefined (meaning `currentElement` is the target element, not one
-    // of its ancestor), we need to use `matches` to check if the sibling is matching the selector,
-    // as `querySelector` only returns a descendant of the element.
-    isSiblingMatching = function isSiblingMatching(sibling) {
-      return sibling.matches(currentElementSelector);
-    };
-  } else {
-    var scopedSelector = supportScopeSelector() ? combineSelector("".concat(currentElementSelector, ":scope"), childSelector) : combineSelector(currentElementSelector, childSelector);
-    isSiblingMatching = function isSiblingMatching(sibling) {
-      return sibling.querySelector(scopedSelector) !== null;
-    };
-  }
-  var parent = currentElement.parentElement;
-  var sibling = parent.firstElementChild;
-  while (sibling) {
-    if (sibling !== currentElement && isSiblingMatching(sibling)) {
-      return false;
-    }
-    sibling = sibling.nextElementSibling;
-  }
-  return true;
-}
-function combineSelector(parent, child) {
-  return child ? parent + '>' + child : parent;
-}
-var supportScopeSelectorCache;
-function supportScopeSelector() {
-  if (supportScopeSelectorCache === undefined) {
-    try {
-      document.querySelector(':scope');
-      supportScopeSelectorCache = true;
-    } catch (_unused) {
-      supportScopeSelectorCache = false;
-    }
-  }
-  return supportScopeSelectorCache;
-}
-
-/**
- * Polyfill-utility for the `isConnected` property not supported in IE11
- */
-function isConnected(element) {
-  if ('isConnected' in element
-  // cast is to make sure `element` is not inferred as `never` after the check
-  ) {
-    return element.isConnected;
-  }
-  return element.ownerDocument.documentElement.contains(element);
-}
-;// CONCATENATED MODULE: ./src/domain/rumEventsCollection/view/trackFirstInput.js
-
-
-
-/**
- * Track the first input occurring during the initial View to return:
- * - First Input Delay
- * - First Input Time
- * Callback is called at most one time.
- * Documentation: https://web.dev/fid/
- * Reference implementation: https://github.com/GoogleChrome/web-vitals/blob/master/src/getFID.ts
- */
-function trackFirstInput(configuration, firstHidden, callback) {
-  var performanceFirstInputSubscription = createPerformanceObservable(configuration, {
-    type: RumPerformanceEntryType.FIRST_INPUT,
-    buffered: true
-  }).subscribe(function (entries) {
-    var firstInputEntry = find(entries, function (entry) {
-      return entry.entryType === RumPerformanceEntryType.FIRST_INPUT && entry.startTime < firstHidden.getTimeStamp();
-    });
-    if (firstInputEntry) {
-      var firstInputDelay = tools_elapsed(firstInputEntry.startTime, firstInputEntry.processingStart);
-      var firstInputTargetSelector;
-      if (firstInputEntry.target && isElementNode(firstInputEntry.target)) {
-        firstInputTargetSelector = getSelectorFromElement(firstInputEntry.target, configuration.actionNameAttribute);
-      }
-      callback({
-        // Ensure firstInputDelay to be positive, see
-        // https://bugs.chromium.org/p/chromium/issues/detail?id=1185815
-        delay: firstInputDelay >= 0 ? firstInputDelay : 0,
-        time: firstInputEntry.startTime,
-        targetSelector: firstInputTargetSelector
-      });
-    }
-  });
-  return {
-    stop: function stop() {
-      performanceFirstInputSubscription.unsubscribe();
-    }
-  };
-}
-;// CONCATENATED MODULE: ./src/domain/performanceUtils.js
-
-
-function getNavigationEntry() {
-  if (supportPerformanceTimingEvent(RumPerformanceEntryType.NAVIGATION)) {
-    var navigationEntry = performance.getEntriesByType(RumPerformanceEntryType.NAVIGATION)[0];
-    if (navigationEntry) {
-      return navigationEntry;
-    }
-  }
-  var timings = computeTimingsFromDeprecatedPerformanceTiming();
-  var entry = tools_assign({
-    entryType: RumPerformanceEntryType.NAVIGATION,
-    initiatorType: 'navigation',
-    name: window.location.href,
-    startTime: 0,
-    duration: timings.responseEnd,
-    decodedBodySize: 0,
-    encodedBodySize: 0,
-    transferSize: 0,
-    toJSON: function toJSON() {
-      return tools_assign({}, entry, {
-        toJSON: undefined
-      });
-    }
-  }, timings);
-  return entry;
-}
-function computeTimingsFromDeprecatedPerformanceTiming() {
-  var result = {};
-  var timing = performance.timing;
-  for (var key in timing) {
-    if (isNumber(timing[key])) {
-      var numberKey = key;
-      var timingElement = timing[numberKey];
-      result[numberKey] = timingElement === 0 ? 0 : getRelativeTime(timingElement);
-    }
-  }
-  return result;
-}
-;// CONCATENATED MODULE: ./src/domain/rumEventsCollection/view/trackNavigationTimings.js
-
-
-function trackNavigationTimings(configuration, callback, getNavigationEntryImpl) {
-  if (getNavigationEntryImpl === undefined) {
-    getNavigationEntryImpl = getNavigationEntry;
-  }
-  return waitAfterLoadEvent(function () {
-    var entry = getNavigationEntryImpl();
-    if (!isIncompleteNavigation(entry)) {
-      callback(processNavigationEntry(entry));
-    }
-  });
-}
-function processNavigationEntry(entry) {
-  return {
-    fetchStart: entry.fetchStart,
-    responseEnd: entry.responseEnd,
-    domComplete: entry.domComplete,
-    domContentLoaded: entry.domContentLoadedEventEnd,
-    domInteractive: entry.domInteractive,
-    loadEvent: entry.loadEventEnd,
-    loadEventEnd: entry.loadEventEnd,
-    loadEventStart: entry.loadEventStart,
-    domContentLoadedEventEnd: entry.domContentLoadedEventEnd,
-    domContentLoadedEventStart: entry.domContentLoadedEventStart,
-    // In some cases the value reported is negative or is larger
-    // than the current page time. Ignore these cases:
-    // https://github.com/GoogleChrome/web-vitals/issues/137
-    // https://github.com/GoogleChrome/web-vitals/issues/162
-    firstByte: entry.responseStart >= 0 && entry.responseStart <= relativeNow() ? entry.responseStart : undefined
-  };
-}
-function isIncompleteNavigation(entry) {
-  return entry.loadEventEnd <= 0;
-}
-function waitAfterLoadEvent(callback) {
-  var timeoutId;
-  var _runOnReadyState = runOnReadyState('complete', function () {
-    // Invoke the callback a bit after the actual load event, so the "loadEventEnd" timing is accurate
-    timeoutId = timer_setTimeout(function () {
-      callback();
-    });
-  });
-  return {
-    stop: function stop() {
-      _runOnReadyState.stop();
-      timer_clearTimeout(timeoutId);
-    }
-  };
-}
-;// CONCATENATED MODULE: ./src/domain/rumEventsCollection/view/trackLargestContentfulPaint.js
-
-
-
-/**
- * Track the largest contentful paint (LCP) occurring during the initial View.  This can yield
- * multiple values, only the most recent one should be used.
- * Documentation: https://web.dev/lcp/
- * Reference implementation: https://github.com/GoogleChrome/web-vitals/blob/master/src/getLCP.ts
- */
-// It happens in some cases like sleep mode or some browser implementations
-var LCP_MAXIMUM_DELAY = 10 * ONE_MINUTE;
-function trackLargestContentfulPaint(configuration, firstHidden, eventTarget, callback) {
-  // Ignore entries that come after the first user interaction.  According to the documentation, the
-  // browser should not send largest-contentful-paint entries after a user interact with the page,
-  // but the web-vitals reference implementation uses this as a safeguard.
-  var firstInteractionTimestamp = Infinity;
-  var _addEventListeners = addEventListeners(eventTarget, [DOM_EVENT.POINTER_DOWN, DOM_EVENT.KEY_DOWN], function (event) {
-    firstInteractionTimestamp = event.timeStamp;
-  }, {
-    capture: true,
-    once: true
-  });
-  var stopEventListener = _addEventListeners.stop;
-  var biggestLcpSize = 0;
-  var performanceLcpSubscription = createPerformanceObservable(configuration, {
-    type: RumPerformanceEntryType.LARGEST_CONTENTFUL_PAINT,
-    buffered: true
-  }).subscribe(function (entries) {
-    var lcpEntry = findLast(entries, function (entry) {
-      return entry.entryType === RumPerformanceEntryType.LARGEST_CONTENTFUL_PAINT && entry.startTime < firstInteractionTimestamp && entry.startTime < firstHidden.getTimeStamp() && entry.startTime < LCP_MAXIMUM_DELAY &&
-      // Ensure to get the LCP entry with the biggest size, see
-      // https://bugs.chromium.org/p/chromium/issues/detail?id=1516655
-      entry.size > biggestLcpSize;
-    });
-    if (lcpEntry) {
-      var lcpTargetSelector;
-      if (lcpEntry.element) {
-        lcpTargetSelector = getSelectorFromElement(lcpEntry.element, configuration.actionNameAttribute);
-      }
-      callback({
-        value: lcpEntry.startTime,
-        targetSelector: lcpTargetSelector
-      });
-      biggestLcpSize = lcpEntry.size;
-    }
-  });
-  return {
-    stop: function stop() {
-      stopEventListener();
-      performanceLcpSubscription.unsubscribe();
-    }
-  };
-}
-;// CONCATENATED MODULE: ./src/domain/rumEventsCollection/view/trackFirstHidden.js
-
-
-function trackFirstHidden(eventTarget) {
-  if (typeof eventTarget === 'undefined') {
-    eventTarget = window;
-  }
-  if (document.visibilityState === 'hidden') {
-    return {
-      getTimeStamp: function getTimeStamp() {
-        return 0;
-      },
-      stop: tools_noop
-    };
-  }
-  if (supportPerformanceTimingEvent(RumPerformanceEntryType.VISIBILITY_STATE)) {
-    var firstHiddenEntry = performance.getEntriesByType(RumPerformanceEntryType.VISIBILITY_STATE).find(function (entry) {
-      return entry.name === 'hidden';
-    });
-    if (firstHiddenEntry) {
-      return {
-        getTimeStamp: function getTimeStamp() {
-          return firstHiddenEntry.startTime;
-        },
-        stop: tools_noop
-      };
-    }
-  }
-  var timeStamp = Infinity;
-  var _addEventListeners = addEventListeners(eventTarget, [DOM_EVENT.PAGE_HIDE, DOM_EVENT.VISIBILITY_CHANGE], function (event) {
-      if (event.type === DOM_EVENT.PAGE_HIDE || document.visibilityState === 'hidden') {
-        timeStamp = event.timeStamp;
-        _stop();
-      }
-    }, {
-      capture: true
-    }),
-    _stop = _addEventListeners.stop;
-  return {
-    getTimeStamp: function getTimeStamp() {
-      return timeStamp;
-    },
-    stop: function stop() {
-      _stop();
-    }
-  };
-}
-;// CONCATENATED MODULE: ./src/domain/rumEventsCollection/view/trackInitialViewTimings.js
-
-
-
-
-
-
-var KEEP_TRACKING_TIMINGS_AFTER_VIEW_DELAY = 5 * ONE_MINUTE;
-function trackInitialViewMetrics(configuration, setLoadEvent, scheduleViewUpdate) {
-  var initialViewMetrics = {};
-  var _trackNavigationTimings = trackNavigationTimings(configuration, function (navigationTimings) {
-    setLoadEvent(navigationTimings.loadEvent);
-    initialViewMetrics.navigationTimings = navigationTimings;
-    scheduleViewUpdate();
-  });
-  var firstHidden = trackFirstHidden();
-  var stopNavigationTracking = _trackNavigationTimings.stop;
-  var _trackFirstContentfulPaint = trackFirstContentfulPaint(configuration, firstHidden, function (firstContentfulPaint) {
-    initialViewMetrics.firstContentfulPaint = firstContentfulPaint;
-    scheduleViewUpdate();
-  });
-  var stopFCPTracking = _trackFirstContentfulPaint.stop;
-  var _trackLargestContentfulPaint = trackLargestContentfulPaint(configuration, firstHidden, window, function (largestContentfulPaint) {
-    initialViewMetrics.largestContentfulPaint = largestContentfulPaint;
-    scheduleViewUpdate();
-  });
-  var stopLCPTracking = _trackLargestContentfulPaint.stop;
-  var _trackFirstInput = trackFirstInput(configuration, firstHidden, function (firstInput) {
-    initialViewMetrics.firstInput = firstInput;
-    scheduleViewUpdate();
-  });
-  var stopFIDTracking = _trackFirstInput.stop;
-  function stop() {
-    stopNavigationTracking();
-    stopFCPTracking();
-    stopLCPTracking();
-    stopFIDTracking();
-    firstHidden.stop();
-  }
-  return {
-    stop: stop,
-    initialViewMetrics: initialViewMetrics
-  };
-}
 ;// CONCATENATED MODULE: ./src/domain/rumEventsCollection/view/trackViews.js
 
 
+// import { trackInitialViewMetrics } from './trackInitialViewTimings'
 // import { trackCommonViewMetrics } from './trackCommonViewMetrics'
 // import { trackViewEventCounts } from './trackViewEventCounts'
 var THROTTLE_VIEW_UPDATE_PERIOD = 3000;
@@ -9112,7 +7393,7 @@ function newView(lifeCycle, domMutationObservable, configuration, initialLocatio
   lifeCycle.notify(LifeCycleEventType.VIEW_CREATED, viewCreatedEvent);
 
   // Update the view every time the measures are changing
-  var _scheduleViewUpdate = throttle(triggerViewUpdate, THROTTLE_VIEW_UPDATE_PERIOD, {
+  var _scheduleViewUpdate = tools_throttle(triggerViewUpdate, THROTTLE_VIEW_UPDATE_PERIOD, {
     leading: false
   });
   var throttled = _scheduleViewUpdate.throttled;
@@ -9131,7 +7412,11 @@ function newView(lifeCycle, domMutationObservable, configuration, initialLocatio
   // var getCommonViewMetrics = _trackCommonViewMetrics.getCommonViewMetrics
   // var stopINPTracking = _trackCommonViewMetrics.stopINPTracking
   // var setViewEnd = _trackCommonViewMetrics.setViewEnd
-  var _trackInitialViewTimings = loadingType === ViewLoadingType.INITIAL_LOAD ? trackInitialViewMetrics(configuration, function () {}, scheduleViewUpdate) : {
+  var _trackInitialViewTimings =
+  // loadingType === ViewLoadingType.INITIAL_LOAD
+  // ? trackInitialViewMetrics(configuration, function(){}, scheduleViewUpdate)
+  /* : */
+  {
     stop: tools_noop,
     initialViewMetrics: {}
   };
@@ -9310,7 +7595,7 @@ function processViewUpdate(view, configuration, recorderApi, pageStateHistory) {
       page_states: pageStates
     },
     date: view.startClocks.timeStamp,
-    type: enums_RumEventType.VIEW,
+    type: RumEventType.VIEW,
     view: {
       action: {
         count: view.eventCounts.actionCount
@@ -9366,10 +7651,10 @@ function processViewUpdate(view, configuration, recorderApi, pageStateHistory) {
       replay_level: configuration.defaultPrivacyLevel
     }
   };
-  if (!isEmptyObject(view.customTimings)) {
+  if (!tools_isEmptyObject(view.customTimings)) {
     viewEvent.view.custom_timings = mapValues(view.customTimings, toServerDuration);
   }
-  viewEvent = tools_extend2Lev(viewEvent, {
+  viewEvent = extend2Lev(viewEvent, {
     view: computePerformanceViewDetails(view.initialViewMetrics.navigationTimings)
   });
   return {
@@ -9379,257 +7664,6 @@ function processViewUpdate(view, configuration, recorderApi, pageStateHistory) {
       location: view.location
     }
   };
-}
-;// CONCATENATED MODULE: ./src/domain/rumEventsCollection/resource/matchRequestResourceEntry.js
-
-
-var alreadyMatchedEntries = new polyfills_WeakSet();
-/**
- * Look for corresponding timing in resource timing buffer
- *
- * Observations:
- * - Timing (start, end) are nested inside the request (start, end)
- * - Browsers generate a timing entry for OPTIONS request
- *
- * Strategy:
- * - from valid nested entries
- * - if a single timing match, return the timing
- * - if two following timings match (OPTIONS request), return the timing for the actual request
- * - otherwise we can't decide, return undefined
- */
-function matchRequestResourceEntry(request) {
-  if (!performance || !('getEntriesByName' in performance)) {
-    return;
-  }
-  var sameNameEntries = performance.getEntriesByName(request.url, 'resource');
-  if (!sameNameEntries.length || !('toJSON' in sameNameEntries[0])) {
-    return;
-  }
-  var candidates = filter(sameNameEntries, function (entry) {
-    return !alreadyMatchedEntries.has(entry);
-  });
-  candidates = filter(candidates, function (entry) {
-    return hasValidResourceEntryDuration(entry) && hasValidResourceEntryTimings(entry);
-  });
-  candidates = filter(candidates, function (entry) {
-    return isBetween(entry, request.startClocks.relative, endTime({
-      startTime: request.startClocks.relative,
-      duration: request.duration
-    }));
-  });
-  var lastEntry = undefined;
-  if (candidates.length > 1) {
-    // 取值和 request startTime 间隔更接近的
-    var startTimeDuration = Number.MAX_SAFE_INTEGER;
-    candidates.forEach(function (entry) {
-      var _startTimeDuration = Math.abs(entry.startTime - request.startClocks.relative);
-      if (_startTimeDuration < startTimeDuration) {
-        startTimeDuration = _startTimeDuration;
-        lastEntry = entry;
-      }
-    });
-  } else if (candidates.length === 1) {
-    lastEntry = candidates[0];
-  }
-  if (lastEntry) {
-    alreadyMatchedEntries.add(lastEntry);
-    return lastEntry.toJSON();
-  }
-  return;
-}
-function endTime(timing) {
-  return addDuration(timing.startTime, timing.duration);
-}
-function isBetween(timing, start, end) {
-  // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-  var errorMargin = 1;
-  return timing.startTime >= start - errorMargin && endTime(timing) <= addDuration(end, errorMargin);
-}
-;// CONCATENATED MODULE: ./src/domain/rumEventsCollection/resource/retrieveInitialDocumentResourceTiming.js
-
-
-
-
-function retrieveInitialDocumentResourceTiming(configuration, callback) {
-  runOnReadyState('interactive', function () {
-    var entry = tools_assign(getNavigationEntry().toJSON(), {
-      entryType: RumPerformanceEntryType.RESOURCE,
-      initiatorType: FAKE_INITIAL_DOCUMENT,
-      toJSON: function toJSON() {
-        return tools_assign({}, entry, {
-          toJSON: undefined
-        });
-      }
-    });
-    callback(entry);
-  });
-}
-;// CONCATENATED MODULE: ./src/domain/rumEventsCollection/resource/resourceCollection.js
-
-
-
-
-
-
-function startResourceCollection(lifeCycle, configuration, pageStateHistory, taskQueue, retrieveInitialDocumentResourceTimingImpl) {
-  if (taskQueue === undefined) {
-    taskQueue = createTaskQueue();
-  }
-  if (typeof retrieveInitialDocumentResourceTimingImpl === 'undefined') {
-    retrieveInitialDocumentResourceTimingImpl = retrieveInitialDocumentResourceTiming;
-  }
-  lifeCycle.subscribe(LifeCycleEventType.REQUEST_COMPLETED, function (request) {
-    handleResource(function () {
-      return processRequest(request, pageStateHistory);
-    });
-  });
-  var performanceResourceSubscription = createPerformanceObservable(configuration, {
-    type: RumPerformanceEntryType.RESOURCE,
-    buffered: true
-  }).subscribe(function (entries) {
-    var loop = function loop(entry) {
-      if (!isResourceEntryRequestType(entry) && !isResourceUrlLimit(entry.name, configuration.resourceUrlLimit)) {
-        handleResource(function () {
-          return processResourceEntry(entry, configuration);
-        });
-      }
-    };
-    for (var _i = 0, entries_1 = entries; _i < entries_1.length; _i++) {
-      var entry = entries_1[_i];
-      loop(entry);
-    }
-  });
-  retrieveInitialDocumentResourceTimingImpl(configuration, function (timing) {
-    handleResource(function () {
-      return processResourceEntry(timing, configuration);
-    });
-  });
-  function handleResource(computeRawEvent) {
-    taskQueue.push(function () {
-      var rawEvent = computeRawEvent();
-      if (rawEvent) {
-        lifeCycle.notify(LifeCycleEventType.RAW_RUM_EVENT_COLLECTED, rawEvent);
-      }
-    });
-  }
-  return {
-    stop: function stop() {
-      performanceResourceSubscription.unsubscribe();
-    }
-  };
-}
-function processRequest(request, pageStateHistory) {
-  var matchingTiming = matchRequestResourceEntry(request);
-  var startClocks = matchingTiming ? relativeToClocks(matchingTiming.startTime) : request.startClocks;
-  var tracingInfo = computeRequestTracingInfo(request);
-  var type = request.type === RequestType.XHR ? ResourceType.XHR : ResourceType.FETCH;
-  var correspondingTimingOverrides = matchingTiming ? computeResourceEntryMetrics(matchingTiming) : undefined;
-  var duration = computeRequestDuration(pageStateHistory, startClocks, request.duration);
-  var urlObj = urlParse(request.url).getParse();
-  var resourceEvent = tools_extend2Lev({
-    date: startClocks.timeStamp,
-    resource: {
-      id: UUID(),
-      type: type,
-      duration: duration,
-      method: request.method,
-      status: request.status,
-      statusGroup: getStatusGroup(request.status),
-      url: isLongDataUrl(request.url) ? sanitizeDataUrl(request.url) : request.url,
-      urlHost: urlObj.Host,
-      urlPath: urlObj.Path,
-      urlPathGroup: replaceNumberCharByPath(urlObj.Path),
-      urlQuery: getQueryParamsFromUrl(request.url),
-      deliveryType: matchingTiming && computeResourceEntryDeliveryType(matchingTiming),
-      protocol: matchingTiming && computeResourceEntryProtocol(matchingTiming)
-    },
-    type: enums_RumEventType.RESOURCE
-  }, tracingInfo, correspondingTimingOverrides);
-  return {
-    startTime: startClocks.relative,
-    rawRumEvent: resourceEvent,
-    domainContext: {
-      performanceEntry: matchingTiming,
-      xhr: request.xhr,
-      response: request.response,
-      requestInput: request.input,
-      requestInit: request.init,
-      error: request.error,
-      isAborted: request.isAborted,
-      handlingStack: request.handlingStack
-    }
-  };
-}
-function processResourceEntry(entry, configuration) {
-  var startClocks = relativeToClocks(entry.startTime);
-  var tracingInfo = computeResourceEntryTracingInfo(entry);
-  var type = computeResourceEntryType(entry);
-  var entryMetrics = computeResourceEntryMetrics(entry);
-  var urlObj = urlParse(entry.name).getParse();
-  var resourceEvent = tools_extend2Lev({
-    date: startClocks.timeStamp,
-    resource: {
-      id: UUID(),
-      type: type,
-      url: entry.name,
-      urlHost: urlObj.Host,
-      urlPath: urlObj.Path,
-      urlPathGroup: replaceNumberCharByPath(urlObj.Path),
-      urlQuery: getQueryParamsFromUrl(entry.name),
-      method: 'GET',
-      status: discardZeroStatus(entry.responseStatus),
-      statusGroup: getStatusGroup(entry.responseStatus),
-      deliveryType: computeResourceEntryDeliveryType(entry),
-      protocol: computeResourceEntryProtocol(entry)
-    },
-    type: enums_RumEventType.RESOURCE
-  }, tracingInfo, entryMetrics);
-  return {
-    startTime: startClocks.relative,
-    rawRumEvent: resourceEvent,
-    domainContext: {
-      performanceEntry: entry
-    }
-  };
-}
-function computeResourceEntryMetrics(entry) {
-  return {
-    resource: tools_extend2Lev({}, {
-      duration: computeResourceEntryDuration(entry)
-    }, computeResourceEntrySize(entry), computePerformanceResourceDetails(entry))
-  };
-}
-function computeRequestTracingInfo(request) {
-  var hasBeenTraced = request.traceSampled && request.traceId && request.spanId;
-  if (!hasBeenTraced) {
-    return undefined;
-  }
-  return {
-    _gc: {
-      spanId: request.spanId,
-      traceId: request.traceId
-    },
-    resource: {
-      id: UUID()
-    }
-  };
-}
-function computeRequestDuration(pageStateHistory, startClocks, duration) {
-  return !pageStateHistory.wasInPageStateDuringPeriod(PageState.FROZEN, startClocks.relative, duration) ? toServerDuration(duration) : undefined;
-}
-function computeResourceEntryTracingInfo(entry) {
-  return entry.traceId ? {
-    _gc: {
-      traceId: entry.traceId
-    }
-  } : undefined;
-}
-/**
- * The status is 0 for cross-origin resources without CORS headers, so the status is meaningless, and we shouldn't report it
- * https://developer.mozilla.org/en-US/docs/Web/API/PerformanceResourceTiming/responseStatus#cross-origin_response_status_codes
- */
-function discardZeroStatus(statusCode) {
-  return statusCode === 0 ? undefined : statusCode;
 }
 ;// CONCATENATED MODULE: ./src/boot/rum.js
 
@@ -9642,16 +7676,17 @@ function discardZeroStatus(statusCode) {
 // import { RumPerformanceEntryType } from '../domain/performanceObservable'
 // import { startActionCollection } from '../domain/rumEventsCollection/actions/actionCollection'
 
+// import { startRumEventBridge } from '../transport/startRumEventBridge'
 
 
 
 
 
 
-
-
+// import { startErrorCollection } from '../domain/rumEventsCollection/error/errorCollection'
 
 // import { startRequestCollection } from '../domain/requestCollection'
+// import { startResourceCollection } from '../domain/rumEventsCollection/resource/resourceCollection'
 
 function startRum(configuration, recorderApi, customerDataTrackerManager, getCommonContext, initialViewOptions, createEncoder) {
   var cleanupTasks = [];
@@ -9676,8 +7711,8 @@ function startRum(configuration, recorderApi, customerDataTrackerManager, getCom
     cleanupTasks.push(function () {
       batch.stop();
     });
-  } else {
-    startRumEventBridge(lifeCycle);
+    // } else {
+    //   startRumEventBridge(lifeCycle)
   }
   var userSession = startCacheUsrCache(configuration);
   // var domMutationObservable = createDOMMutationObservable()
@@ -9718,8 +7753,13 @@ function startRum(configuration, recorderApi, customerDataTrackerManager, getCom
     getViewContext = _startViewCollection.getViewContext,
     stopViewCollection = _startViewCollection.stop;
   cleanupTasks.push(stopViewCollection);
-  var _startResourceCollection = startResourceCollection(lifeCycle, configuration, pageStateHistory);
-  cleanupTasks.push(_startResourceCollection.stop);
+
+  // const _startResourceCollection = startResourceCollection(
+  //   lifeCycle,
+  //   configuration,
+  //   pageStateHistory
+  // )
+  // cleanupTasks.push(_startResourceCollection.stop)
   // if (
   //   PerformanceObserver.supportedEntryTypes &&
   //   PerformanceObserver.supportedEntryTypes.includes(
@@ -9735,8 +7775,13 @@ function startRum(configuration, recorderApi, customerDataTrackerManager, getCom
   //   startLongTaskCollection(lifeCycle, configuration)
   // }
 
-  var _startErrorCollection = startErrorCollection(lifeCycle, configuration, session, pageStateHistory);
-  var addError = _startErrorCollection.addError;
+  // var _startErrorCollection = startErrorCollection(
+  //   lifeCycle,
+  //   configuration,
+  //   session,
+  //   pageStateHistory
+  // )
+  // var addError = _startErrorCollection.addError
   // startRequestCollection(lifeCycle, configuration, session)
 
   var internalContext = startInternalContext(configuration.applicationId, session, viewContexts, 'actionContexts', urlContexts);
@@ -9877,24 +7922,50 @@ function validateAndBuildRumConfiguration(initConfiguration) {
   return tools_assign({
     applicationId: initConfiguration.applicationId,
     actionNameAttribute: initConfiguration.actionNameAttribute,
-    sessionReplaySampleRate: tools_isNullUndefinedDefaultValue(initConfiguration.sessionReplaySampleRate, 100),
+    // sessionReplaySampleRate: isNullUndefinedDefaultValue(
+    //   initConfiguration.sessionReplaySampleRate,
+    //   100
+    // ),
     sessionOnErrorSampleRate: tools_isNullUndefinedDefaultValue(initConfiguration.sessionOnErrorSampleRate, 0),
-    sessionReplayOnErrorSampleRate: tools_isNullUndefinedDefaultValue(initConfiguration.sessionReplayOnErrorSampleRate, 0),
-    tracingSampleRate: tools_isNullUndefinedDefaultValue(initConfiguration.tracingSampleRate, 100),
-    allowedTracingUrls: [],
-    // allowedTracingUrls,
-    injectTraceHeader: initConfiguration.injectTraceHeader && catchUserErrors_catchUserErrors(initConfiguration.injectTraceHeader, 'injectTraceHeader threw an error:'),
-    generateTraceId: initConfiguration.generateTraceId && catchUserErrors_catchUserErrors(initConfiguration.generateTraceId, 'generateTraceId threw an error:'),
+    // sessionReplayOnErrorSampleRate: isNullUndefinedDefaultValue(
+    //   initConfiguration.sessionReplayOnErrorSampleRate,
+    //   0
+    // ),
+    // tracingSampleRate: isNullUndefinedDefaultValue(
+    //   initConfiguration.tracingSampleRate,
+    //   100
+    // ),
+    // allowedTracingUrls: [], // allowedTracingUrls,
+    // injectTraceHeader:
+    //   initConfiguration.injectTraceHeader &&
+    //   catchUserErrors(
+    //     initConfiguration.injectTraceHeader,
+    //     'injectTraceHeader threw an error:'
+    //   ),
+    // generateTraceId:
+    //   initConfiguration.generateTraceId &&
+    //   catchUserErrors(
+    //     initConfiguration.generateTraceId,
+    //     'generateTraceId threw an error:'
+    //   ),
     excludedActivityUrls: tools_isNullUndefinedDefaultValue(initConfiguration.excludedActivityUrls, []),
     workerUrl: initConfiguration.workerUrl,
     compressIntakeRequests: !!initConfiguration.compressIntakeRequests,
     trackUserInteractions: trackUserInteractions,
     enableLongAnimationFrame: !!initConfiguration.enableLongAnimationFrame,
     trackViewsManually: !!initConfiguration.trackViewsManually,
-    traceType: tools_isNullUndefinedDefaultValue(initConfiguration.traceType, enums_TraceType.DDTRACE),
-    traceId128Bit: !!initConfiguration.traceId128Bit,
-    defaultPrivacyLevel: objectHasValue(DefaultPrivacyLevel, initConfiguration.defaultPrivacyLevel) ? initConfiguration.defaultPrivacyLevel : DefaultPrivacyLevel.MASK_USER_INPUT,
-    shouldMaskNode: initConfiguration.shouldMaskNode && catchUserErrors_catchUserErrors(initConfiguration.shouldMaskNode, 'shouldMaskNode threw an error:')
+    // traceType: isNullUndefinedDefaultValue(
+    //   initConfiguration.traceType,
+    //   TraceType.DDTRACE
+    // ),
+    // traceId128Bit: !!initConfiguration.traceId128Bit,
+    defaultPrivacyLevel: objectHasValue(DefaultPrivacyLevel, initConfiguration.defaultPrivacyLevel) ? initConfiguration.defaultPrivacyLevel : DefaultPrivacyLevel.MASK_USER_INPUT
+    // shouldMaskNode:
+    //   initConfiguration.shouldMaskNode &&
+    //   catchUserErrors(
+    //     initConfiguration.shouldMaskNode,
+    //     'shouldMaskNode threw an error:'
+    //   )
   }, baseConfiguration, buildEnv);
 }
 /**
@@ -9997,7 +8068,7 @@ function convertLegacyMatchOptionToTracingOption(item, traceType) {
 function createPreStartStrategy(rumPublicApiOptions, getCommonContext, doStartRum) {
   var ignoreInitIfSyntheticsWillInjectRum = rumPublicApiOptions.ignoreInitIfSyntheticsWillInjectRum;
   var startDeflateWorker = rumPublicApiOptions.startDeflateWorker;
-  var bufferApiCalls = boundedBuffer_createBoundedBuffer();
+  var bufferApiCalls = createBoundedBuffer();
   var firstStartViewCall;
   var deflateWorker;
   var cachedInitConfiguration;
@@ -10024,10 +8095,10 @@ function createPreStartStrategy(rumPublicApiOptions, getCommonContext, doStartRu
     bufferApiCalls.drain(startRumResult);
   }
   function doInit(initConfiguration) {
-    var eventBridgeAvailable = canUseEventBridge();
-    if (eventBridgeAvailable) {
-      initConfiguration = overrideInitConfigurationForBridge(initConfiguration);
-    }
+    // var eventBridgeAvailable = canUseEventBridge()
+    // if (eventBridgeAvailable) {
+    //   initConfiguration = overrideInitConfigurationForBridge(initConfiguration)
+    // }
 
     // Update the exposed initConfiguration to reflect the bridge and remote configuration overrides
     cachedInitConfiguration = initConfiguration;
@@ -10082,7 +8153,7 @@ function createPreStartStrategy(rumPublicApiOptions, getCommonContext, doStartRu
         return;
       }
       if (initConfiguration.remoteConfiguration) {
-        fetchAndApplyRemoteConfiguration(initConfiguration, doInit);
+        // fetchAndApplyRemoteConfiguration(initConfiguration, doInit)
       } else {
         doInit(initConfiguration);
       }
@@ -10152,7 +8223,7 @@ function createPreStartStrategy(rumPublicApiOptions, getCommonContext, doStartRu
 }
 function overrideInitConfigurationForBridge(initConfiguration) {
   var _initConfiguration$de, _getEventBridge;
-  return tools_assign({}, initConfiguration, {
+  return assign({}, initConfiguration, {
     applicationId: '00000000-aaaa-0000-aaaa-000000000000',
     clientToken: 'empty',
     sessionSampleRate: 100,
@@ -10169,12 +8240,18 @@ function makeRumPublicApi(startRumImpl, recorderApi, options) {
   if (options === undefined) {
     options = {};
   }
-  var customerDataTrackerManager = createCustomerDataTrackerManager(CustomerDataCompressionStatus.Unknown);
+  // const customerDataTrackerManager = createCustomerDataTrackerManager(
+  //   CustomerDataCompressionStatus.Unknown
+  // )
   var globalContextManager = createContextManager('global', {
-    customerDataTracker: customerDataTrackerManager.getOrCreateTracker(CustomerDataType.GlobalContext)
+    // customerDataTracker: customerDataTrackerManager.getOrCreateTracker(
+    //   CustomerDataType.GlobalContext
+    // )
   });
   var userContextManager = createContextManager('user', {
-    customerDataTracker: customerDataTrackerManager.getOrCreateTracker(CustomerDataType.User),
+    // customerDataTracker: customerDataTrackerManager.getOrCreateTracker(
+    //   CustomerDataType.User
+    // ),
     propertiesConfig: {
       id: {
         type: 'string'
@@ -10195,8 +8272,12 @@ function makeRumPublicApi(startRumImpl, recorderApi, options) {
       storeContextManager(configuration, globalContextManager, RUM_STORAGE_KEY, CustomerDataType.GlobalContext);
       storeContextManager(configuration, userContextManager, RUM_STORAGE_KEY, CustomerDataType.User);
     }
-    customerDataTrackerManager.setCompressionStatus(deflateWorker ? CustomerDataCompressionStatus.Enabled : CustomerDataCompressionStatus.Disabled);
-    var startRumResult = startRumImpl(configuration, recorderApi, customerDataTrackerManager, getCommonContext, initialViewOptions, deflateWorker && options.createDeflateEncoder ? function (streamId) {
+    // customerDataTrackerManager.setCompressionStatus(
+    //   deflateWorker
+    //     ? CustomerDataCompressionStatus.Enabled
+    //     : CustomerDataCompressionStatus.Disabled
+    // )
+    var startRumResult = startRumImpl(configuration, recorderApi, 'customerDataTrackerManager', getCommonContext, initialViewOptions, deflateWorker && options.createDeflateEncoder ? function (streamId) {
       return options.createDeflateEncoder(deflateWorker, streamId);
     } : createIdentityEncoder);
     // recorderApi.onRumStart(
@@ -10210,164 +8291,151 @@ function makeRumPublicApi(startRumImpl, recorderApi, options) {
     strategy = createPostStartStrategy(strategy, startRumResult);
     return startRumResult;
   });
-  var startView = monitor(function (options) {
+  var startView = monitor_monitor(function (options) {
     var sanitizedOptions = typeof_typeof(options) === 'object' ? options : {
       name: options
     };
     strategy.startView(sanitizedOptions);
-    if (sanitizedOptions.context) {
-      customerDataTrackerManager.getOrCreateTracker(CustomerDataType.View).updateCustomerData(sanitizedOptions.context);
-    }
-    (0,esm_namespaceObject.addTelemetryUsage)({
-      feature: 'start-view'
-    });
+    // if (sanitizedOptions.context) {
+    //   customerDataTrackerManager
+    //     .getOrCreateTracker(CustomerDataType.View)
+    //     .updateCustomerData(sanitizedOptions.context)
+    // }
+    // addTelemetryUsage({ feature: 'start-view' })
   });
   var rumPublicApi = makePublicApi({
-    init: monitor(function (initConfiguration) {
+    init: monitor_monitor(function (initConfiguration) {
       strategy.init(initConfiguration);
-    }),
-    setViewName: monitor(function (name) {
-      strategy.setViewName(name);
-      (0,esm_namespaceObject.addTelemetryUsage)({
-        feature: 'set-view-name'
-      });
-    }),
-    setViewContext: monitor(function (context) {
-      strategy.setViewContext(context);
-      (0,esm_namespaceObject.addTelemetryUsage)({
-        feature: 'set-view-context'
-      });
-    }),
-    setViewContextProperty: monitor(function (key, value) {
-      strategy.setViewContextProperty(key, value);
-      (0,esm_namespaceObject.addTelemetryUsage)({
-        feature: 'set-view-context-property'
-      });
-    }),
-    getViewContext: monitor(function () {
-      (0,esm_namespaceObject.addTelemetryUsage)({
-        feature: 'set-view-context-property'
-      });
-      return strategy.getViewContext();
-    }),
+    })
+    // setViewName: monitor((name) => {
+    //   strategy.setViewName(name)
+    //   // addTelemetryUsage({ feature: 'set-view-name' })
+    // }),
+
+    // setViewContext: monitor((context) => {
+    //   strategy.setViewContext(context)
+    //   // addTelemetryUsage({ feature: 'set-view-context' })
+    // }),
+
+    // setViewContextProperty: monitor((key, value) => {
+    //   strategy.setViewContextProperty(key, value)
+    //   // addTelemetryUsage({ feature: 'set-view-context-property' })
+    // }),
+
+    // getViewContext: monitor(() => {
+    //   // addTelemetryUsage({ feature: 'set-view-context-property' })
+    //   return strategy.getViewContext()
+    // }),
     // /** @deprecated: use setGlobalContextProperty instead */
     // addRumGlobalContext: monitor(function (key, value) {
     //   globalContextManager.setContextProperty(key, value)
     //   addTelemetryUsage({ feature: 'set-global-context' })
     // }),
-    setGlobalContextProperty: monitor(function (key, value) {
-      globalContextManager.setContextProperty(key, value);
-      (0,esm_namespaceObject.addTelemetryUsage)({
-        feature: 'set-global-context'
-      });
-    }),
+    // setGlobalContextProperty: monitor(function (key, value) {
+    //   globalContextManager.setContextProperty(key, value)
+    //   // addTelemetryUsage({ feature: 'set-global-context' })
+    // }),
+
     // /** @deprecated: use removeGlobalContextProperty instead */
     // removeRumGlobalContext: monitor(function (key) {
     //   return globalContextManager.removeContextProperty(key)
     // }),
-    removeGlobalContextProperty: monitor(function (key) {
-      return globalContextManager.removeContextProperty(key);
-    }),
+    // removeGlobalContextProperty: monitor(function (key) {
+    //   return globalContextManager.removeContextProperty(key)
+    // }),
+
     // /** @deprecated: use getGlobalContext instead */
     // getRumGlobalContext: monitor(function () {
     //   return globalContextManager.getContext()
     // }),
-    getGlobalContext: monitor(function () {
-      return globalContextManager.getContext();
-    }),
+    // getGlobalContext: monitor(function () {
+    //   return globalContextManager.getContext()
+    // }),
+
     // /** @deprecated: use setGlobalContext instead */
     // setRumGlobalContext: monitor(function (context) {
     //   globalContextManager.setContext(context)
     //   addTelemetryUsage({ feature: 'set-global-context' })
     // }),
-    setGlobalContext: monitor(function (context) {
-      globalContextManager.setContext(context);
-      (0,esm_namespaceObject.addTelemetryUsage)({
-        feature: 'set-global-context'
-      });
-    }),
-    clearGlobalContext: monitor(function () {
-      return globalContextManager.clearContext();
-    }),
-    getInitConfiguration: monitor(function () {
-      return deepClone(strategy.initConfiguration);
-    }),
-    getInternalContext: monitor(function (startTime) {
-      return strategy.getInternalContext(startTime);
-    }),
-    addDebugSession: monitor(function (id) {}),
-    clearDebugSession: monitor(function () {}),
-    getDebugSession: monitor(function () {}),
-    addAction: monitor(function (name, context) {
-      var handlingStack = createHandlingStack();
-      callMonitored(function () {
-        strategy.addAction({
-          name: sanitize(name),
-          context: sanitize(context),
-          startClocks: tools_clocksNow(),
-          type: ActionType.CUSTOM,
-          handlingStack: handlingStack
-        });
-        (0,esm_namespaceObject.addTelemetryUsage)({
-          feature: 'add-action'
-        });
-      });
-    }),
-    addError: monitor(function (error, context) {
-      var handlingStack = createHandlingStack();
-      callMonitored(function () {
-        strategy.addError({
-          error: error,
-          // Do not sanitize error here, it is needed unserialized by computeRawError()
-          handlingStack: handlingStack,
-          context: sanitize(context),
-          startClocks: tools_clocksNow()
-        });
-        (0,esm_namespaceObject.addTelemetryUsage)({
-          feature: 'add-error'
-        });
-      });
-    }),
-    addTiming: monitor(function (name, time) {
-      strategy.addTiming(sanitize(name), time);
-    }),
-    setUser: monitor(function (newUser) {
-      if (checkUser(newUser)) {
-        userContextManager.setContext(sanitizeUser(newUser));
-      }
-      (0,esm_namespaceObject.addTelemetryUsage)({
-        feature: 'set-user'
-      });
-    }),
-    getUser: monitor(function () {
-      return userContextManager.getContext();
-    }),
-    setUserProperty: monitor(function (key, property) {
-      var newUser = {};
-      newUser[key] = property;
-      var sanitizedProperty = sanitizeUser(newUser)[key];
-      userContextManager.setContextProperty(key, sanitizedProperty);
-      (0,esm_namespaceObject.addTelemetryUsage)({
-        feature: 'set-user'
-      });
-    }),
-    removeUserProperty: monitor(function (key) {
-      return userContextManager.removeContextProperty(key);
-    }),
+    // setGlobalContext: monitor(function (context) {
+    //   globalContextManager.setContext(context)
+    //   // addTelemetryUsage({ feature: 'set-global-context' })
+    // }),
+
+    // clearGlobalContext: monitor(function () {
+    //   return globalContextManager.clearContext()
+    // }),
+
+    // getInitConfiguration: monitor(function () {
+    //   return deepClone(strategy.initConfiguration)
+    // }),
+    // getInternalContext: monitor(function (startTime) {
+    //   return strategy.getInternalContext(startTime)
+    // }),
+    // addDebugSession: monitor(function (id) {}),
+    // clearDebugSession: monitor(function () {}),
+    // getDebugSession: monitor(function () {}),
+    // addAction: monitor(function (name, context) {
+    //   const handlingStack = createHandlingStack()
+
+    //   callMonitored(function () {
+    //     strategy.addAction({
+    //       name: sanitize(name),
+    //       context: sanitize(context),
+    //       startClocks: clocksNow(),
+    //       type: ActionType.CUSTOM,
+    //       handlingStack: handlingStack
+    //     })
+    //     // addTelemetryUsage({ feature: 'add-action' })
+    //   })
+    // }),
+    // addError: monitor(function (error, context) {
+    //   var handlingStack = createHandlingStack()
+    //   callMonitored(function () {
+    //     strategy.addError({
+    //       error, // Do not sanitize error here, it is needed unserialized by computeRawError()
+    //       handlingStack,
+    //       context: sanitize(context),
+    //       startClocks: clocksNow()
+    //     })
+    //     // addTelemetryUsage({ feature: 'add-error' })
+    //   })
+    // }),
+    // addTiming: monitor(function (name, time) {
+    //   strategy.addTiming(sanitize(name), time)
+    // }),
+    // setUser: monitor(function (newUser) {
+    //   if (checkUser(newUser)) {
+    //     userContextManager.setContext(sanitizeUser(newUser))
+    //   }
+    //   // addTelemetryUsage({ feature: 'set-user' })
+    // }),
+    // getUser: monitor(function () {
+    //   return userContextManager.getContext()
+    // }),
+    // setUserProperty: monitor(function (key, property) {
+    //   var newUser = {}
+    //   newUser[key] = property
+    //   var sanitizedProperty = sanitizeUser(newUser)[key]
+    //   userContextManager.setContextProperty(key, sanitizedProperty)
+    //   // addTelemetryUsage({ feature: 'set-user' })
+    // }),
+    // removeUserProperty: monitor(function (key) {
+    //   return userContextManager.removeContextProperty(key)
+    // }),
+
     // /** @deprecated: renamed to clearUser */
     // removeUser: monitor(function () {
     //   return userContextManager.clearContext()
     // }),
-    clearUser: monitor(function () {
-      return userContextManager.clearContext();
-    }),
-    startView: startView,
-    stopSession: monitor(function () {
-      strategy.stopSession();
-      (0,esm_namespaceObject.addTelemetryUsage)({
-        feature: 'stop-session'
-      });
-    })
+    // clearUser: monitor(function () {
+    //   return userContextManager.clearContext()
+    // }),
+    // startView: startView,
+    // stopSession: monitor(function () {
+    //   strategy.stopSession()
+    //   // addTelemetryUsage({ feature: 'stop-session' })
+    // }),
     // startSessionReplayRecording: monitor(function (options) {
     //   recorderApi.start(options)
     //   addTelemetryUsage({
