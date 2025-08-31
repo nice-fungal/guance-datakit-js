@@ -5,12 +5,12 @@ import {
   validateAndBuildConfiguration,
   validatePostRequestRequireParamsConfiguration,
   isArray,
-  TraceType,
+  // TraceType,
   isNullUndefinedDefaultValue,
   DefaultPrivacyLevel,
   objectHasValue,
   isMatchOption,
-  catchUserErrors,
+  // catchUserErrors,
   getOrigin,
   each
 } from '@cloudcare/browser-core'
@@ -97,35 +97,35 @@ export function validateAndBuildRumConfiguration(initConfiguration) {
     {
       applicationId: initConfiguration.applicationId,
       actionNameAttribute: initConfiguration.actionNameAttribute,
-      sessionReplaySampleRate: isNullUndefinedDefaultValue(
-        initConfiguration.sessionReplaySampleRate,
-        100
-      ),
+      // sessionReplaySampleRate: isNullUndefinedDefaultValue(
+      //   initConfiguration.sessionReplaySampleRate,
+      //   100
+      // ),
       sessionOnErrorSampleRate: isNullUndefinedDefaultValue(
         initConfiguration.sessionOnErrorSampleRate,
         0
       ),
-      sessionReplayOnErrorSampleRate: isNullUndefinedDefaultValue(
-        initConfiguration.sessionReplayOnErrorSampleRate,
-        0
-      ),
-      tracingSampleRate: isNullUndefinedDefaultValue(
-        initConfiguration.tracingSampleRate,
-        100
-      ),
-      allowedTracingUrls: [], // allowedTracingUrls,
-      injectTraceHeader:
-        initConfiguration.injectTraceHeader &&
-        catchUserErrors(
-          initConfiguration.injectTraceHeader,
-          'injectTraceHeader threw an error:'
-        ),
-      generateTraceId:
-        initConfiguration.generateTraceId &&
-        catchUserErrors(
-          initConfiguration.generateTraceId,
-          'generateTraceId threw an error:'
-        ),
+      // sessionReplayOnErrorSampleRate: isNullUndefinedDefaultValue(
+      //   initConfiguration.sessionReplayOnErrorSampleRate,
+      //   0
+      // ),
+      // tracingSampleRate: isNullUndefinedDefaultValue(
+      //   initConfiguration.tracingSampleRate,
+      //   100
+      // ),
+      // allowedTracingUrls: [], // allowedTracingUrls,
+      // injectTraceHeader:
+      //   initConfiguration.injectTraceHeader &&
+      //   catchUserErrors(
+      //     initConfiguration.injectTraceHeader,
+      //     'injectTraceHeader threw an error:'
+      //   ),
+      // generateTraceId:
+      //   initConfiguration.generateTraceId &&
+      //   catchUserErrors(
+      //     initConfiguration.generateTraceId,
+      //     'generateTraceId threw an error:'
+      //   ),
       excludedActivityUrls: isNullUndefinedDefaultValue(
         initConfiguration.excludedActivityUrls,
         []
@@ -135,23 +135,23 @@ export function validateAndBuildRumConfiguration(initConfiguration) {
       trackUserInteractions: trackUserInteractions,
       enableLongAnimationFrame: !!initConfiguration.enableLongAnimationFrame,
       trackViewsManually: !!initConfiguration.trackViewsManually,
-      traceType: isNullUndefinedDefaultValue(
-        initConfiguration.traceType,
-        TraceType.DDTRACE
-      ),
-      traceId128Bit: !!initConfiguration.traceId128Bit,
+      // traceType: isNullUndefinedDefaultValue(
+      //   initConfiguration.traceType,
+      //   TraceType.DDTRACE
+      // ),
+      // traceId128Bit: !!initConfiguration.traceId128Bit,
       defaultPrivacyLevel: objectHasValue(
         DefaultPrivacyLevel,
         initConfiguration.defaultPrivacyLevel
       )
         ? initConfiguration.defaultPrivacyLevel
         : DefaultPrivacyLevel.MASK_USER_INPUT,
-      shouldMaskNode:
-        initConfiguration.shouldMaskNode &&
-        catchUserErrors(
-          initConfiguration.shouldMaskNode,
-          'shouldMaskNode threw an error:'
-        )
+      // shouldMaskNode:
+      //   initConfiguration.shouldMaskNode &&
+      //   catchUserErrors(
+      //     initConfiguration.shouldMaskNode,
+      //     'shouldMaskNode threw an error:'
+      //   )
     },
     baseConfiguration,
     buildEnv

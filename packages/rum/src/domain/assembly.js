@@ -112,18 +112,18 @@ export function startRumAssembly(
             drift: currentDrift(),
             configuration: {
               session_sample_rate: round(configuration.sessionSampleRate, 3),
-              session_replay_sample_rate: round(
-                configuration.sessionReplaySampleRate,
-                3
-              ),
+              // session_replay_sample_rate: round(
+              //   configuration.sessionReplaySampleRate,
+              //   3
+              // ),
               session_on_error_sample_rate: round(
                 configuration.sessionOnErrorSampleRate,
                 3
               ),
-              session_replay_on_error_sample_rate: round(
-                configuration.sessionReplayOnErrorSampleRate,
-                3
-              )
+              // session_replay_on_error_sample_rate: round(
+              //   configuration.sessionReplayOnErrorSampleRate,
+              //   3
+              // )
             }
           },
           terminal: {
