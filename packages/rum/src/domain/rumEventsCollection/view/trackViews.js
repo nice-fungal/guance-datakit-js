@@ -22,7 +22,7 @@ import {
   createContextManager
 } from '@cloudcare/browser-core'
 
-import { trackInitialViewMetrics } from './trackInitialViewTimings'
+// import { trackInitialViewMetrics } from './trackInitialViewTimings'
 // import { trackCommonViewMetrics } from './trackCommonViewMetrics'
 // import { trackViewEventCounts } from './trackViewEventCounts'
 export var THROTTLE_VIEW_UPDATE_PERIOD = 3000
@@ -208,9 +208,9 @@ function newView(
   // var stopINPTracking = _trackCommonViewMetrics.stopINPTracking
   // var setViewEnd = _trackCommonViewMetrics.setViewEnd
   var _trackInitialViewTimings =
-    loadingType === ViewLoadingType.INITIAL_LOAD
-      ? trackInitialViewMetrics(configuration, function(){}, scheduleViewUpdate)
-      : {
+    // loadingType === ViewLoadingType.INITIAL_LOAD
+      // ? trackInitialViewMetrics(configuration, function(){}, scheduleViewUpdate)
+      /* : */ {
           stop: noop,
           initialViewMetrics: {}
         }
