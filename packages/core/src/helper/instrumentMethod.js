@@ -1,9 +1,9 @@
 import { noop, arrayFrom, startsWith } from './tools'
 import { setTimeout } from './timer'
 import { callMonitored } from './monitor'
-import { createHandlingStack } from './errorTools'
+// import { createHandlingStack } from './errorTools'
 export function instrumentMethod(targetPrototype, method, onPreCall, opts) {
-  var computeHandlingStack = opts && opts.computeHandlingStack
+  var computeHandlingStack = false; // opts && opts.computeHandlingStack  // 只有 fetch 和 xhr 是 true
   var original = targetPrototype[method]
 
   if (typeof original !== 'function') {
@@ -33,7 +33,7 @@ export function instrumentMethod(targetPrototype, method, onPreCall, opts) {
         onPostCall: function (callback) {
           postCallCallback = callback
         },
-        handlingStack: computeHandlingStack ? createHandlingStack() : undefined
+        handlingStack: undefined // computeHandlingStack ? createHandlingStack() : undefined
       }
     ])
 
