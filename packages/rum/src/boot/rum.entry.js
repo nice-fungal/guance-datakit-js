@@ -1,4 +1,4 @@
-import { defineGlobal, getGlobalObject } from '@cloudcare/browser-core'
+// import { defineGlobal, getGlobalObject } from '@cloudcare/browser-core'
 import { startRum } from './rum'
 import { makeRumPublicApi } from './rumPublicApi'
 // import { startRecording } from './startRecording'
@@ -10,4 +10,4 @@ export var datafluxRum = makeRumPublicApi(startRum, 'recorderApi', {
   createDeflateEncoder: null,
 })
 
-defineGlobal(getGlobalObject(), 'DATAFLUX_RUM', datafluxRum)
+// defineGlobal(getGlobalObject(), 'DATAFLUX_RUM', datafluxRum)
