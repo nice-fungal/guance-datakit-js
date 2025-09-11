@@ -1,7 +1,7 @@
-import { display } from './display'
+// import { display } from './display'
 import { setTimeout, clearTimeout } from './timer'
 var ArrayProto = Array.prototype
-var FuncProto = Function.prototype
+// var FuncProto = Function.prototype
 var ObjProto = Object.prototype
 var slice = ArrayProto.slice
 var toString = ObjProto.toString
@@ -67,16 +67,16 @@ export var extend2Lev = function (obj) {
   })
   return obj
 }
-export var coverExtend = function (obj) {
-  each(slice.call(arguments, 1), function (source) {
-    for (var prop in source) {
-      if (source[prop] !== void 0 && obj[prop] === void 0) {
-        obj[prop] = source[prop]
-      }
-    }
-  })
-  return obj
-}
+// export var coverExtend = function (obj) {
+//   each(slice.call(arguments, 1), function (source) {
+//     for (var prop in source) {
+//       if (source[prop] !== void 0 && obj[prop] === void 0) {
+//         obj[prop] = source[prop]
+//       }
+//     }
+//   })
+//   return obj
+// }
 export var isArray =
   nativeIsArray ||
   function (obj) {
@@ -128,26 +128,26 @@ export var keys = function (obj) {
   })
   return results
 }
-export var indexOf = function (arr, target) {
-  var indexOf = arr.indexOf
-  if (indexOf) {
-    return indexOf.call(arr, target)
-  } else {
-    for (var i = 0; i < arr.length; i++) {
-      if (target === arr[i]) {
-        return i
-      }
-    }
-    return -1
-  }
-}
-export var hasAttribute = function (ele, attr) {
-  if (ele.hasAttribute) {
-    return ele.hasAttribute(attr)
-  } else {
-    return !!(ele.attributes[attr] && ele.attributes[attr].specified)
-  }
-}
+// export var indexOf = function (arr, target) {
+//   var indexOf = arr.indexOf
+//   if (indexOf) {
+//     return indexOf.call(arr, target)
+//   } else {
+//     for (var i = 0; i < arr.length; i++) {
+//       if (target === arr[i]) {
+//         return i
+//       }
+//     }
+//     return -1
+//   }
+// }
+// export var hasAttribute = function (ele, attr) {
+//   if (ele.hasAttribute) {
+//     return ele.hasAttribute(attr)
+//   } else {
+//     return !!(ele.attributes[attr] && ele.attributes[attr].specified)
+//   }
+// }
 export var filter = function (arr, fn, self) {
   if (arr.filter) {
     return arr.filter(fn)
@@ -212,25 +212,25 @@ export var every = function (arr, fn, self) {
   }
   return flag
 }
-export var matchList = function (list, value, useStartsWith) {
-  if (useStartsWith === undefined) {
-    useStartsWith = false
-  }
-  return some(list, function (item) {
-    try {
-      if (typeof item === 'function') {
-        return item(value)
-      } else if (item instanceof RegExp) {
-        return item.test(value)
-      } else if (typeof item === 'string') {
-        return useStartsWith ? startsWith(value, item) : item === value
-      }
-    } catch (e) {
-      display.error(e)
-    }
-    return false
-  })
-}
+// export var matchList = function (list, value, useStartsWith) {
+//   if (useStartsWith === undefined) {
+//     useStartsWith = false
+//   }
+//   return some(list, function (item) {
+//     try {
+//       if (typeof item === 'function') {
+//         return item(value)
+//       } else if (item instanceof RegExp) {
+//         return item.test(value)
+//       } else if (typeof item === 'string') {
+//         return useStartsWith ? startsWith(value, item) : item === value
+//       }
+//     } catch (e) {
+//       display.error(e)
+//     }
+//     return false
+//   })
+// }
 // https://github.com/jquery/jquery/blob/a684e6ba836f7c553968d7d026ed7941e1a612d8/src/selector/escapeSelector.js
 export var cssEscape = function (str) {
   str = str + ''
@@ -260,17 +260,17 @@ export var cssEscape = function (str) {
     }
   )
 }
-export var inherit = function (subclass, superclass) {
-  var F = function () {}
-  F.prototype = superclass.prototype
-  subclass.prototype = new F()
-  subclass.prototype.constructor = subclass
-  subclass.superclass = superclass.prototype
-  return subclass
-}
-export var tirm = function (str) {
-  return str.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, '')
-}
+// export var inherit = function (subclass, superclass) {
+//   var F = function () {}
+//   F.prototype = superclass.prototype
+//   subclass.prototype = new F()
+//   subclass.prototype.constructor = subclass
+//   subclass.superclass = superclass.prototype
+//   return subclass
+// }
+// export var tirm = function (str) {
+//   return str.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, '')
+// }
 export var isObject = function (obj) {
   if (obj === null) return false
   return toString.call(obj) === '[object Object]'
@@ -295,9 +295,9 @@ export var objectEntries = function (object) {
   })
   return res
 }
-export var isUndefined = function (obj) {
-  return obj === void 0
-}
+// export var isUndefined = function (obj) {
+//   return obj === void 0
+// }
 export var isString = function (obj) {
   return toString.call(obj) === '[object String]'
 }
@@ -310,26 +310,26 @@ export var isBoolean = function (obj) {
 export var isNumber = function (obj) {
   return toString.call(obj) === '[object Number]' && /[\d\.]+/.test(String(obj))
 }
-export var isElement = function (obj) {
-  return !!(obj && obj.nodeType === 1)
-}
-export var isJSONString = function (str) {
-  try {
-    JSON.parse(str)
-  } catch (e) {
-    return false
-  }
-  return true
-}
-export var safeJSONParse = function (str) {
-  var val = null
-  try {
-    val = JSON.parse(str)
-  } catch (e) {
-    return false
-  }
-  return val
-}
+// export var isElement = function (obj) {
+//   return !!(obj && obj.nodeType === 1)
+// }
+// export var isJSONString = function (str) {
+//   try {
+//     JSON.parse(str)
+//   } catch (e) {
+//     return false
+//   }
+//   return true
+// }
+// export var safeJSONParse = function (str) {
+//   var val = null
+//   try {
+//     val = JSON.parse(str)
+//   } catch (e) {
+//     return false
+//   }
+//   return val
+// }
 
 export var encodeDates = function (obj) {
   each(obj, function (v, k) {
@@ -341,36 +341,36 @@ export var encodeDates = function (obj) {
   })
   return obj
 }
-export var mediaQueriesSupported = function () {
-  return (
-    typeof window.matchMedia !== 'undefined' ||
-    typeof window.msMatchMedia !== 'undefined'
-  )
-}
-export var getScreenOrientation = function () {
-  var screenOrientationAPI =
-    screen.msOrientation ||
-    screen.mozOrientation ||
-    (screen.orientation || {}).type
-  var screenOrientation = '未取到值'
-  if (screenOrientationAPI) {
-    screenOrientation =
-      screenOrientationAPI.indexOf('landscape') > -1 ? 'landscape' : 'portrait'
-  } else if (mediaQueriesSupported()) {
-    var matchMediaFunc = window.matchMedia || window.msMatchMedia
-    if (matchMediaFunc('(orientation: landscape)').matches) {
-      screenOrientation = 'landscape'
-    } else if (matchMediaFunc('(orientation: portrait)').matches) {
-      screenOrientation = 'portrait'
-    }
-  }
-  return screenOrientation
-}
-export var now =
-  Date.now ||
-  function () {
-    return new Date().getTime()
-  }
+// export var mediaQueriesSupported = function () {
+//   return (
+//     typeof window.matchMedia !== 'undefined' ||
+//     typeof window.msMatchMedia !== 'undefined'
+//   )
+// }
+// export var getScreenOrientation = function () {
+//   var screenOrientationAPI =
+//     screen.msOrientation ||
+//     screen.mozOrientation ||
+//     (screen.orientation || {}).type
+//   var screenOrientation = '未取到值'
+//   if (screenOrientationAPI) {
+//     screenOrientation =
+//       screenOrientationAPI.indexOf('landscape') > -1 ? 'landscape' : 'portrait'
+//   } else if (mediaQueriesSupported()) {
+//     var matchMediaFunc = window.matchMedia || window.msMatchMedia
+//     if (matchMediaFunc('(orientation: landscape)').matches) {
+//       screenOrientation = 'landscape'
+//     } else if (matchMediaFunc('(orientation: portrait)').matches) {
+//       screenOrientation = 'portrait'
+//     }
+//   }
+//   return screenOrientation
+// }
+// export var now =
+//   Date.now ||
+//   function () {
+//     return new Date().getTime()
+//   }
 
 export var throttle = function (fn, wait, options) {
   var needLeadingExecution =
@@ -409,22 +409,22 @@ export var throttle = function (fn, wait, options) {
     }
   }
 }
-export var hashCode = function (str) {
-  if (typeof str !== 'string') {
-    return 0
-  }
-  var hash = 0
-  var char = null
-  if (str.length == 0) {
-    return hash
-  }
-  for (var i = 0; i < str.length; i++) {
-    char = str.charCodeAt(i)
-    hash = (hash << 5) - hash + char
-    hash = hash & hash
-  }
-  return hash
-}
+// export var hashCode = function (str) {
+//   if (typeof str !== 'string') {
+//     return 0
+//   }
+//   var hash = 0
+//   var char = null
+//   if (str.length == 0) {
+//     return hash
+//   }
+//   for (var i = 0; i < str.length; i++) {
+//     char = str.charCodeAt(i)
+//     hash = (hash << 5) - hash + char
+//     hash = hash & hash
+//   }
+//   return hash
+// }
 export var formatDate = function (d) {
   function pad(n) {
     return n < 10 ? '0' + n : n
@@ -459,13 +459,13 @@ export var searchObjDate = function (o) {
     })
   }
 }
-export var formatJsonString = function (obj) {
-  try {
-    return JSON.stringify(obj, null, '  ')
-  } catch (e) {
-    return JSON.stringify(obj)
-  }
-}
+// export var formatJsonString = function (obj) {
+//   try {
+//     return JSON.stringify(obj, null, '  ')
+//   } catch (e) {
+//     return JSON.stringify(obj)
+//   }
+// }
 // export var formatString = function (str) {
 //   if (str.length > MAX_STRING_LENGTH) {
 //     sd.log('字符串长度超过限制，已经做截取--' + str)
@@ -500,15 +500,15 @@ export var unique = function (ar) {
   }
   return n
 }
-export var strip_empty_properties = function (p) {
-  var ret = {}
-  each(p, function (v, k) {
-    if (v != null) {
-      ret[k] = v
-    }
-  })
-  return ret
-}
+// export var strip_empty_properties = function (p) {
+//   var ret = {}
+//   each(p, function (v, k) {
+//     if (v != null) {
+//       ret[k] = v
+//     }
+//   })
+//   return ret
+// }
 export var utf8Encode = function (string) {
   string = (string + '').replace(/\r\n/g, '\n').replace(/\r/g, '\n')
 
@@ -724,16 +724,16 @@ export var urlParse = function (para) {
   }
   return new URLParser(para)
 }
-export function elementMatches(element, selector) {
-  if (element.matches) {
-    return element.matches(selector)
-  }
-  // IE11 support
-  if (element.msMatchesSelector) {
-    return element.msMatchesSelector(selector)
-  }
-  return false
-}
+// export function elementMatches(element, selector) {
+//   if (element.matches) {
+//     return element.matches(selector)
+//   }
+//   // IE11 support
+//   if (element.msMatchesSelector) {
+//     return element.msMatchesSelector(selector)
+//   }
+//   return false
+// }
 
 export var localStorage = {
   get: function (name) {
@@ -794,191 +794,191 @@ export var sessionStorage = {
     return supported
   }
 }
-export var isSupportCors = function () {
-  if (typeof window.XMLHttpRequest === 'undefined') {
-    return false
-  }
-  if ('withCredentials' in new XMLHttpRequest()) {
-    return true
-  } else if (typeof XDomainRequest !== 'undefined') {
-    return true
-  } else {
-    return false
-  }
-}
-export var xhr = function (cors) {
-  if (cors) {
-    if (
-      typeof window.XMLHttpRequest !== 'undefined' &&
-      'withCredentials' in new XMLHttpRequest()
-    ) {
-      return new XMLHttpRequest()
-    } else if (typeof XDomainRequest !== 'undefined') {
-      return new XDomainRequest()
-    } else {
-      return null
-    }
-  } else {
-    if (typeof window.XMLHttpRequest !== 'undefined') {
-      return new XMLHttpRequest()
-    }
-    if (window.ActiveXObject) {
-      try {
-        return new ActiveXObject('Msxml2.XMLHTTP')
-      } catch (d) {
-        try {
-          return new ActiveXObject('Microsoft.XMLHTTP')
-        } catch (d) {
-          console.log(d)
-        }
-      }
-    }
-  }
-}
-export var ajax = function (para) {
-  para.timeout = para.timeout || 20000
+// export var isSupportCors = function () {
+//   if (typeof window.XMLHttpRequest === 'undefined') {
+//     return false
+//   }
+//   if ('withCredentials' in new XMLHttpRequest()) {
+//     return true
+//   } else if (typeof XDomainRequest !== 'undefined') {
+//     return true
+//   } else {
+//     return false
+//   }
+// }
+// export var xhr = function (cors) {
+//   if (cors) {
+//     if (
+//       typeof window.XMLHttpRequest !== 'undefined' &&
+//       'withCredentials' in new XMLHttpRequest()
+//     ) {
+//       return new XMLHttpRequest()
+//     } else if (typeof XDomainRequest !== 'undefined') {
+//       return new XDomainRequest()
+//     } else {
+//       return null
+//     }
+//   } else {
+//     if (typeof window.XMLHttpRequest !== 'undefined') {
+//       return new XMLHttpRequest()
+//     }
+//     if (window.ActiveXObject) {
+//       try {
+//         return new ActiveXObject('Msxml2.XMLHTTP')
+//       } catch (d) {
+//         try {
+//           return new ActiveXObject('Microsoft.XMLHTTP')
+//         } catch (d) {
+//           console.log(d)
+//         }
+//       }
+//     }
+//   }
+// }
+// export var ajax = function (para) {
+//   para.timeout = para.timeout || 20000
 
-  para.credentials =
-    typeof para.credentials === 'undefined' ? true : para.credentials
+//   para.credentials =
+//     typeof para.credentials === 'undefined' ? true : para.credentials
 
-  function getJSON(data) {
-    if (!data) {
-      return ''
-    }
-    try {
-      return JSON.parse(data)
-    } catch (e) {
-      return {}
-    }
-  }
+//   function getJSON(data) {
+//     if (!data) {
+//       return ''
+//     }
+//     try {
+//       return JSON.parse(data)
+//     } catch (e) {
+//       return {}
+//     }
+//   }
 
-  var g = xhr(para.cors)
+//   var g = xhr(para.cors)
 
-  if (!g) {
-    return false
-  }
+//   if (!g) {
+//     return false
+//   }
 
-  if (!para.type) {
-    para.type = para.data ? 'POST' : 'GET'
-  }
-  para = extend(
-    {
-      success: function () {},
-      error: function () {}
-    },
-    para
-  )
+//   if (!para.type) {
+//     para.type = para.data ? 'POST' : 'GET'
+//   }
+//   para = extend(
+//     {
+//       success: function () {},
+//       error: function () {}
+//     },
+//     para
+//   )
 
-  try {
-    if (typeof g === 'object' && 'timeout' in g) {
-      g.timeout = para.timeout
-    } else {
-      setTimeout(function () {
-        g.abort()
-      }, para.timeout + 500)
-    }
-  } catch (e) {
-    try {
-      setTimeout(function () {
-        g.abort()
-      }, para.timeout + 500)
-    } catch (e2) {}
-  }
+//   try {
+//     if (typeof g === 'object' && 'timeout' in g) {
+//       g.timeout = para.timeout
+//     } else {
+//       setTimeout(function () {
+//         g.abort()
+//       }, para.timeout + 500)
+//     }
+//   } catch (e) {
+//     try {
+//       setTimeout(function () {
+//         g.abort()
+//       }, para.timeout + 500)
+//     } catch (e2) {}
+//   }
 
-  g.onreadystatechange = function () {
-    try {
-      if (g.readyState == 4) {
-        if ((g.status >= 200 && g.status < 300) || g.status == 304) {
-          para.success(getJSON(g.responseText))
-        } else {
-          para.error(getJSON(g.responseText), g.status)
-        }
-        g.onreadystatechange = null
-        g.onload = null
-      }
-    } catch (e) {
-      g.onreadystatechange = null
-      g.onload = null
-    }
-  }
+//   g.onreadystatechange = function () {
+//     try {
+//       if (g.readyState == 4) {
+//         if ((g.status >= 200 && g.status < 300) || g.status == 304) {
+//           para.success(getJSON(g.responseText))
+//         } else {
+//           para.error(getJSON(g.responseText), g.status)
+//         }
+//         g.onreadystatechange = null
+//         g.onload = null
+//       }
+//     } catch (e) {
+//       g.onreadystatechange = null
+//       g.onload = null
+//     }
+//   }
 
-  g.open(para.type, para.url, true)
+//   g.open(para.type, para.url, true)
 
-  try {
-    if (para.credentials) {
-      g.withCredentials = true
-    }
-    if (isObject(para.header)) {
-      for (var i in para.header) {
-        g.setRequestHeader(i, para.header[i])
-      }
-    }
+//   try {
+//     if (para.credentials) {
+//       g.withCredentials = true
+//     }
+//     if (isObject(para.header)) {
+//       for (var i in para.header) {
+//         g.setRequestHeader(i, para.header[i])
+//       }
+//     }
 
-    if (para.data) {
-      if (!para.cors) {
-        g.setRequestHeader('X-Requested-With', 'XMLHttpRequest')
-      }
-      if (para.contentType === 'application/json') {
-        g.setRequestHeader('Content-type', 'application/json; charset=UTF-8')
-      } else {
-        g.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
-      }
-    }
-  } catch (e) {}
+//     if (para.data) {
+//       if (!para.cors) {
+//         g.setRequestHeader('X-Requested-With', 'XMLHttpRequest')
+//       }
+//       if (para.contentType === 'application/json') {
+//         g.setRequestHeader('Content-type', 'application/json; charset=UTF-8')
+//       } else {
+//         g.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
+//       }
+//     }
+//   } catch (e) {}
 
-  g.send(para.data || null)
-}
-export var loadScript = function (para) {
-  para = extend(
-    {
-      success: function () {},
-      error: function () {},
-      appendCall: function (g) {
-        document.getElementsByTagName('head')[0].appendChild(g)
-      }
-    },
-    para
-  )
+//   g.send(para.data || null)
+// }
+// export var loadScript = function (para) {
+//   para = extend(
+//     {
+//       success: function () {},
+//       error: function () {},
+//       appendCall: function (g) {
+//         document.getElementsByTagName('head')[0].appendChild(g)
+//       }
+//     },
+//     para
+//   )
 
-  var g = null
-  if (para.type === 'css') {
-    g = document.createElement('link')
-    g.rel = 'stylesheet'
-    g.href = para.url
-  }
-  if (para.type === 'js') {
-    g = document.createElement('script')
-    g.async = 'async'
-    g.setAttribute('charset', 'UTF-8')
-    g.src = para.url
-    g.type = 'text/javascript'
-  }
-  g.onload = g.onreadystatechange = function () {
-    if (
-      !this.readyState ||
-      this.readyState === 'loaded' ||
-      this.readyState === 'complete'
-    ) {
-      para.success()
-      g.onload = g.onreadystatechange = null
-    }
-  }
-  g.onerror = function () {
-    para.error()
-    g.onerror = null
-  }
-  para.appendCall(g)
-}
-export var getHostname = function (url, defaultValue) {
-  if (!defaultValue || typeof defaultValue !== 'string') {
-    defaultValue = 'hostname解析异常'
-  }
-  var hostname = null
-  try {
-    hostname = URL(url).hostname
-  } catch (e) {}
-  return hostname || defaultValue
-}
+//   var g = null
+//   if (para.type === 'css') {
+//     g = document.createElement('link')
+//     g.rel = 'stylesheet'
+//     g.href = para.url
+//   }
+//   if (para.type === 'js') {
+//     g = document.createElement('script')
+//     g.async = 'async'
+//     g.setAttribute('charset', 'UTF-8')
+//     g.src = para.url
+//     g.type = 'text/javascript'
+//   }
+//   g.onload = g.onreadystatechange = function () {
+//     if (
+//       !this.readyState ||
+//       this.readyState === 'loaded' ||
+//       this.readyState === 'complete'
+//     ) {
+//       para.success()
+//       g.onload = g.onreadystatechange = null
+//     }
+//   }
+//   g.onerror = function () {
+//     para.error()
+//     g.onerror = null
+//   }
+//   para.appendCall(g)
+// }
+// export var getHostname = function (url, defaultValue) {
+//   if (!defaultValue || typeof defaultValue !== 'string') {
+//     defaultValue = 'hostname解析异常'
+//   }
+//   var hostname = null
+//   try {
+//     hostname = URL(url).hostname
+//   } catch (e) {}
+//   return hostname || defaultValue
+// }
 export var getQueryParamsFromUrl = function (url) {
   var result = {}
   var arr = url.split('?')
@@ -1110,172 +1110,172 @@ export function deepClone(value) {
   return mergeInto(undefined, value)
 }
 
-export var getCurrentDomain = function (url) {
-  var cookieTopLevelDomain = getCookieTopLevelDomain()
-  if (url === '') {
-    return 'url解析失败'
-  } else if (cookieTopLevelDomain === '') {
-    return 'url解析失败'
-  } else {
-    return cookieTopLevelDomain
-  }
-}
-export var getCookieTopLevelDomain = function (hostname) {
-  hostname = hostname || window.location.hostname
-  var splitResult = hostname.split('.')
-  if (
-    isArray(splitResult) &&
-    splitResult.length >= 2 &&
-    !/^(\d+\.)+\d+$/.test(hostname)
-  ) {
-    var domainStr = '.' + splitResult.splice(splitResult.length - 1, 1)
-    while (splitResult.length > 0) {
-      domainStr =
-        '.' + splitResult.splice(splitResult.length - 1, 1) + domainStr
-      document.cookie = 'domain_test=true; path=/; domain=' + domainStr
-      if (document.cookie.indexOf('domain_test=true') !== -1) {
-        var now = new Date()
-        now.setTime(now.getTime() - 1000)
-        document.cookie =
-          'domain_test=true; expires=' +
-          now.toGMTString() +
-          '; path=/; domain=' +
-          domainStr
-        return domainStr
-      }
-    }
-  }
-  return ''
-}
-export var strToUnicode = function (str) {
-  if (typeof str !== 'string') {
-    return str
-  }
-  var nstr = ''
-  for (var i = 0; i < str.length; i++) {
-    nstr += '\\' + str.charCodeAt(i).toString(16)
-  }
-  return nstr
-}
-export var autoExeQueue = function () {
-  var queue = {
-    items: [],
-    enqueue: function (val) {
-      this.items.push(val)
-      this.start()
-    },
-    dequeue: function () {
-      return this.items.shift()
-    },
-    getCurrentItem: function () {
-      return this.items[0]
-    },
-    isRun: false,
-    start: function () {
-      if (this.items.length > 0 && !this.isRun) {
-        this.isRun = true
-        this.getCurrentItem().start()
-      }
-    },
-    close: function () {
-      this.dequeue()
-      this.isRun = false
-      this.start()
-    }
-  }
-  return queue
-}
-export var strip_sa_properties = function (p) {
-  if (!isObject(p)) {
-    return p
-  }
-  each(p, function (v, k) {
-    if (isArray(v)) {
-      var temp = []
-      each(v, function (arrv) {
-        if (isString(arrv)) {
-          temp.push(arrv)
-        } else {
-          console.log(
-            '您的数据-',
-            k,
-            v,
-            '的数组里的值必须是字符串,已经将其删除'
-          )
-        }
-      })
-      if (temp.length !== 0) {
-        p[k] = temp
-      } else {
-        delete p[k]
-        console.log('已经删除空的数组')
-      }
-    }
-    if (
-      !(
-        isString(v) ||
-        isNumber(v) ||
-        isDate(v) ||
-        isBoolean(v) ||
-        isArray(v) ||
-        isFunction(v) ||
-        k === '$option'
-      )
-    ) {
-      console.log('您的数据-', k, v, '-格式不满足要求，我们已经将其删除')
-      delete p[k]
-    }
-  })
-  return p
-}
+// export var getCurrentDomain = function (url) {
+//   var cookieTopLevelDomain = getCookieTopLevelDomain()
+//   if (url === '') {
+//     return 'url解析失败'
+//   } else if (cookieTopLevelDomain === '') {
+//     return 'url解析失败'
+//   } else {
+//     return cookieTopLevelDomain
+//   }
+// }
+// export var getCookieTopLevelDomain = function (hostname) {
+//   hostname = hostname || window.location.hostname
+//   var splitResult = hostname.split('.')
+//   if (
+//     isArray(splitResult) &&
+//     splitResult.length >= 2 &&
+//     !/^(\d+\.)+\d+$/.test(hostname)
+//   ) {
+//     var domainStr = '.' + splitResult.splice(splitResult.length - 1, 1)
+//     while (splitResult.length > 0) {
+//       domainStr =
+//         '.' + splitResult.splice(splitResult.length - 1, 1) + domainStr
+//       document.cookie = 'domain_test=true; path=/; domain=' + domainStr
+//       if (document.cookie.indexOf('domain_test=true') !== -1) {
+//         var now = new Date()
+//         now.setTime(now.getTime() - 1000)
+//         document.cookie =
+//           'domain_test=true; expires=' +
+//           now.toGMTString() +
+//           '; path=/; domain=' +
+//           domainStr
+//         return domainStr
+//       }
+//     }
+//   }
+//   return ''
+// }
+// export var strToUnicode = function (str) {
+//   if (typeof str !== 'string') {
+//     return str
+//   }
+//   var nstr = ''
+//   for (var i = 0; i < str.length; i++) {
+//     nstr += '\\' + str.charCodeAt(i).toString(16)
+//   }
+//   return nstr
+// }
+// export var autoExeQueue = function () {
+//   var queue = {
+//     items: [],
+//     enqueue: function (val) {
+//       this.items.push(val)
+//       this.start()
+//     },
+//     dequeue: function () {
+//       return this.items.shift()
+//     },
+//     getCurrentItem: function () {
+//       return this.items[0]
+//     },
+//     isRun: false,
+//     start: function () {
+//       if (this.items.length > 0 && !this.isRun) {
+//         this.isRun = true
+//         this.getCurrentItem().start()
+//       }
+//     },
+//     close: function () {
+//       this.dequeue()
+//       this.isRun = false
+//       this.start()
+//     }
+//   }
+//   return queue
+// }
+// export var strip_sa_properties = function (p) {
+//   if (!isObject(p)) {
+//     return p
+//   }
+//   each(p, function (v, k) {
+//     if (isArray(v)) {
+//       var temp = []
+//       each(v, function (arrv) {
+//         if (isString(arrv)) {
+//           temp.push(arrv)
+//         } else {
+//           console.log(
+//             '您的数据-',
+//             k,
+//             v,
+//             '的数组里的值必须是字符串,已经将其删除'
+//           )
+//         }
+//       })
+//       if (temp.length !== 0) {
+//         p[k] = temp
+//       } else {
+//         delete p[k]
+//         console.log('已经删除空的数组')
+//       }
+//     }
+//     if (
+//       !(
+//         isString(v) ||
+//         isNumber(v) ||
+//         isDate(v) ||
+//         isBoolean(v) ||
+//         isArray(v) ||
+//         isFunction(v) ||
+//         k === '$option'
+//       )
+//     ) {
+//       console.log('您的数据-', k, v, '-格式不满足要求，我们已经将其删除')
+//       delete p[k]
+//     }
+//   })
+//   return p
+// }
 
-export var searchConfigData = function (data) {
-  if (typeof data === 'object' && data.$option) {
-    var data_config = data.$option
-    delete data.$option
-    return data_config
-  } else {
-    return {}
-  }
-}
+// export var searchConfigData = function (data) {
+//   if (typeof data === 'object' && data.$option) {
+//     var data_config = data.$option
+//     delete data.$option
+//     return data_config
+//   } else {
+//     return {}
+//   }
+// }
 // 从字符串 src 中查找 k+sp 和  e 之间的字符串，如果 k==e 且 k 只有一个，或者 e 不存在，从 k+sp 截取到字符串结束
 // abcd=1&b=1&c=3;
 // abdc=1;b=1;a=3;
-export var stringSplice = function (src, k, e, sp) {
-  if (src === '') {
-    return ''
-  }
-  sp = sp === '' ? '=' : sp
-  k += sp
-  var ps = src.indexOf(k)
-  if (ps < 0) {
-    return ''
-  }
-  ps += k.length
-  var pe = pe < ps ? src.length : src.indexOf(e, ps)
-  return src.substring(ps, pe)
-}
+// export var stringSplice = function (src, k, e, sp) {
+//   if (src === '') {
+//     return ''
+//   }
+//   sp = sp === '' ? '=' : sp
+//   k += sp
+//   var ps = src.indexOf(k)
+//   if (ps < 0) {
+//     return ''
+//   }
+//   ps += k.length
+//   var pe = pe < ps ? src.length : src.indexOf(e, ps)
+//   return src.substring(ps, pe)
+// }
 export function getStatusGroup(status) {
   if (!status) return status === 0 ? undefined : status
   return (
     String(status).substr(0, 1) + String(status).substr(1).replace(/\d*/g, 'x')
   )
 }
-export var getReferrer = function () {
-  var ref = document.referrer.toLowerCase()
-  var re = /^[^\?&#]*.swf([\?#])?/
-  // 如果页面 Referer 为空，从 URL 中获取
-  if (ref === '' || ref.match(re)) {
-    ref = stringSplice(window.location.href, 'ref', '&', '')
-    if (ref !== '') {
-      return encodeURIComponent(ref)
-    }
-  }
-  return encodeURIComponent(ref)
-}
-export var typeDecide = function (o, type) {
-  return toString.call(o) === '[object ' + type + ']'
-}
+// export var getReferrer = function () {
+//   var ref = document.referrer.toLowerCase()
+//   var re = /^[^\?&#]*.swf([\?#])?/
+//   // 如果页面 Referer 为空，从 URL 中获取
+//   if (ref === '' || ref.match(re)) {
+//     ref = stringSplice(window.location.href, 'ref', '&', '')
+//     if (ref !== '') {
+//       return encodeURIComponent(ref)
+//     }
+//   }
+//   return encodeURIComponent(ref)
+// }
+// export var typeDecide = function (o, type) {
+//   return toString.call(o) === '[object ' + type + ']'
+// }
 
 export function noop() {}
 
@@ -1357,12 +1357,12 @@ export function elapsed(start, end) {
 export function clocksOrigin() {
   return { relative: 0, timeStamp: getNavigationStart() }
 }
-export function preferredClock(clocks) {
-  return clocks.relative
-}
-export function preferredTimeStamp(clocks) {
-  return getTimestamp(clocks.relative)
-}
+// export function preferredClock(clocks) {
+//   return clocks.relative
+// }
+// export function preferredTimeStamp(clocks) {
+//   return getTimestamp(clocks.relative)
+// }
 export function relativeToClocks(relative) {
   return { relative: relative, timeStamp: getCorrectedTimeStamp(relative) }
 }
@@ -1607,13 +1607,13 @@ export function startsWith(candidate, search) {
 export function endsWith(candidate, search) {
   return candidate.slice(-search.length) === search
 }
-export function removeDuplicates(array) {
-  var set = new Set()
-  array.forEach(function (item) {
-    set.add(item)
-  })
-  return arrayFrom(set)
-}
+// export function removeDuplicates(array) {
+//   var set = new Set()
+//   array.forEach(function (item) {
+//     set.add(item)
+//   })
+//   return arrayFrom(set)
+// }
 
 export function removeItem(array, item) {
   var index = array.indexOf(item)
