@@ -13,5 +13,13 @@
                 "modules": false
             }
         ]
+    ],
+    "plugins": [
+        [
+        "@babel/plugin-transform-runtime",
+            {
+                "helpers": true
+            }
+        ]
     ]
 }
