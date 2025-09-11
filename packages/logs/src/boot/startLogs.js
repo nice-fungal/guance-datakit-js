@@ -2,13 +2,13 @@ import {
   LifeCycle,
   createPageExitObservable,
   willSyntheticsInjectRum,
-  startTelemetry,
+  // startTelemetry,
   startBatchWithReplica,
   canUseEventBridge,
-  TelemetryService,
-  drainPreStartTelemetry,
+  // TelemetryService,
+  // drainPreStartTelemetry,
   createIdentityEncoder,
-  addTelemetryConfiguration,
+  // addTelemetryConfiguration,
   deepClone
 } from '@cloudcare/browser-core'
 import {
@@ -36,16 +36,16 @@ export function startLogs(initConfiguration, configuration, getCommonContext) {
     !willSyntheticsInjectRum()
       ? startLogsSessionManager(configuration)
       : startLogsSessionManagerStub(configuration)
-  const telemetry = startLogsTelemetry(
-    initConfiguration,
-    configuration,
-    reportError,
-    pageExitObservable,
-    session
-  )
-  cleanupTasks.push(function () {
-    telemetry.stop()
-  })
+  // const telemetry = startLogsTelemetry(
+  //   initConfiguration,
+  //   configuration,
+  //   reportError,
+  //   pageExitObservable,
+  //   session
+  // )
+  // cleanupTasks.push(function () {
+  //   telemetry.stop()
+  // })
   startNetworkErrorCollection(configuration, lifeCycle)
   startRuntimeErrorCollection(configuration, lifeCycle)
   startConsoleCollection(configuration, lifeCycle)
@@ -86,69 +86,69 @@ export function startLogs(initConfiguration, configuration, getCommonContext) {
     }
   }
 }
-function startLogsTelemetry(
-  initConfiguration,
-  configuration,
-  reportError,
-  pageExitObservable,
-  session
-) {
-  const telemetry = startTelemetry(TelemetryService.LOGS, configuration)
-  telemetry.setContextProvider(function () {
-    var RUMInternalContext = getRUMInternalContext()
-    return {
-      application: {
-        id:
-          RUMInternalContext &&
-          RUMInternalContext.application &&
-          RUMInternalContext.application.id
-      },
-      session: {
-        id: session.findTrackedSession() && session.findTrackedSession().id
-      },
-      view: {
-        id:
-          RUMInternalContext &&
-          RUMInternalContext.view &&
-          RUMInternalContext.view.id
-      },
-      action: {
-        id:
-          RUMInternalContext &&
-          RUMInternalContext.userAction &&
-          RUMInternalContext.userAction.id
-      }
-    }
-  })
-  var cleanupTasks = []
-  if (!canUseEventBridge()) {
-    var telemetryBatch = startBatchWithReplica(
-      configuration,
-      { endpoint: configuration.rumEndpoint, encoder: createIdentityEncoder() },
-      reportError,
-      pageExitObservable,
-      session.expireObservable
-    )
-    cleanupTasks.push(function () {
-      telemetryBatch.stop()
-    })
-    var telemetrySubscription = telemetry.observable.subscribe(function (
-      event
-    ) {
-      telemetryBatch.add(event)
-    })
-    cleanupTasks.push(function () {
-      telemetrySubscription.unsubscribe()
-    })
-  }
-  drainPreStartTelemetry()
-  addTelemetryConfiguration(deepClone(initConfiguration))
-  return {
-    telemetry: telemetry,
-    stop: function () {
-      cleanupTasks.forEach(function (task) {
-        task()
-      })
-    }
-  }
-}
+// function startLogsTelemetry(
+//   initConfiguration,
+//   configuration,
+//   reportError,
+//   pageExitObservable,
+//   session
+// ) {
+//   const telemetry = startTelemetry(TelemetryService.LOGS, configuration)
+//   telemetry.setContextProvider(function () {
+//     var RUMInternalContext = getRUMInternalContext()
+//     return {
+//       application: {
+//         id:
+//           RUMInternalContext &&
+//           RUMInternalContext.application &&
+//           RUMInternalContext.application.id
+//       },
+//       session: {
+//         id: session.findTrackedSession() && session.findTrackedSession().id
+//       },
+//       view: {
+//         id:
+//           RUMInternalContext &&
+//           RUMInternalContext.view &&
+//           RUMInternalContext.view.id
+//       },
+//       action: {
+//         id:
+//           RUMInternalContext &&
+//           RUMInternalContext.userAction &&
+//           RUMInternalContext.userAction.id
+//       }
+//     }
+//   })
+//   var cleanupTasks = []
+//   if (!canUseEventBridge()) {
+//     var telemetryBatch = startBatchWithReplica(
+//       configuration,
+//       { endpoint: configuration.rumEndpoint, encoder: createIdentityEncoder() },
+//       reportError,
+//       pageExitObservable,
+//       session.expireObservable
+//     )
+//     cleanupTasks.push(function () {
+//       telemetryBatch.stop()
+//     })
+//     var telemetrySubscription = telemetry.observable.subscribe(function (
+//       event
+//     ) {
+//       telemetryBatch.add(event)
+//     })
+//     cleanupTasks.push(function () {
+//       telemetrySubscription.unsubscribe()
+//     })
+//   }
+//   drainPreStartTelemetry()
+//   addTelemetryConfiguration(deepClone(initConfiguration))
+//   return {
+//     telemetry: telemetry,
+//     stop: function () {
+//       cleanupTasks.forEach(function (task) {
+//         task()
+//       })
+//     }
+//   }
+// }

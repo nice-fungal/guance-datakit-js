@@ -1,7 +1,7 @@
 import {
   ErrorSource,
   LifeCycleEventType,
-  addTelemetryDebug
+  // addTelemetryDebug
 } from '@cloudcare/browser-core'
 import { StatusType } from './logger'
 export function startReportError(lifeCycle) {
@@ -14,8 +14,8 @@ export function startReportError(lifeCycle) {
         status: StatusType.error
       }
     })
-    addTelemetryDebug('Error reported to customer', {
-      'error.message': error.message
-    })
+    // addTelemetryDebug('Error reported to customer', {
+    //   'error.message': error.message
+    // })
   }
 }
