@@ -11,9 +11,15 @@ module.exports = ({
 }) => ({
   entry,
   mode,
+  experiments: { 
+    outputModule: true,
+  },
   output: {
     filename,
-    path
+    path,
+    library: {
+      type: 'module',
+    },
   },
   target: ['web', 'es5'],
   devtool: false,

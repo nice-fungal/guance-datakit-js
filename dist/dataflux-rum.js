@@ -1,8 +1,31 @@
-/******/ (function() { // webpackBootstrap
-/******/ 	"use strict";
+/******/ // The require scope
+/******/ var __webpack_require__ = {};
+/******/ 
+/************************************************************************/
+/******/ /* webpack/runtime/define property getters */
+/******/ !function() {
+/******/ 	// define getter functions for harmony exports
+/******/ 	__webpack_require__.d = function(exports, definition) {
+/******/ 		for(var key in definition) {
+/******/ 			if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+/******/ 				Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 			}
+/******/ 		}
+/******/ 	};
+/******/ }();
+/******/ 
+/******/ /* webpack/runtime/hasOwnProperty shorthand */
+/******/ !function() {
+/******/ 	__webpack_require__.o = function(obj, prop) { return Object.prototype.hasOwnProperty.call(obj, prop); }
+/******/ }();
+/******/ 
+/************************************************************************/
 var __webpack_exports__ = {};
 
-// UNUSED EXPORTS: datafluxRum
+// EXPORTS
+__webpack_require__.d(__webpack_exports__, {
+  E: function() { return /* reexport */ datafluxRum; }
+});
 
 ;// CONCATENATED MODULE: ../../node_modules/@babel/runtime/helpers/esm/typeof.js
 function typeof_typeof(o) {
@@ -78,7 +101,7 @@ function displayIfDebugEnabled() {
 }
 ;// CONCATENATED MODULE: ../core/esm/helper/catchUserErrors.js
 
-function catchUserErrors(fn, errorMsg) {
+function catchUserErrors_catchUserErrors(fn, errorMsg) {
   return function () {
     var args = [].slice.call(arguments);
     try {
@@ -202,7 +225,7 @@ var tools_hasOwnProperty = ObjProto.hasOwnProperty;
 var nativeForEach = ArrayProto.forEach;
 var nativeIsArray = Array.isArray;
 var breaker = false;
-var each = function each(obj, iterator, context) {
+var tools_each = function each(obj, iterator, context) {
   if (obj === null) return false;
   if (nativeForEach && obj.forEach === nativeForEach) {
     obj.forEach(iterator, context);
@@ -223,7 +246,7 @@ var each = function each(obj, iterator, context) {
   }
 };
 function tools_assign(target) {
-  each(slice.call(arguments, 1), function (source) {
+  tools_each(slice.call(arguments, 1), function (source) {
     for (var prop in source) {
       if (Object.prototype.hasOwnProperty.call(source, prop)) {
         target[prop] = source[prop];
@@ -236,7 +259,7 @@ function shallowClone(object) {
   return tools_assign({}, object);
 }
 var extend = function extend(obj) {
-  each(slice.call(arguments, 1), function (source) {
+  tools_each(slice.call(arguments, 1), function (source) {
     for (var prop in source) {
       if (source[prop] !== void 0) {
         obj[prop] = source[prop];
@@ -246,7 +269,7 @@ var extend = function extend(obj) {
   return obj;
 };
 var extend2Lev = function extend2Lev(obj) {
-  each(slice.call(arguments, 1), function (source) {
+  tools_each(slice.call(arguments, 1), function (source) {
     for (var prop in source) {
       if (source[prop] !== void 0) {
         if (isObject(source[prop]) && isObject(obj[prop])) {
@@ -260,7 +283,7 @@ var extend2Lev = function extend2Lev(obj) {
   return obj;
 };
 var coverExtend = function coverExtend(obj) {
-  each(slice.call(arguments, 1), function (source) {
+  tools_each(slice.call(arguments, 1), function (source) {
     for (var prop in source) {
       if (source[prop] !== void 0 && obj[prop] === void 0) {
         obj[prop] = source[prop];
@@ -303,7 +326,7 @@ var values = function values(obj) {
   if (obj === null) {
     return results;
   }
-  each(obj, function (value) {
+  tools_each(obj, function (value) {
     results[results.length] = value;
   });
   return results;
@@ -313,7 +336,7 @@ var keys = function keys(obj) {
   if (obj === null) {
     return results;
   }
-  each(obj, function (value, key) {
+  tools_each(obj, function (value, key) {
     results[results.length] = key;
   });
   return results;
@@ -471,7 +494,7 @@ var isEmptyObject = function isEmptyObject(obj) {
 };
 var objectEntries = function objectEntries(object) {
   var res = [];
-  each(object, function (value, key) {
+  tools_each(object, function (value, key) {
     res.push([key, value]);
   });
   return res;
@@ -512,7 +535,7 @@ var safeJSONParse = function safeJSONParse(str) {
   return val;
 };
 var _encodeDates = function encodeDates(obj) {
-  each(obj, function (v, k) {
+  tools_each(obj, function (v, k) {
     if (isDate(v)) {
       obj[k] = formatDate(v);
     } else if (isObject(v)) {
@@ -601,7 +624,7 @@ var formatDate = function formatDate(d) {
 };
 var _searchObjDate = function searchObjDate(o) {
   if (isObject(o)) {
-    each(o, function (a, b) {
+    tools_each(o, function (a, b) {
       if (isObject(a)) {
         _searchObjDate(o[b]);
       } else {
@@ -630,7 +653,7 @@ var formatJsonString = function formatJsonString(obj) {
 // }
 var _searchObjString = function searchObjString(o) {
   if (isObject(o)) {
-    each(o, function (a, b) {
+    tools_each(o, function (a, b) {
       if (isObject(a)) {
         _searchObjString(o[b]);
       } else {
@@ -657,7 +680,7 @@ var unique = function unique(ar) {
 };
 var strip_empty_properties = function strip_empty_properties(p) {
   var ret = {};
-  each(p, function (v, k) {
+  tools_each(p, function (v, k) {
     if (v != null) {
       ret[k] = v;
     }
@@ -1258,10 +1281,10 @@ var strip_sa_properties = function strip_sa_properties(p) {
   if (!isObject(p)) {
     return p;
   }
-  each(p, function (v, k) {
+  tools_each(p, function (v, k) {
     if (isArray(v)) {
       var temp = [];
-      each(v, function (arrv) {
+      tools_each(v, function (arrv) {
         if (isString(arrv)) {
           temp.push(arrv);
         } else {
@@ -1352,7 +1375,7 @@ function msToNs(duration) {
 }
 function mapValues(object, fn) {
   var newObject = {};
-  each(object, function (value, key) {
+  tools_each(object, function (value, key) {
     newObject[key] = fn(value);
   });
   return newObject;
@@ -1592,7 +1615,7 @@ function tools_getLinkElementOrigin(element) {
 }
 function withSnakeCaseKeys(candidate) {
   var result = {};
-  each(candidate, function (value, key) {
+  tools_each(candidate, function (value, key) {
     result[toSnakeCase(key)] = deepSnakeCase(value);
   });
   return result;
@@ -2037,7 +2060,7 @@ function computeStackTrace(ex) {
     stackProperty = stackProperty.slice(exString.length);
   }
   if (stackProperty) {
-    each(stackProperty.split('\n'), function (line) {
+    tools_each(stackProperty.split('\n'), function (line) {
       var stackFrame = parseChromeLine(line) || parseChromeAnonymousLine(line) || parseWinLine(line) || parseGeckoLine(line);
       if (stackFrame) {
         if (!stackFrame.func && stackFrame.line) {
@@ -2600,7 +2623,7 @@ function createHandlingStack() {
 }
 function toStackTraceString(stack) {
   var result = formatErrorMessage(stack);
-  each(stack.stack, function (frame) {
+  tools_each(stack.stack, function (frame) {
     var func = frame.func === '?' ? '<anonymous>' : frame.func;
     var args = frame.args && frame.args.length > 0 ? '(' + frame.args.join(', ') + ')' : '';
     var line = frame.line ? ':' + frame.line : '';
@@ -2758,7 +2781,7 @@ _Observable.prototype = {
     };
   },
   notify: function notify(data) {
-    each(this.observers, function (observer) {
+    tools_each(this.observers, function (observer) {
       observer(data);
     });
   }
@@ -2773,7 +2796,7 @@ function mergeObservables() {
       });
     });
     return function () {
-      return each(subscriptions, function (subscription) {
+      return tools_each(subscriptions, function (subscription) {
         return subscription.unsubscribe();
       });
     };
@@ -2890,12 +2913,12 @@ function addEventListeners(eventTarget, eventNames, listener, options) {
   // Use the window.EventTarget.prototype when possible to avoid wrong overrides (e.g: https://github.com/salesforce/lwc/issues/1824)
   var listenerTarget = window.EventTarget && eventTarget instanceof EventTarget ? window.EventTarget.prototype : eventTarget;
   var add = getZoneJsOriginalValue(listenerTarget, 'addEventListener');
-  each(eventNames, function (eventName) {
+  tools_each(eventNames, function (eventName) {
     add.call(eventTarget, eventName, wrappedListener, options);
   });
   var stop = function stop() {
     var remove = getZoneJsOriginalValue(listenerTarget, 'removeEventListener');
-    each(eventNames, function (eventName) {
+    tools_each(eventNames, function (eventName) {
       remove.call(eventTarget, eventName, wrappedListener, options);
     });
   };
@@ -2934,7 +2957,7 @@ function createReportObservable(reportTypes) {
       return;
     }
     var handleReports = monitor(function (reports) {
-      each(reports, function (report) {
+      tools_each(reports, function (report) {
         observable.notify(buildRawReportErrorFromReport(report));
       });
     });
@@ -3025,7 +3048,7 @@ LifeCycle.prototype = {
   notify: function notify(eventType, data) {
     var eventCallbacks = this.callbacks[eventType];
     if (eventCallbacks) {
-      each(eventCallbacks, function (callback) {
+      tools_each(eventCallbacks, function (callback) {
         callback(data);
       });
     }
@@ -3326,7 +3349,7 @@ function readBytesFromStream(stream, callback, options) {
         // else, we need to copy buffers into a larger buffer to concatenate them.
         completeBuffer = new Uint8Array(readBytesCount);
         var offset = 0;
-        each(chunks, function (chunk) {
+        tools_each(chunks, function (chunk) {
           completeBuffer.set(chunk, offset);
           offset += chunk.length;
         });
@@ -4022,7 +4045,7 @@ function validateAndBuildConfiguration(initConfiguration) {
   }
   var sessionSampleRate = isNullUndefinedDefaultValue(initConfiguration.sessionSampleRate, initConfiguration.sampleRate);
   return tools_assign({
-    beforeSend: initConfiguration.beforeSend && catchUserErrors(initConfiguration.beforeSend, 'beforeSend threw an error:'),
+    beforeSend: initConfiguration.beforeSend && catchUserErrors_catchUserErrors(initConfiguration.beforeSend, 'beforeSend threw an error:'),
     sessionStoreStrategyType: selectSessionStoreStrategyType(initConfiguration),
     sessionSampleRate: isNullUndefinedDefaultValue(sessionSampleRate, 100),
     service: initConfiguration.service,
@@ -5080,14 +5103,14 @@ var processedMessageByDataMap = function processedMessageByDataMap(message) {
   };
   var hasFileds = false;
   var rowStr = '';
-  each(dataMap, function (value, key) {
+  tools_each(dataMap, function (value, key) {
     if (value.type === message.type) {
       rowStr += key + ',';
       rowData.measurement = key;
       var tagsStr = [];
       var tags = extend({}, commonTags, value.tags);
       var filterFileds = ['date', 'type', CUSTOM_KEYS]; // 已经在datamap中定义过的fields和tags
-      each(tags, function (value_path, _key) {
+      tools_each(tags, function (value_path, _key) {
         var _value = findByPath(message, value_path);
         filterFileds.push(_key);
         if (_value || isNumber(_value)) {
@@ -5097,7 +5120,7 @@ var processedMessageByDataMap = function processedMessageByDataMap(message) {
       });
       var fieldsStr = [];
       var fields = extend({}, commonFields, value.fields);
-      each(fields, function (_value, _key) {
+      tools_each(fields, function (_value, _key) {
         if (isArray(_value) && _value.length === 2) {
           var value_path = _value[1];
           var _valueData = findByPath(message, value_path);
@@ -5118,7 +5141,7 @@ var processedMessageByDataMap = function processedMessageByDataMap(message) {
       if (message.context && isObject(message.context) && !isEmptyObject(message.context)) {
         // 自定义tag， 存储成field
         var _tagKeys = [];
-        each(message.context, function (_value, _key) {
+        tools_each(message.context, function (_value, _key) {
           // 如果和之前tag重名，则舍弃
           if (filterFileds.indexOf(_key) > -1) return;
           filterFileds.push(_key);
@@ -5135,7 +5158,7 @@ var processedMessageByDataMap = function processedMessageByDataMap(message) {
       }
       if (message.type === RumEventType.LOGGER) {
         // 这里处理日志类型数据自定义字段
-        each(message, function (value, key) {
+        tools_each(message, function (value, key) {
           if (filterFileds.indexOf(key) === -1 && value !== undefined && value !== null) {
             rowData.fields[key] = escapeJsonValue(value); // 这里不需要转译
             fieldsStr.push(escapeRowData(key) + '=' + escapeRowField(value));
@@ -5887,7 +5910,7 @@ function sanitizeUser(newUser) {
   // We shallow clone only to prevent mutation of user data.
   var user = tools_assign({}, newUser);
   var keys = ['id', 'name', 'email'];
-  each(keys, function (key) {
+  tools_each(keys, function (key) {
     if (key in user) {
       user[key] = String(user[key]);
     }
@@ -7004,7 +7027,7 @@ function computeResourceEntryType(entry) {
   }
   var path = getPathName(url);
   var type = ResourceType.OTHER;
-  each(RESOURCE_TYPES, function (res) {
+  tools_each(RESOURCE_TYPES, function (res) {
     var _type = res[0],
       isType = res[1];
     if (isType(entry.initiatorType, path)) {
@@ -8173,7 +8196,7 @@ function createPageActivityObservable(lifeCycle, domMutationObservable, configur
     var stopTrackingWindowOpen = _trackWindowOpen.stop;
     return function () {
       stopTrackingWindowOpen();
-      each(subscriptions, function (s) {
+      tools_each(subscriptions, function (s) {
         s.unsubscribe();
       });
     };
@@ -9090,7 +9113,7 @@ function startTracer(configuration, sessionManager) {
       return injectHeadersIfTracingAllowed(configuration, context, sessionManager, function (tracingHeaders) {
         if (context.input instanceof Request && (!context.init || !context.init.headers)) {
           context.input = new Request(context.input);
-          each(tracingHeaders, function (value, key) {
+          tools_each(tracingHeaders, function (value, key) {
             context.input.headers.append(key, value);
           });
         } else {
@@ -9101,18 +9124,18 @@ function startTracer(configuration, sessionManager) {
               headers.push([key, value]);
             });
           } else if (isArray(context.init.headers)) {
-            each(context.init.headers, function (header) {
+            tools_each(context.init.headers, function (header) {
               headers.push(header);
             });
           } else if (context.init.headers) {
-            each(context.init.headers, function (value, key) {
+            tools_each(context.init.headers, function (value, key) {
               headers.push([key, value]);
             });
           }
           // context.init.headers = headers.concat(objectEntries(tracingHeaders))
           // 转换成对象，兼容部分
           var headersMap = {};
-          each(headers.concat(objectEntries(tracingHeaders)), function (header) {
+          tools_each(headers.concat(objectEntries(tracingHeaders)), function (header) {
             headersMap[header[0]] = header[1];
           });
           context.init.headers = headersMap;
@@ -9121,7 +9144,7 @@ function startTracer(configuration, sessionManager) {
     },
     traceXhr: function traceXhr(context, xhr) {
       return injectHeadersIfTracingAllowed(configuration, context, sessionManager, function (tracingHeaders) {
-        each(tracingHeaders, function (value, name) {
+        tools_each(tracingHeaders, function (value, name) {
           xhr.setRequestHeader(name, value);
         });
       });
@@ -9801,8 +9824,8 @@ function validateAndBuildRumConfiguration(initConfiguration) {
     sessionReplayOnErrorSampleRate: isNullUndefinedDefaultValue(initConfiguration.sessionReplayOnErrorSampleRate, 0),
     tracingSampleRate: isNullUndefinedDefaultValue(initConfiguration.tracingSampleRate, 100),
     allowedTracingUrls: allowedTracingUrls,
-    injectTraceHeader: initConfiguration.injectTraceHeader && catchUserErrors(initConfiguration.injectTraceHeader, 'injectTraceHeader threw an error:'),
-    generateTraceId: initConfiguration.generateTraceId && catchUserErrors(initConfiguration.generateTraceId, 'generateTraceId threw an error:'),
+    injectTraceHeader: initConfiguration.injectTraceHeader && catchUserErrors_catchUserErrors(initConfiguration.injectTraceHeader, 'injectTraceHeader threw an error:'),
+    generateTraceId: initConfiguration.generateTraceId && catchUserErrors_catchUserErrors(initConfiguration.generateTraceId, 'generateTraceId threw an error:'),
     excludedActivityUrls: isNullUndefinedDefaultValue(initConfiguration.excludedActivityUrls, []),
     workerUrl: initConfiguration.workerUrl,
     compressIntakeRequests: !!initConfiguration.compressIntakeRequests,
@@ -9812,7 +9835,7 @@ function validateAndBuildRumConfiguration(initConfiguration) {
     traceType: isNullUndefinedDefaultValue(initConfiguration.traceType, TraceType.DDTRACE),
     traceId128Bit: !!initConfiguration.traceId128Bit,
     defaultPrivacyLevel: objectHasValue(DefaultPrivacyLevel, initConfiguration.defaultPrivacyLevel) ? initConfiguration.defaultPrivacyLevel : DefaultPrivacyLevel.MASK_USER_INPUT,
-    shouldMaskNode: initConfiguration.shouldMaskNode && catchUserErrors(initConfiguration.shouldMaskNode, 'shouldMaskNode threw an error:')
+    shouldMaskNode: initConfiguration.shouldMaskNode && catchUserErrors_catchUserErrors(initConfiguration.shouldMaskNode, 'shouldMaskNode threw an error:')
   }, baseConfiguration, buildEnv);
 }
 /**
@@ -9835,7 +9858,7 @@ function validateAndBuildTracingOptions(initConfiguration) {
     // }
     // Convert from (MatchOption | TracingOption) to TracingOption, remove unknown properties
     var tracingOptions = [];
-    each(initConfiguration.allowedTracingUrls, function (option) {
+    tools_each(initConfiguration.allowedTracingUrls, function (option) {
       if (isMatchOption(option)) {
         tracingOptions.push({
           match: option,
@@ -10319,7 +10342,7 @@ function createPostStartStrategy(preStartStrategy, startRumResult) {
   }, startRumResult);
 }
 ;// CONCATENATED MODULE: ./src/boot/rum.entry.js
-
+// import { defineGlobal, getGlobalObject } from '@cloudcare/browser-core'
 
 
 // import { startRecording } from './startRecording'
@@ -10330,9 +10353,10 @@ var datafluxRum = makeRumPublicApi(startRum, 'recorderApi', {
   startDeflateWorker: null,
   createDeflateEncoder: null
 });
-defineGlobal(getGlobalObject(), 'DATAFLUX_RUM', datafluxRum);
+
+// defineGlobal(getGlobalObject(), 'DATAFLUX_RUM', datafluxRum)
 ;// CONCATENATED MODULE: ./src/index.js
 
 
-/******/ })()
-;
+var __webpack_exports__datafluxRum = __webpack_exports__.E;
+export { __webpack_exports__datafluxRum as datafluxRum };
