@@ -15,7 +15,7 @@ import {
   each
 } from '@cloudcare/browser-core'
 import { buildEnv } from '../boot/buildEnv'
-import { isTracingOption } from '../domain/tracing/tracer'
+// import { isTracingOption } from '../domain/tracing/tracer'
 
 export function validateAndBuildRumConfiguration(initConfiguration) {
   if (!initConfiguration.applicationId) {
@@ -54,10 +54,10 @@ export function validateAndBuildRumConfiguration(initConfiguration) {
     )
     return
   }
-  var allowedTracingUrls = validateAndBuildTracingOptions(initConfiguration)
-  if (!allowedTracingUrls) {
-    return
-  }
+  // var allowedTracingUrls = validateAndBuildTracingOptions(initConfiguration)
+  // if (!allowedTracingUrls) {
+  //   return
+  // }
   //   if (initConfiguration.allowedTracingOrigins !== undefined) {
   //     if (!isArray(initConfiguration.allowedTracingOrigins)) {
   //       display.error('Allowed Tracing Origins should be an array')
@@ -70,13 +70,13 @@ export function validateAndBuildRumConfiguration(initConfiguration) {
   //       return
   //     }
   //   }
-  if (
-    initConfiguration.tracingSampleRate !== undefined &&
-    !isPercentage(initConfiguration.tracingSampleRate)
-  ) {
-    display.error('Tracing Sample Rate should be a number between 0 and 100')
-    return
-  }
+  // if (
+  //   initConfiguration.tracingSampleRate !== undefined &&
+  //   !isPercentage(initConfiguration.tracingSampleRate)
+  // ) {
+  //   display.error('Tracing Sample Rate should be a number between 0 and 100')
+  //   return
+  // }
   if (
     initConfiguration.excludedActivityUrls !== undefined &&
     !isArray(initConfiguration.excludedActivityUrls)
@@ -113,7 +113,7 @@ export function validateAndBuildRumConfiguration(initConfiguration) {
         initConfiguration.tracingSampleRate,
         100
       ),
-      allowedTracingUrls: allowedTracingUrls,
+      allowedTracingUrls: [], // allowedTracingUrls,
       injectTraceHeader:
         initConfiguration.injectTraceHeader &&
         catchUserErrors(

@@ -28,7 +28,7 @@ import { startViewContexts } from '../domain/contexts/viewContexts'
 import { startPageStateHistory } from '../domain/contexts/pageStateHistory'
 import { startErrorCollection } from '../domain/rumEventsCollection/error/errorCollection'
 import { startViewCollection } from '../domain/rumEventsCollection/view/viewCollection'
-import { startRequestCollection } from '../domain/requestCollection'
+// import { startRequestCollection } from '../domain/requestCollection'
 import { startResourceCollection } from '../domain/rumEventsCollection/resource/resourceCollection'
 
 export function startRum(
@@ -162,7 +162,7 @@ export function startRum(
     pageStateHistory
   )
   var addError = _startErrorCollection.addError
-  startRequestCollection(lifeCycle, configuration, session)
+  // startRequestCollection(lifeCycle, configuration, session)
 
   var internalContext = startInternalContext(
     configuration.applicationId,
