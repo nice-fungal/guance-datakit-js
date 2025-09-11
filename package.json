@@ -37,6 +37,10 @@
     },
     "scripts": {
         "build": "lerna run build --stream",
+        "build:core": "lerna run build --scope=@cloudcare/browser-core --stream",
+        "build:worker": "lerna run build --scope=@cloudcare/browser-worker --stream",
+        "build:rum": "lerna run build --scope=@cloudcare/browser-rum --stream",
+        "build:logs": "lerna run build --scope=@cloudcare/browser-logs --stream",
         "build:bundle": "lerna run build:bundle --stream",
         "publish:npm": "npm run build && lerna publish from-package",
         "publish:oss:current": "lerna run publish:oss:current --stream",

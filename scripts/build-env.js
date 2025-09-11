@@ -28,10 +28,12 @@ const buildEnvFactories = {
     // Make sure the worker is built
     // TODO: Improve overall built time by rebuilding the worker only if its sources have changed?
     // TODO: Improve developer experience during tests by detecting worker source changes?
-    command`npm run build`.withCurrentWorkingDirectory(workerPath).run()
-    return readFileSync(path.join(workerPath, 'bundle/worker.js'), {
-      encoding: 'utf-8'
-    })
+    // AFTER `$ npm run build:worker`
+    // command`npm run build`.withCurrentWorkingDirectory(workerPath).run()
+    // return readFileSync(path.join(workerPath, 'bundle/worker.js'), {
+    //   encoding: 'utf-8'
+    // })
+    return '';
   }
 }
 
