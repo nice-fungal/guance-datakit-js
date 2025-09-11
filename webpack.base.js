@@ -17,13 +17,17 @@ module.exports = ({
   },
   target: ['web', 'es5'],
   devtool: false,
+  // optimization: {
+  //   minimizer: [
+  //     new TerserPlugin({
+  //       extractComments: false
+  //     })
+  //   ]
+  // },
   optimization: {
-    minimizer: [
-      new TerserPlugin({
-        extractComments: false
-      })
-    ]
+    minimize: false
   },
+
   module: {
     rules: [
       {
