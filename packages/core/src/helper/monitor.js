@@ -2,13 +2,13 @@ import { ConsoleApiName, display } from './display'
 var onMonitorErrorCollected
 var debugMode = false
 
-export function startMonitorErrorCollection(newOnMonitorErrorCollected) {
-  onMonitorErrorCollected = newOnMonitorErrorCollected
-}
+// export function startMonitorErrorCollection(newOnMonitorErrorCollected) {
+//   onMonitorErrorCollected = newOnMonitorErrorCollected
+// }
 
-export function setDebugMode(newDebugMode) {
-  debugMode = newDebugMode
-}
+// export function setDebugMode(newDebugMode) {
+//   debugMode = newDebugMode
+// }
 
 export function resetMonitor() {
   onMonitorErrorCollected = undefined
@@ -25,21 +25,21 @@ export function callMonitored(fn, context, args) {
   try {
     return fn.apply(context, args)
   } catch (e) {
-    displayIfDebugEnabled(e)
+    // displayIfDebugEnabled(e)
     if (onMonitorErrorCollected) {
       try {
         onMonitorErrorCollected(e)
       } catch (e) {
-        displayIfDebugEnabled(e)
+        // displayIfDebugEnabled(e)
       }
     }
   }
 }
 
-export function displayIfDebugEnabled() {
-  var args = [].slice.call(arguments)
-  //   display.error.apply(null, ['[MONITOR]'].concat(args))
-  if (debugMode) {
-    display.error.apply(null, ['[MONITOR]'].concat(args))
-  }
-}
+// export function displayIfDebugEnabled() {
+//   var args = [].slice.call(arguments)
+//   //   display.error.apply(null, ['[MONITOR]'].concat(args))
+//   if (debugMode) {
+//     display.error.apply(null, ['[MONITOR]'].concat(args))
+//   }
+// }

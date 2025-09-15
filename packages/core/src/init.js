@@ -1,5 +1,5 @@
 import { each, assign } from './helper/tools'
-import { setDebugMode } from './helper/monitor'
+// import { setDebugMode } from './helper/monitor'
 import { catchUserErrors } from './helper/catchUserErrors'
 
 export function makePublicApi(stub) {
@@ -15,12 +15,12 @@ export function makePublicApi(stub) {
 
   // Add an "hidden" property to set debug mode. We define it that way to hide it
   // as much as possible but of course it's not a real protection.
-  Object.defineProperty(publicApi, '_setDebug', {
-    get: function () {
-      return setDebugMode
-    },
-    enumerable: false
-  })
+  // Object.defineProperty(publicApi, '_setDebug', {
+  //   get: function () {
+  //     return setDebugMode
+  //   },
+  //   enumerable: false
+  // })
 
   return publicApi
 }
