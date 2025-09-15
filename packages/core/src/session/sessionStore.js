@@ -65,6 +65,7 @@ export function startSessionStore(
     throttled: throttledExpandOrRenewSession,
     cancel: cancelExpandOrRenewSession
   } = throttle(function () {
+    console.log('%c%s', 'background-color: #FEFB00', '[SessionStore.throttle]');
     processSessionStoreOperations(
       {
         process: function (sessionState) {
@@ -73,6 +74,7 @@ export function startSessionStore(
           }
 
           const synchronizedSession = synchronizeSession(sessionState)
+          // console.log('%c%s', 'background-color: #FEFB00', '[SessionStore.expandOrRenewSessionState.new ]');
           expandOrRenewSessionState(synchronizedSession)
           return synchronizedSession
         },
@@ -88,6 +90,7 @@ export function startSessionStore(
   }, STORAGE_POLL_DELAY)
 
   function expandSession() {
+    console.log('%c%s', 'background-color: #FEFB00', '[SessionStore.expandSession]');
     processSessionStoreOperations(
       {
         process: function (sessionState) {
@@ -104,8 +107,12 @@ export function startSessionStore(
    * allows two behaviors:
    * - if the session is active, synchronize the session cache without updating the session store
    * - if the session is not active, clear the session store and expire the session cache
+   * 
+   * SessionStore 内部轮询，仅检查是否过期；外部主动延期是调用的 throttledExpandOrRenewSession
+   * 目前看下来只有 trackActivity 会触发主动延期
    */
   function watchSession() {
+    // console.log('%c%s', 'background-color: #FEFB00', '[SessionStore.watchSession]');
     processSessionStoreOperations(
       {
         process: function (sessionState) {
@@ -127,6 +134,7 @@ export function startSessionStore(
       if (isSessionInCacheOutdated(sessionState)) {
         expireSessionInCache()
       } else {
+        console.debug('%c%s', 'background-color: #FEFB00', '[SessionStore.sessionStateUpdateObservable.notify]');
         sessionStateUpdateObservable.notify({
           previousState: sessionCache,
           newState: sessionState
@@ -138,6 +146,7 @@ export function startSessionStore(
   }
 
   function startSession() {
+    console.log('%c%s', 'background-color: #FEFB00', '[SessionStore.startSession]');
     processSessionStoreOperations(
       {
         process: function (sessionState) {
@@ -154,6 +163,7 @@ export function startSessionStore(
   }
 
   function expandOrRenewSessionState(sessionState) {
+    console.log('%c%s', 'background-color: #FEFB00', '[SessionStore.expandOrRenewSessionState]');
     if (isSessionInNotStartedState(sessionState)) {
       return false
     }
@@ -181,16 +191,19 @@ export function startSessionStore(
   }
 
   function expireSessionInCache() {
+    console.log('%c%s', 'background-color: #F0F9FF', '[SessionStore.expireSessionInCache]');
     sessionCache = getExpiredSessionState()
     expireObservable.notify()
   }
 
   function renewSessionInCache(sessionState) {
+    console.log('%c%s', 'background-color: #FEFB00', '[SessionStore.renewSessionInCache]');
     sessionCache = sessionState
     renewObservable.notify()
   }
 
   function updateSessionState(partialSessionState) {
+    console.log('%c%s', 'background-color: #FEFB00', '[SessionStore.updateSessionState]');
     processSessionStoreOperations(
       {
         process: function (sessionState) {

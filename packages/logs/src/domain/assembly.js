@@ -80,7 +80,7 @@ export function startLogsAssembly(
     }
 
     lifeCycle.notify(LifeCycleEventType.LOG_COLLECTED, withSnakeCaseKeys(log))
-  })
+  }, { __NO_LOG__: true })
 }
 
 export function getRUMInternalContext(startTime) {

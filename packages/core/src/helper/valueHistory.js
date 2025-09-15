@@ -15,7 +15,7 @@ function cleanupHistories() {
  * @param {expireDelay,maxEntries } params
  * @returns
  */
-export function createValueHistory(params) {
+export function createValueHistory(params, __name__ = '__name__') {
   var expireDelay = params.expireDelay
   var maxEntries = params.maxEntries
 
@@ -37,6 +37,7 @@ export function createValueHistory(params) {
   }
   cleanupTasks.add(clearExpiredValues)
   function add(value, startTime) {
+    console.log('%c%s', 'background-color: #00F900', '[createValueHistory.add]', __name__, value);
     var entry = {
       value: value,
       startTime: startTime,
@@ -77,6 +78,7 @@ export function createValueHistory(params) {
   }
 
   function closeActive(endTime) {
+    console.log('%c%s', 'background-color: #00F900', '[createValueHistory.closeActive]', __name__);
     var latestEntry = entries[0]
     if (latestEntry && latestEntry.endTime === END_OF_TIMES) {
       latestEntry.close(endTime)
@@ -104,6 +106,7 @@ export function createValueHistory(params) {
    * Remove all entries from this collection.
    */
   function reset() {
+    console.log('%c%s', 'background-color: #00F900', '[createValueHistory.reset]', __name__);
     entries = []
   }
 
@@ -111,6 +114,7 @@ export function createValueHistory(params) {
    * Stop internal garbage collection of past entries.
    */
   function stop() {
+    console.log('%c%s', 'background-color: #00F900', '[createValueHistory.stop]');
     cleanupTasks.delete(clearExpiredValues)
     if (cleanupTasks.size === 0 && cleanupHistoriesInterval) {
       clearInterval(cleanupHistoriesInterval)

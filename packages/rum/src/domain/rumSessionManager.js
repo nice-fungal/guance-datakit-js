@@ -143,13 +143,13 @@ function computeSessionState(configuration, rawTrackingType) {
     sessionReplaySampleRate,
     sessionReplayOnErrorSampleRate
   } = configuration
-  const isSession = performDraw(sessionSampleRate)
-  const isErrorSession = performDraw(sessionOnErrorSampleRate)
-  const isSessionReplay = performDraw(sessionReplaySampleRate)
-  const isErrorSessionReplay = performDraw(sessionReplayOnErrorSampleRate)
+  const isSession = performDraw(sessionSampleRate)                         // 100 true
+  const isErrorSession = performDraw(sessionOnErrorSampleRate)             // 100 true
+  const isSessionReplay = performDraw(sessionReplaySampleRate)             // undefined false
+  const isErrorSessionReplay = performDraw(sessionReplayOnErrorSampleRate) // undefined false
   var trackingType
   if (hasValidRumSession(rawTrackingType)) {
-    trackingType = rawTrackingType
+    trackingType = rawTrackingType                                         // 2 TRACKED_WITH_SESSION_AND_WITHOUT_SESSION_REPLAY
   } else if (!isErrorSession && !isSession) {
     trackingType = RumTrackingType.NOT_TRACKED
   } else if (isSession && isSessionReplay) {

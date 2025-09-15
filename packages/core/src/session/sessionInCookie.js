@@ -40,6 +40,7 @@ export function initCookieStrategy(cookieOptions) {
 }
 
 function persistSessionCookie(options) {
+  console.log('%c%s', 'background-color: #FEFB00', '[SessionInCookie.persistSessionCookie]');
   return function (session) {
     setCookie(
       SESSION_STORE_KEY,
@@ -51,6 +52,7 @@ function persistSessionCookie(options) {
 }
 
 function expireSessionCookie(options) {
+  console.debug('%c%s', 'background-color: #FEFB00', '[SessionInCookie.expireSessionCookie]');
   setCookie(
     SESSION_STORE_KEY,
     toSessionString(getExpiredSessionState()),

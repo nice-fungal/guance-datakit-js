@@ -33,7 +33,7 @@ export function startSessionManager(
 
   const sessionContextHistory = createValueHistory({
     expireDelay: SESSION_CONTEXT_TIMEOUT_DELAY
-  })
+  }, '__SessionContext__')
   stopCallbacks.push(function () {
     return sessionContextHistory.stop()
   })

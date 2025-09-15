@@ -223,11 +223,12 @@ export function startRumAssembly(
           }
           lifeCycle.notify(
             LifeCycleEventType.RUM_EVENT_COLLECTED,
-            serverRumEvent
+            serverRumEvent,
+            { __NO_LOG__: true }
           )
         }
       }
-    }
+    },
   )
 }
 

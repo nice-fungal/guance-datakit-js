@@ -112,6 +112,7 @@ function processViewUpdate(view, configuration, recorderApi, pageStateHistory) {
     view.startClocks.relative,
     view.duration
   )
+  console.trace('domain/rumEventsCollection/view/viewCollection.js::processViewUpdate', pageStates);
   var viewEvent = {
     _gc: {
       document_version: view.documentVersion,

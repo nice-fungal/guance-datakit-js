@@ -30,7 +30,7 @@ export function startPageStateHistory(maxPageStateEntriesSelectable) {
   var pageStateEntryHistory = createValueHistory({
     expireDelay: PAGE_STATE_CONTEXT_TIME_OUT_DELAY,
     maxEntries: MAX_PAGE_STATE_ENTRIES
-  })
+  }, '__PageStateEntry__')
 
   var currentPageState
   addPageState(getPageState(), relativeNow())

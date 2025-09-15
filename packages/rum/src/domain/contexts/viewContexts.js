@@ -9,7 +9,7 @@ export var VIEW_CONTEXT_TIME_OUT_DELAY = SESSION_TIME_OUT_DELAY
 export function startViewContexts(lifeCycle) {
   var viewContextHistory = createValueHistory({
     expireDelay: VIEW_CONTEXT_TIME_OUT_DELAY
-  })
+  }, '__ViewContext__')
 
   lifeCycle.subscribe(LifeCycleEventType.BEFORE_VIEW_CREATED, function (view) {
     viewContextHistory.add(buildViewContext(view), view.startClocks.relative)

@@ -26,13 +26,15 @@ export function startRumBatch(
   lifeCycle.subscribe(
     LifeCycleEventType.RUM_EVENT_COLLECTED,
     function (serverRumEvent) {
+      console.log('%c%s', 'background-color: #00F900', '[startRumBatch]', serverRumEvent);
       // NOTE: upsert 和 add 其实是同一个方法；只是 upsert 会根据 key 来覆盖之前的内容
       if (serverRumEvent.type === RumEventType.VIEW) {
         batch.upsert(serverRumEvent, serverRumEvent.view.id)
       } else {
         batch.add(serverRumEvent)
       }
-    }
+    },
+    { __NO_LOG__: true }
   )
   // telemetryEventObservable.subscribe(function (event) {
   //   batch.add(event)

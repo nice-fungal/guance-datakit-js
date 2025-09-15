@@ -32,6 +32,7 @@ export function createFlushController({
   var currentMessagesCount = 0
 
   function flush(flushReason) {
+    console.log('%c%s', 'background-color: #00F900', '[FlushController.flush]', flushReason);
     if (currentMessagesCount === 0) {
       return
     }

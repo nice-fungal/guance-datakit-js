@@ -23,7 +23,21 @@ import { jsonStringify } from '../helper/serialisation/jsonStringify'
 // https://en.wikipedia.org/wiki/UTF-8
 // eslint-disable-next-line no-control-regex
 var CUSTOM_KEYS = 'custom_keys'
+
+function _trace(level, highlight, ...message) {
+  const COLOR = {
+    'verbose': 'background-color: #F0F9FF',
+    'debug': 'background-color: #00F900',
+    'warn': 'background-color: #FEFB00',
+  };
+  console.groupCollapsed('%c%s', COLOR[level], highlight, ...message);
+  console.trace();
+  console.groupEnd();
+}
+
 export var processedMessageByDataMap = function (message) {
+  _trace('debug', '[transport.batch.processedMessageByDataMap]', message);
+
   if (!message || !message.type)
     return {
       rowStr: '',
@@ -195,6 +209,7 @@ export function createBatch(options) {
     return processedMessage
   }
   function addOrUpdate(message, key) {
+    console.log('%c%s', 'background-color: #00F900', '[batch.addOrUpdate]', message, key);
     const serializedMessage = process(message)
 
     const estimatedMessageBytesCount =

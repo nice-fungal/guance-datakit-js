@@ -24,7 +24,7 @@ export function startUrlContexts(
 ) {
   var urlContextHistory = createValueHistory({
     expireDelay: URL_CONTEXT_TIME_OUT_DELAY
-  })
+  }, '__UrlContext__')
 
   var previousViewUrl
 

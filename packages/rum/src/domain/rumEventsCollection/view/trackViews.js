@@ -77,8 +77,9 @@ export function trackViews(
     })
 
     lifeCycle.subscribe(LifeCycleEventType.SESSION_EXPIRED, function () {
+      console.log('%c%s', 'background-color: #FEFB00', '[trackViews.lifeCycle.subscribe.SESSION_EXPIRED] currentView.end');
       currentView.end({ sessionIsActive: false })
-    })
+    }, { __NO_LOG__: true })
     // // End the current view on page unload
     // lifeCycle.subscribe(
     //   LifeCycleEventType.PAGE_EXITED,
@@ -95,6 +96,7 @@ export function trackViews(
       var oldLocation = params.oldLocation
       var newLocation = params.newLocation
       if (areDifferentLocation(oldLocation, newLocation)) {
+        console.log('%c%s', 'background-color: #FEFB00', '[trackViews.locationChangeObservable.subscribe] currentView.end');
         currentView.end()
         currentView = startNewView(ViewLoadingType.ROUTE_CHANGE)
         return
@@ -110,6 +112,7 @@ export function trackViews(
       currentView.addTiming(name, time)
     },
     startView: function (options, startClocks) {
+      console.log('%c%s', 'background-color: #FEFB00', '[trackViews.startView] currentView.end');
       currentView.end({ endClocks: startClocks })
       currentView = startNewView(
         ViewLoadingType.ROUTE_CHANGE,
@@ -131,6 +134,7 @@ export function trackViews(
       if (locationChangeSubscription) {
         locationChangeSubscription.unsubscribe()
       }
+      console.log('%c%s', 'background-color: #FEFB00', '[trackViews.stop] currentView.end');
       currentView.end()
       activeViews.forEach(function (view) {
         view.stop()
