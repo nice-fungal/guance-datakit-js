@@ -37,74 +37,74 @@ export function startViewCollection(
     initialViewOptions
   )
 }
-function computePerformanceViewDetails(navigationTimings) {
-  if (!navigationTimings) {
-    return undefined
-  }
-  var fetchStart = navigationTimings.fetchStart,
-    responseEnd = navigationTimings.responseEnd,
-    domInteractive = navigationTimings.domInteractive,
-    domContentLoaded = navigationTimings.domContentLoaded,
-    domComplete = navigationTimings.domComplete,
-    loadEventEnd = navigationTimings.loadEventEnd,
-    loadEventStart = navigationTimings.loadEventStart,
-    domContentLoadedEventEnd = navigationTimings.domContentLoadedEventEnd
-  var details = {}
-  if (
-    isNumber(responseEnd) &&
-    isNumber(fetchStart) &&
-    responseEnd !== fetchStart &&
-    responseEnd > fetchStart
-  ) {
-    details.fpt = toServerDuration(responseEnd - fetchStart)
-    var apdexLevel = parseInt((responseEnd - fetchStart) / 1000) // 秒数取整
-    details.apdexLevel = apdexLevel > 9 ? 9 : apdexLevel
-  }
-  if (
-    isNumber(domInteractive) &&
-    isNumber(fetchStart) &&
-    domInteractive !== fetchStart &&
-    domInteractive > fetchStart
-  ) {
-    details.tti = toServerDuration(domInteractive - fetchStart)
-  }
-  if (
-    isNumber(domContentLoaded) &&
-    isNumber(fetchStart) &&
-    domContentLoaded !== fetchStart &&
-    domContentLoaded > fetchStart
-  ) {
-    details.dom_ready = toServerDuration(domContentLoaded - fetchStart)
-  }
-  // Make sure a connection occurred
-  if (
-    isNumber(loadEventEnd) &&
-    isNumber(fetchStart) &&
-    loadEventEnd !== fetchStart &&
-    loadEventEnd > fetchStart
-  ) {
-    details.load = toServerDuration(loadEventEnd - fetchStart)
-  }
-  if (
-    isNumber(loadEventStart) &&
-    isNumber(domContentLoadedEventEnd) &&
-    loadEventStart !== domContentLoadedEventEnd &&
-    loadEventStart > domContentLoadedEventEnd
-  ) {
-    details.resource_load_time = toServerDuration(
-      loadEventStart - domContentLoadedEventEnd
-    )
-  }
-  if (
-    isNumber(domComplete) &&
-    isNumber(domInteractive) &&
-    domComplete !== domInteractive &&
-    domComplete > domInteractive
-  ) {
-    details.dom = toServerDuration(domComplete - domInteractive)
-  }
-  return details
-}
+// function computePerformanceViewDetails(navigationTimings) {
+//   if (!navigationTimings) {
+//     return undefined
+//   }
+//   var fetchStart = navigationTimings.fetchStart,
+//     responseEnd = navigationTimings.responseEnd,
+//     domInteractive = navigationTimings.domInteractive,
+//     domContentLoaded = navigationTimings.domContentLoaded,
+//     domComplete = navigationTimings.domComplete,
+//     loadEventEnd = navigationTimings.loadEventEnd,
+//     loadEventStart = navigationTimings.loadEventStart,
+//     domContentLoadedEventEnd = navigationTimings.domContentLoadedEventEnd
+//   var details = {}
+//   if (
+//     isNumber(responseEnd) &&
+//     isNumber(fetchStart) &&
+//     responseEnd !== fetchStart &&
+//     responseEnd > fetchStart
+//   ) {
+//     details.fpt = toServerDuration(responseEnd - fetchStart)
+//     var apdexLevel = parseInt((responseEnd - fetchStart) / 1000) // 秒数取整
+//     details.apdexLevel = apdexLevel > 9 ? 9 : apdexLevel
+//   }
+//   if (
+//     isNumber(domInteractive) &&
+//     isNumber(fetchStart) &&
+//     domInteractive !== fetchStart &&
+//     domInteractive > fetchStart
+//   ) {
+//     details.tti = toServerDuration(domInteractive - fetchStart)
+//   }
+//   if (
+//     isNumber(domContentLoaded) &&
+//     isNumber(fetchStart) &&
+//     domContentLoaded !== fetchStart &&
+//     domContentLoaded > fetchStart
+//   ) {
+//     details.dom_ready = toServerDuration(domContentLoaded - fetchStart)
+//   }
+//   // Make sure a connection occurred
+//   if (
+//     isNumber(loadEventEnd) &&
+//     isNumber(fetchStart) &&
+//     loadEventEnd !== fetchStart &&
+//     loadEventEnd > fetchStart
+//   ) {
+//     details.load = toServerDuration(loadEventEnd - fetchStart)
+//   }
+//   if (
+//     isNumber(loadEventStart) &&
+//     isNumber(domContentLoadedEventEnd) &&
+//     loadEventStart !== domContentLoadedEventEnd &&
+//     loadEventStart > domContentLoadedEventEnd
+//   ) {
+//     details.resource_load_time = toServerDuration(
+//       loadEventStart - domContentLoadedEventEnd
+//     )
+//   }
+//   if (
+//     isNumber(domComplete) &&
+//     isNumber(domInteractive) &&
+//     domComplete !== domInteractive &&
+//     domComplete > domInteractive
+//   ) {
+//     details.dom = toServerDuration(domComplete - domInteractive)
+//   }
+//   return details
+// }
 
 function processViewUpdate(view, configuration, recorderApi, pageStateHistory) {
   // var replayStats = recorderApi.getReplayStats(view.id)
@@ -139,37 +139,37 @@ function processViewUpdate(view, configuration, recorderApi, pageStateHistory) {
       //   view.commonViewMetrics,
       //   'cumulativeLayoutShift.targetSelector'
       // ),
-      first_byte: toServerDuration(
-        findByPath(view.initialViewMetrics, 'navigationTimings.firstByte')
-      ),
-      dom_complete: toServerDuration(
-        findByPath(view.initialViewMetrics, 'navigationTimings.domComplete')
-      ),
-      dom_content_loaded: toServerDuration(
-        findByPath(
-          view.initialViewMetrics,
-          'navigationTimings.domContentLoaded'
-        )
-      ),
-      dom_interactive: toServerDuration(
-        findByPath(view.initialViewMetrics, 'navigationTimings.domInteractive')
-      ),
+      // first_byte: toServerDuration(
+      //   findByPath(view.initialViewMetrics, 'navigationTimings.firstByte')
+      // ),
+      // dom_complete: toServerDuration(
+      //   findByPath(view.initialViewMetrics, 'navigationTimings.domComplete')
+      // ),
+      // dom_content_loaded: toServerDuration(
+      //   findByPath(
+      //     view.initialViewMetrics,
+      //     'navigationTimings.domContentLoaded'
+      //   )
+      // ),
+      // dom_interactive: toServerDuration(
+      //   findByPath(view.initialViewMetrics, 'navigationTimings.domInteractive')
+      // ),
       // error: {
       //   count: view.eventCounts.errorCount
       // },
-      first_contentful_paint: toServerDuration(
-        findByPath(view.initialViewMetrics, 'firstContentfulPaint')
-      ),
-      first_input_delay: toServerDuration(
-        findByPath(view.initialViewMetrics, 'firstInput.delay')
-      ),
-      first_input_time: toServerDuration(
-        findByPath(view.initialViewMetrics, 'firstInput.time')
-      ),
-      first_input_target_selector: findByPath(
-        view.initialViewMetrics,
-        'firstInput.targetSelector'
-      ),
+      // first_contentful_paint: toServerDuration(
+      //   findByPath(view.initialViewMetrics, 'firstContentfulPaint')
+      // ),
+      // first_input_delay: toServerDuration(
+      //   findByPath(view.initialViewMetrics, 'firstInput.delay')
+      // ),
+      // first_input_time: toServerDuration(
+      //   findByPath(view.initialViewMetrics, 'firstInput.time')
+      // ),
+      // first_input_target_selector: findByPath(
+      //   view.initialViewMetrics,
+      //   'firstInput.targetSelector'
+      // ),
       // interaction_to_next_paint: toServerDuration(
       //   findByPath(view.commonViewMetrics, 'interactionToNextPaint.value')
       // ),
@@ -179,16 +179,16 @@ function processViewUpdate(view, configuration, recorderApi, pageStateHistory) {
       // ),
       is_active: view.isActive,
       name: view.name,
-      largest_contentful_paint: toServerDuration(
-        findByPath(view.initialViewMetrics, 'largestContentfulPaint.value')
-      ),
-      largest_contentful_paint_element_selector: findByPath(
-        view.initialViewMetrics,
-        'largestContentfulPaint.targetSelector'
-      ),
-      load_event: toServerDuration(
-        findByPath(view.initialViewMetrics, 'navigationTimings.loadEvent')
-      ),
+      // largest_contentful_paint: toServerDuration(
+      //   findByPath(view.initialViewMetrics, 'largestContentfulPaint.value')
+      // ),
+      // largest_contentful_paint_element_selector: findByPath(
+      //   view.initialViewMetrics,
+      //   'largestContentfulPaint.targetSelector'
+      // ),
+      // load_event: toServerDuration(
+      //   findByPath(view.initialViewMetrics, 'navigationTimings.loadEvent')
+      // ),
       // loading_time: discardNegativeDuration(
       //   toServerDuration(view.commonViewMetrics.loadingTime)
       // ),
@@ -228,11 +228,11 @@ function processViewUpdate(view, configuration, recorderApi, pageStateHistory) {
       toServerDuration
     )
   }
-  viewEvent = extend2Lev(viewEvent, {
-    view: computePerformanceViewDetails(
-      view.initialViewMetrics.navigationTimings
-    )
-  })
+  // viewEvent = extend2Lev(viewEvent, {
+  //   view: computePerformanceViewDetails(
+  //     view.initialViewMetrics.navigationTimings
+  //   )
+  // })
   return {
     rawRumEvent: viewEvent,
     startTime: view.startClocks.relative,
