@@ -596,21 +596,6 @@ var MethodLibrary = {
       browserMajor: _this.browserMajor
     }
   }),
-  // 获取地理位置
-  getGeoPostion: monitor(function (callback) {
-    navigator &&
-      navigator.geolocation &&
-      navigator.geolocation.getCurrentPosition(
-        // 位置获取成功
-        function (position) {
-          callback(position)
-        },
-        // 位置获取失败
-        function (error) {
-          display.warn(error)
-        }
-      )
-  })
 }
 var _deviceInfo = {}
 if (typeof window !== 'undefined') {
