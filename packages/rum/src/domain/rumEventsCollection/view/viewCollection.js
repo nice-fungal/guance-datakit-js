@@ -127,18 +127,18 @@ function processViewUpdate(view, configuration, recorderApi, pageStateHistory) {
       frustration: {
         count: view.eventCounts.frustrationCount
       },
-      cumulative_layout_shift: findByPath(
-        view.commonViewMetrics,
-        'cumulativeLayoutShift.value'
-      ),
-      cumulative_layout_shift_time: findByPath(
-        view.commonViewMetrics,
-        'cumulativeLayoutShift.time'
-      ),
-      cumulative_layout_shift_target_selector: findByPath(
-        view.commonViewMetrics,
-        'cumulativeLayoutShift.targetSelector'
-      ),
+      // cumulative_layout_shift: findByPath(
+      //   view.commonViewMetrics,
+      //   'cumulativeLayoutShift.value'
+      // ),
+      // cumulative_layout_shift_time: findByPath(
+      //   view.commonViewMetrics,
+      //   'cumulativeLayoutShift.time'
+      // ),
+      // cumulative_layout_shift_target_selector: findByPath(
+      //   view.commonViewMetrics,
+      //   'cumulativeLayoutShift.targetSelector'
+      // ),
       first_byte: toServerDuration(
         findByPath(view.initialViewMetrics, 'navigationTimings.firstByte')
       ),
@@ -170,13 +170,13 @@ function processViewUpdate(view, configuration, recorderApi, pageStateHistory) {
         view.initialViewMetrics,
         'firstInput.targetSelector'
       ),
-      interaction_to_next_paint: toServerDuration(
-        findByPath(view.commonViewMetrics, 'interactionToNextPaint.value')
-      ),
-      interaction_to_next_paint_target_selector: findByPath(
-        view.commonViewMetrics,
-        'interactionToNextPaint.targetSelector'
-      ),
+      // interaction_to_next_paint: toServerDuration(
+      //   findByPath(view.commonViewMetrics, 'interactionToNextPaint.value')
+      // ),
+      // interaction_to_next_paint_target_selector: findByPath(
+      //   view.commonViewMetrics,
+      //   'interactionToNextPaint.targetSelector'
+      // ),
       is_active: view.isActive,
       name: view.name,
       largest_contentful_paint: toServerDuration(
@@ -189,9 +189,9 @@ function processViewUpdate(view, configuration, recorderApi, pageStateHistory) {
       load_event: toServerDuration(
         findByPath(view.initialViewMetrics, 'navigationTimings.loadEvent')
       ),
-      loading_time: discardNegativeDuration(
-        toServerDuration(view.commonViewMetrics.loadingTime)
-      ),
+      // loading_time: discardNegativeDuration(
+      //   toServerDuration(view.commonViewMetrics.loadingTime)
+      // ),
       loading_type: view.loadingType,
       long_task: {
         count: view.eventCounts.longTaskCount
@@ -201,19 +201,19 @@ function processViewUpdate(view, configuration, recorderApi, pageStateHistory) {
       },
       time_spent: toServerDuration(view.duration)
     },
-    display: view.commonViewMetrics.scroll
-      ? {
-          scroll: {
-            max_depth: view.commonViewMetrics.scroll.maxDepth,
-            max_depth_scroll_top:
-              view.commonViewMetrics.scroll.maxDepthScrollTop,
-            max_scroll_height: view.commonViewMetrics.scroll.maxScrollHeight,
-            max_scroll_height_time: toServerDuration(
-              view.commonViewMetrics.scroll.maxScrollHeightTime
-            )
-          }
-        }
-      : undefined,
+    // display: view.commonViewMetrics.scroll
+    //   ? {
+    //       scroll: {
+    //         max_depth: view.commonViewMetrics.scroll.maxDepth,
+    //         max_depth_scroll_top:
+    //           view.commonViewMetrics.scroll.maxDepthScrollTop,
+    //         max_scroll_height: view.commonViewMetrics.scroll.maxScrollHeight,
+    //         max_scroll_height_time: toServerDuration(
+    //           view.commonViewMetrics.scroll.maxScrollHeightTime
+    //         )
+    //       }
+    //     }
+    //   : undefined,
     session: {
       // has_replay: replayStats ? true : undefined,
       is_active: view.sessionIsActive ? undefined : false
