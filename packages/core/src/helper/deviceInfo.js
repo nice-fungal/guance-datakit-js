@@ -576,18 +576,6 @@ var MethodLibrary = {
       browserMajor: _this.browserMajor
     }
   }),
-  getGeoPostion: monitor(function (callback) {
-    navigator &&
-      navigator.geolocation &&
-      navigator.geolocation.getCurrentPosition(
-        function (position) {
-          callback(position)
-        },
-        function (error) {
-          display.warn(error)
-        }
-      )
-  })
 }
 var _deviceInfo = {}
 if (typeof window !== 'undefined') {
