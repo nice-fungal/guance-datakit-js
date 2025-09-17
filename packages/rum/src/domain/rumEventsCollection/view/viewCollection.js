@@ -121,12 +121,12 @@ function processViewUpdate(view, configuration, recorderApi, pageStateHistory) {
     date: view.startClocks.timeStamp,
     type: RumEventType.VIEW,
     view: {
-      action: {
-        count: view.eventCounts.actionCount
-      },
-      frustration: {
-        count: view.eventCounts.frustrationCount
-      },
+      // action: {
+      //   count: view.eventCounts.actionCount
+      // },
+      // frustration: {
+      //   count: view.eventCounts.frustrationCount
+      // },
       // cumulative_layout_shift: findByPath(
       //   view.commonViewMetrics,
       //   'cumulativeLayoutShift.value'
@@ -154,9 +154,9 @@ function processViewUpdate(view, configuration, recorderApi, pageStateHistory) {
       dom_interactive: toServerDuration(
         findByPath(view.initialViewMetrics, 'navigationTimings.domInteractive')
       ),
-      error: {
-        count: view.eventCounts.errorCount
-      },
+      // error: {
+      //   count: view.eventCounts.errorCount
+      // },
       first_contentful_paint: toServerDuration(
         findByPath(view.initialViewMetrics, 'firstContentfulPaint')
       ),
@@ -193,12 +193,12 @@ function processViewUpdate(view, configuration, recorderApi, pageStateHistory) {
       //   toServerDuration(view.commonViewMetrics.loadingTime)
       // ),
       loading_type: view.loadingType,
-      long_task: {
-        count: view.eventCounts.longTaskCount
-      },
-      resource: {
-        count: view.eventCounts.resourceCount
-      },
+      // long_task: {
+      //   count: view.eventCounts.longTaskCount
+      // },
+      // resource: {
+      //   count: view.eventCounts.resourceCount
+      // },
       time_spent: toServerDuration(view.duration)
     },
     // display: view.commonViewMetrics.scroll
