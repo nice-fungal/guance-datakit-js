@@ -11,8 +11,8 @@ import {
   LifeCycleEventType,
   NonErrorPrefix
 } from '@cloudcare/browser-core'
-import { trackConsoleError } from './trackConsoleError'
-import { trackReportError } from './trackReportError'
+// import { trackConsoleError } from './trackConsoleError'
+// import { trackReportError } from './trackReportError'
 import { PageState } from '../../contexts/pageStateHistory'
 
 export function startErrorCollection(
@@ -23,9 +23,9 @@ export function startErrorCollection(
 ) {
   var errorObservable = new Observable()
 
-  trackConsoleError(errorObservable)
+  // trackConsoleError(errorObservable)
   trackRuntimeError(errorObservable)
-  trackReportError(configuration, errorObservable)
+  // trackReportError(configuration, errorObservable)
   var session = sessionManager.findTrackedSession()
   let hasError = session.isErrorSession && session.sessionHasError
   if (session.isErrorSession) {
@@ -83,6 +83,7 @@ export function doStartErrorCollection(lifeCycle, pageStateHistory) {
 }
 
 function processError(error, pageStateHistory) {
+  console.trace('domain/rumEventsCollection/error/errorCollection.js::processError', error);
   var rawRumEvent = {
     date: error.startClocks.timeStamp,
     error: {
