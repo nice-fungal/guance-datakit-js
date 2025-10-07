@@ -27,67 +27,38 @@ __webpack_require__.d(__webpack_exports__, {
   E: function() { return /* reexport */ datafluxRum; }
 });
 
+;// CONCATENATED MODULE: ../../node_modules/@babel/runtime/helpers/esm/typeof.js
+function typeof_typeof(o) {
+  "@babel/helpers - typeof";
+
+  return typeof_typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) {
+    return typeof o;
+  } : function (o) {
+    return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o;
+  }, typeof_typeof(o);
+}
+
 ;// CONCATENATED MODULE: ../core/esm/helper/display.js
-var display_ConsoleApiName = {
-  log: 'log',
-  debug: 'debug',
-  info: 'info',
+var ConsoleApiName = {
+  // log: 'log',
+  // debug: 'debug',
+  // info: 'info',
   warn: 'warn',
   error: 'error'
 };
 var globalConsole = console;
 var originalConsoleMethods = {};
-Object.keys(display_ConsoleApiName).forEach(function (name) {
+Object.keys(ConsoleApiName).forEach(function (name) {
   originalConsoleMethods[name] = globalConsole[name];
 });
 var PREFIX = 'GUANCE Browser SDK:';
 var display_display = {
-  debug: originalConsoleMethods.debug.bind(globalConsole, PREFIX),
-  log: originalConsoleMethods.log.bind(globalConsole, PREFIX),
-  info: originalConsoleMethods.info.bind(globalConsole, PREFIX),
+  // debug: originalConsoleMethods.debug.bind(globalConsole, PREFIX),
+  // log: originalConsoleMethods.log.bind(globalConsole, PREFIX),
+  // info: originalConsoleMethods.info.bind(globalConsole, PREFIX),
   warn: originalConsoleMethods.warn.bind(globalConsole, PREFIX),
   error: originalConsoleMethods.error.bind(globalConsole, PREFIX)
 };
-;// CONCATENATED MODULE: ../core/esm/helper/monitor.js
-
-var onMonitorErrorCollected;
-var debugMode = false;
-function startMonitorErrorCollection(newOnMonitorErrorCollected) {
-  onMonitorErrorCollected = newOnMonitorErrorCollected;
-}
-function setDebugMode(newDebugMode) {
-  debugMode = newDebugMode;
-}
-function resetMonitor() {
-  onMonitorErrorCollected = undefined;
-  debugMode = false;
-}
-function monitor_monitor(fn) {
-  return function () {
-    return monitor_callMonitored(fn, this, arguments);
-  };
-}
-function monitor_callMonitored(fn, context, args) {
-  try {
-    return fn.apply(context, args);
-  } catch (e) {
-    displayIfDebugEnabled(e);
-    if (onMonitorErrorCollected) {
-      try {
-        onMonitorErrorCollected(e);
-      } catch (e) {
-        displayIfDebugEnabled(e);
-      }
-    }
-  }
-}
-function displayIfDebugEnabled() {
-  var args = [].slice.call(arguments);
-  //   display.error.apply(null, ['[MONITOR]'].concat(args))
-  if (debugMode) {
-    display_display.error.apply(null, ['[MONITOR]'].concat(args));
-  }
-}
 ;// CONCATENATED MODULE: ../core/esm/helper/catchUserErrors.js
 
 function catchUserErrors_catchUserErrors(fn, errorMsg) {
@@ -101,17 +72,9 @@ function catchUserErrors_catchUserErrors(fn, errorMsg) {
   };
 }
 ;// CONCATENATED MODULE: ../core/esm/init.js
-function _typeof(o) {
-  "@babel/helpers - typeof";
-
-  return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) {
-    return typeof o;
-  } : function (o) {
-    return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o;
-  }, _typeof(o);
-}
 
 
+// import { setDebugMode } from './helper/monitor'
 
 function makePublicApi(stub) {
   var publicApi = tools_assign({
@@ -122,12 +85,13 @@ function makePublicApi(stub) {
 
   // Add an "hidden" property to set debug mode. We define it that way to hide it
   // as much as possible but of course it's not a real protection.
-  Object.defineProperty(publicApi, '_setDebug', {
-    get: function get() {
-      return setDebugMode;
-    },
-    enumerable: false
-  });
+  // Object.defineProperty(publicApi, '_setDebug', {
+  //   get: function () {
+  //     return setDebugMode
+  //   },
+  //   enumerable: false
+  // })
+
   return publicApi;
 }
 function defineGlobal(global, name, api) {
@@ -140,7 +104,7 @@ function defineGlobal(global, name, api) {
   }
 }
 function getGlobalObject() {
-  if ((typeof globalThis === "undefined" ? "undefined" : _typeof(globalThis)) === 'object') {
+  if ((typeof globalThis === "undefined" ? "undefined" : typeof_typeof(globalThis)) === 'object') {
     return globalThis;
   }
   Object.defineProperty(Object.prototype, '_gc_temp_', {
@@ -153,12 +117,12 @@ function getGlobalObject() {
   var globalObject = _gc_temp_;
   // @ts-ignore
   delete Object.prototype._gc_temp_;
-  if (_typeof(globalObject) !== 'object') {
+  if (typeof_typeof(globalObject) !== 'object') {
     // on safari _gc_temp_ is available on window but not globally
     // fallback on other browser globals check
-    if ((typeof self === "undefined" ? "undefined" : _typeof(self)) === 'object') {
+    if ((typeof self === "undefined" ? "undefined" : typeof_typeof(self)) === 'object') {
       globalObject = self;
-    } else if ((typeof window === "undefined" ? "undefined" : _typeof(window)) === 'object') {
+    } else if ((typeof window === "undefined" ? "undefined" : typeof_typeof(window)) === 'object') {
       globalObject = window;
     } else {
       globalObject = {};
@@ -192,6 +156,50 @@ function getZoneJsOriginalValue(target, name) {
   }
   return original;
 }
+;// CONCATENATED MODULE: ../core/esm/helper/monitor.js
+
+var onMonitorErrorCollected;
+var debugMode = false;
+
+// export function startMonitorErrorCollection(newOnMonitorErrorCollected) {
+//   onMonitorErrorCollected = newOnMonitorErrorCollected
+// }
+
+// export function setDebugMode(newDebugMode) {
+//   debugMode = newDebugMode
+// }
+
+function resetMonitor() {
+  onMonitorErrorCollected = undefined;
+  debugMode = false;
+}
+function monitor_monitor(fn) {
+  return function () {
+    return monitor_callMonitored(fn, this, arguments);
+  };
+}
+function monitor_callMonitored(fn, context, args) {
+  try {
+    return fn.apply(context, args);
+  } catch (e) {
+    // displayIfDebugEnabled(e)
+    if (onMonitorErrorCollected) {
+      try {
+        onMonitorErrorCollected(e);
+      } catch (e) {
+        // displayIfDebugEnabled(e)
+      }
+    }
+  }
+}
+
+// export function displayIfDebugEnabled() {
+//   var args = [].slice.call(arguments)
+//   //   display.error.apply(null, ['[MONITOR]'].concat(args))
+//   if (debugMode) {
+//     display.error.apply(null, ['[MONITOR]'].concat(args))
+//   }
+// }
 ;// CONCATENATED MODULE: ../core/esm/helper/timer.js
 
 
@@ -209,15 +217,7 @@ function timer_clearInterval(timeoutId) {
   getZoneJsOriginalValue(getGlobalObject(), 'clearInterval')(timeoutId);
 }
 ;// CONCATENATED MODULE: ../core/esm/helper/tools.js
-function tools_typeof(o) {
-  "@babel/helpers - typeof";
 
-  return tools_typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) {
-    return typeof o;
-  } : function (o) {
-    return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o;
-  }, tools_typeof(o);
-}
 // import { display } from './display'
 
 var ArrayProto = Array.prototype;
@@ -365,7 +365,7 @@ var keys = function keys(obj) {
 //     return !!(ele.attributes[attr] && ele.attributes[attr].specified)
 //   }
 // }
-var tools_filter = function filter(arr, fn, self) {
+var filter = function filter(arr, fn, self) {
   if (arr.filter) {
     return arr.filter(fn);
   }
@@ -412,23 +412,23 @@ var tools_some = function some(arr, fn, self) {
   }
   return flag;
 };
-// export var every = function (arr, fn, self) {
-//   if (arr.every) {
-//     return arr.every(fn)
-//   }
-//   var flag = true
-//   for (var i = 0; i < arr.length; i++) {
-//     if (!hasOwnProperty.call(arr, i)) {
-//       continue
-//     }
-//     var val = arr[i]
-//     if (!fn.call(self, val, i, arr)) {
-//       flag = false
-//       break
-//     }
-//   }
-//   return flag
-// }
+var every = function every(arr, fn, self) {
+  if (arr.every) {
+    return arr.every(fn);
+  }
+  var flag = true;
+  for (var i = 0; i < arr.length; i++) {
+    if (!tools_hasOwnProperty.call(arr, i)) {
+      continue;
+    }
+    var val = arr[i];
+    if (!fn.call(self, val, i, arr)) {
+      flag = false;
+      break;
+    }
+  }
+  return flag;
+};
 // export var matchList = function (list, value, useStartsWith) {
 //   if (useStartsWith === undefined) {
 //     useStartsWith = false
@@ -678,19 +678,20 @@ var _searchObjString = function searchObjString(o) {
     });
   }
 };
-// export var unique = function (ar) {
-//   var temp,
-//     n = [],
-//     o = {}
-//   for (var i = 0; i < ar.length; i++) {
-//     temp = ar[i]
-//     if (!(temp in o)) {
-//       o[temp] = true
-//       n.push(temp)
-//     }
-//   }
-//   return n
-// }
+
+var unique = function unique(ar) {
+  var temp,
+    n = [],
+    o = {};
+  for (var i = 0; i < ar.length; i++) {
+    temp = ar[i];
+    if (!(temp in o)) {
+      o[temp] = true;
+      n.push(temp);
+    }
+  }
+  return n;
+};
 // export var strip_empty_properties = function (p) {
 //   var ret = {}
 //   each(p, function (v, k) {
@@ -700,7 +701,6 @@ var _searchObjString = function searchObjString(o) {
 //   })
 //   return ret
 // }
-
 var utf8Encode = function utf8Encode(string) {
   string = (string + '').replace(/\r\n/g, '\n').replace(/\r/g, '\n');
   var utftext = '',
@@ -789,7 +789,16 @@ function UUID(placeholder) {
   (parseInt(placeholder, 10) ^ Math.random() * 16 >> parseInt(placeholder, 10) / 4).toString(16) : "".concat(1e7, "-", 1e3, "-", 4e3, "-", 8e3, "-", 1e11).replace(/[018]/g, UUID);
 }
 
-// 替换url包含数字的路由
+/**
+ * 替换url包含数字的路由, e.g.
+ * 
+ * /authors/345             ->  /authors/?
+ * /authors/abc             ->  /authors/abc
+ * /authors/a4c             ->  /authors/?
+ * /v2/authors/345          ->  /?/authors/?
+ * /authors/abc#/books/678  ->  /authors/abc#/books/?
+ * /authors/345#/books/678  ->  /authors/?/books/?
+ */
 function replaceNumberCharByPath(path) {
   var pathGroup = '';
   if (path) {
@@ -826,7 +835,7 @@ var urlParse = function urlParse(para) {
     }
   };
   URLParser.prototype.addQueryString = function (queryObj) {
-    if (tools_typeof(queryObj) !== 'object') {
+    if (_typeof(queryObj) !== 'object') {
       return false;
     }
     var query = this._values.QueryString || '';
@@ -1190,7 +1199,7 @@ function tools_getType(value) {
   if (Array.isArray(value)) {
     return 'array';
   }
-  return tools_typeof(value);
+  return typeof_typeof(value);
 }
 /**
  * Iterate over source and affect its sub values into destination, recursively.
@@ -1204,7 +1213,7 @@ function mergeInto(destination, source, circularReferenceChecker) {
   if (source === undefined) {
     return destination;
   }
-  if (tools_typeof(source) !== 'object' || source === null) {
+  if (typeof_typeof(source) !== 'object' || source === null) {
     // primitive values - just return source
     return source;
   } else if (source instanceof Date) {
@@ -1564,7 +1573,7 @@ function findByPath(source, path) {
   }
   return source;
 }
-function tools_safeTruncate(candidate, length) {
+function safeTruncate(candidate, length) {
   var lastChar = candidate.charCodeAt(length - 1);
   // check if it is the high part of a surrogate pair
   if (lastChar >= 0xd800 && lastChar <= 0xdbff) {
@@ -1576,11 +1585,11 @@ function tools_isMatchOption(item) {
   var itemType = tools_getType(item);
   return itemType === 'string' || itemType === 'function' || item instanceof RegExp;
 }
-function tools_includes(candidate, search) {
+function includes(candidate, search) {
   // tslint:disable-next-line: no-unsafe-any
   return candidate.indexOf(search) !== -1;
 }
-function tools_find(array, predicate) {
+function find(array, predicate) {
   for (var i = 0; i < array.length; i += 1) {
     var item = array[i];
     if (predicate(item, i, array)) {
@@ -1685,7 +1694,7 @@ function deepSnakeCase(candidate) {
       return deepSnakeCase(value);
     });
   }
-  if (tools_typeof(candidate) === 'object' && candidate !== null) {
+  if (typeof_typeof(candidate) === 'object' && candidate !== null) {
     return withSnakeCaseKeys(candidate);
   }
   return candidate;
@@ -1727,14 +1736,14 @@ function removeItem(array, item) {
     array.splice(index, 1);
   }
 }
-// export function tryToClone(response) {
-//   try {
-//     return response.clone()
-//   } catch (e) {
-//     // clone can throw if the response has already been used by another instrumentation or is disturbed
-//     return
-//   }
-// }
+function tryToClone(response) {
+  try {
+    return response.clone();
+  } catch (e) {
+    // clone can throw if the response has already been used by another instrumentation or is disturbed
+    return;
+  }
+}
 function isHashAnAnchor(hash) {
   var correspondingId = hash.substr(1);
   if (!correspondingId) return false;
@@ -2397,18 +2406,6 @@ var MethodLibrary = {
       engine: _this.engine,
       browserMajor: _this.browserMajor
     };
-  }),
-  // 获取地理位置
-  getGeoPostion: monitor_monitor(function (callback) {
-    navigator && navigator.geolocation && navigator.geolocation.getCurrentPosition(
-    // 位置获取成功
-    function (position) {
-      callback(position);
-    },
-    // 位置获取失败
-    function (error) {
-      display_display.warn(error);
-    });
   })
 };
 var _deviceInfo = {};
@@ -2514,24 +2511,100 @@ var enums_TraceType = {
   SKYWALKING_V3: 'skywalking_v3',
   JAEGER: 'jaeger'
 };
-var enums_ErrorHandling = {
+var ErrorHandling = {
   HANDLED: 'handled',
   UNHANDLED: 'unhandled'
 };
-var enums_NonErrorPrefix = {
+var NonErrorPrefix = {
   UNCAUGHT: 'Uncaught',
   PROVIDED: 'Provided'
 };
-;// CONCATENATED MODULE: ../core/esm/helper/serialisation/jsonStringify.js
-function jsonStringify_typeof(o) {
-  "@babel/helpers - typeof";
+;// CONCATENATED MODULE: ../core/esm/helper/instrumentMethod.js
 
-  return jsonStringify_typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) {
-    return typeof o;
-  } : function (o) {
-    return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o;
-  }, jsonStringify_typeof(o);
+
+
+// import { createHandlingStack } from './errorTools'
+function instrumentMethod_instrumentMethod(targetPrototype, method, onPreCall, opts) {
+  var computeHandlingStack = false; // opts && opts.computeHandlingStack  // 只有 fetch 和 xhr 是 true
+  var original = targetPrototype[method];
+  if (typeof original !== 'function') {
+    if (startsWith(method, 'on')) {
+      original = tools_noop;
+    } else {
+      return {
+        stop: tools_noop
+      };
+    }
+  }
+  var stopped = false;
+  var instrumentation = function instrumentation() {
+    if (stopped) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
+      return original.apply(this, arguments);
+    }
+    var parameters = arrayFrom(arguments);
+    var postCallCallback;
+    monitor_callMonitored(onPreCall, null, [{
+      target: this,
+      parameters: parameters,
+      onPostCall: function onPostCall(callback) {
+        postCallCallback = callback;
+      },
+      handlingStack: undefined // computeHandlingStack ? createHandlingStack() : undefined
+    }]);
+    var result = original.apply(this, parameters);
+    if (postCallCallback) {
+      monitor_callMonitored(postCallCallback, null, [result]);
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    return result;
+  };
+  targetPrototype[method] = instrumentation;
+  return {
+    stop: function stop() {
+      stopped = true;
+      // If the instrumentation has been removed by a third party, keep the last one
+      if (targetPrototype[method] === instrumentation) {
+        targetPrototype[method] = original;
+      }
+    }
+  };
 }
+function instrumentSetter(targetPrototype, property, after) {
+  var originalDescriptor = Object.getOwnPropertyDescriptor(targetPrototype, property);
+  if (!originalDescriptor || !originalDescriptor.set || !originalDescriptor.configurable) {
+    return {
+      stop: noop
+    };
+  }
+  var stoppedInstrumentation = noop;
+  var _instrumentation = function instrumentation(target, value) {
+    // put hooked setter into event loop to avoid of set latency
+    setTimeout(function () {
+      if (_instrumentation !== stoppedInstrumentation) {
+        after(target, value);
+      }
+    }, 0);
+  };
+  var instrumentationWrapper = function instrumentationWrapper(value) {
+    originalDescriptor.set.call(this, value);
+    _instrumentation(this, value);
+  };
+  Object.defineProperty(targetPrototype, property, {
+    set: instrumentationWrapper
+  });
+  return {
+    stop: function stop() {
+      if (Object.getOwnPropertyDescriptor(targetPrototype, property) && Object.getOwnPropertyDescriptor(targetPrototype, property).set === instrumentationWrapper) {
+        Object.defineProperty(targetPrototype, property, originalDescriptor);
+      }
+      _instrumentation = stoppedInstrumentation;
+    }
+  };
+}
+;// CONCATENATED MODULE: ../core/esm/helper/serialisation/jsonStringify.js
+
 
 
 /**
@@ -2543,7 +2616,7 @@ function jsonStringify_typeof(o) {
  * Note: this still assumes that JSON.stringify is correct.
  */
 function jsonStringify_jsonStringify(value, replacer, space) {
-  if (jsonStringify_typeof(value) !== 'object' || value === null) {
+  if (typeof_typeof(value) !== 'object' || value === null) {
     return JSON.stringify(value);
   }
 
@@ -2576,15 +2649,7 @@ function detachToJsonMethod(value) {
   return tools_noop;
 }
 ;// CONCATENATED MODULE: ../core/esm/tracekit/computeStackTrace.js
-function computeStackTrace_typeof(o) {
-  "@babel/helpers - typeof";
 
-  return computeStackTrace_typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) {
-    return typeof o;
-  } : function (o) {
-    return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o;
-  }, computeStackTrace_typeof(o);
-}
 
 var UNKNOWN_FUNCTION = '?';
 
@@ -2693,7 +2758,7 @@ function parseGeckoLine(line) {
   };
 }
 function tryToGetString(candidate, property) {
-  if (computeStackTrace_typeof(candidate) !== 'object' || !candidate || !(property in candidate)) {
+  if (typeof_typeof(candidate) !== 'object' || !candidate || !(property in candidate)) {
     return undefined;
   }
   var value = candidate[property];
@@ -2738,7 +2803,7 @@ var ERROR_TYPES_RE = /^(?:[Uu]ncaught (?:exception: )?)?(?:((?:Eval|Internal|Ran
  * @namespace
  */
 
-function tracekit_startUnhandledErrorCollection(callback) {
+function startUnhandledErrorCollection(callback) {
   var _instrumentOnError = instrumentOnError(callback);
   var _instrumentUnhandledRejection = instrumentUnhandledRejection(callback);
   return {
@@ -2753,7 +2818,7 @@ function tracekit_startUnhandledErrorCollection(callback) {
  * Install a global onerror handler
  */
 function instrumentOnError(callback) {
-  return instrumentMethod(window, 'onerror', function (params) {
+  return instrumentMethod_instrumentMethod(window, 'onerror', function (params) {
     var parameters = params.parameters;
     var messageObj = parameters[0];
     var url = parameters[1];
@@ -2762,7 +2827,7 @@ function instrumentOnError(callback) {
     var errorObj = parameters[4];
     var stackTrace;
     if (errorObj instanceof Error) {
-      stackTrace = computeStackTrace(errorObj);
+      stackTrace = computeStackTrace_computeStackTrace(errorObj);
     } else {
       var location = {
         url: url,
@@ -2776,7 +2841,7 @@ function instrumentOnError(callback) {
         stack: [location]
       };
     }
-    callback(stackTrace, isNullUndefinedDefaultValue(errorObj, messageObj));
+    callback(stackTrace, tools_isNullUndefinedDefaultValue(errorObj, messageObj));
   });
 }
 function tryToParseMessage(messageObj) {
@@ -2798,11 +2863,11 @@ function tryToParseMessage(messageObj) {
  * Install a global onunhandledrejection handler
  */
 function instrumentUnhandledRejection(callback) {
-  return instrumentMethod(window, 'onunhandledrejection', function (params) {
+  return instrumentMethod_instrumentMethod(window, 'onunhandledrejection', function (params) {
     var parameters = params.parameters;
     var e = parameters[0];
     var reason = e.reason || 'Empty reason';
-    var stack = computeStackTrace(reason);
+    var stack = computeStackTrace_computeStackTrace(reason);
     callback(stack, reason);
   });
 }
@@ -2838,15 +2903,7 @@ function concatBuffers(buffers) {
   return result;
 }
 ;// CONCATENATED MODULE: ../core/esm/helper/sanitize.js
-function sanitize_typeof(o) {
-  "@babel/helpers - typeof";
 
-  return sanitize_typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) {
-    return typeof o;
-  } : function (o) {
-    return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o;
-  }, sanitize_typeof(o);
-}
 
 
 
@@ -2877,7 +2934,7 @@ var KEY_DECORATION_LENGTH = 3;
  * @param maxCharacterCount   Maximum number of characters allowed in serialized form
  */
 
-function sanitize_sanitize(source, maxCharacterCount) {
+function sanitize(source, maxCharacterCount) {
   if (maxCharacterCount === undefined) {
     maxCharacterCount = SANITIZE_DEFAULT_MAX_CHARACTER_COUNT;
   }
@@ -2952,7 +3009,7 @@ function sanitize_sanitize(source, maxCharacterCount) {
 function sanitizeProcessor(source, parentPath, key, queue, visitedObjectsWithPath) {
   // Start by handling toJSON, as we want to sanitize its output
   var sourceToSanitize = tryToApplyToJSON(source);
-  if (!sourceToSanitize || sanitize_typeof(sourceToSanitize) !== 'object') {
+  if (!sourceToSanitize || typeof_typeof(sourceToSanitize) !== 'object') {
     return sanitizePrimitivesAndFunctions(sourceToSanitize);
   }
   var sanitizedSource = sanitizeObjects(sourceToSanitize);
@@ -2995,7 +3052,7 @@ function sanitizePrimitivesAndFunctions(value) {
     return '[Function] ' + value.name || 0;
   }
   // JSON.stringify() does not serialize symbols.
-  if (sanitize_typeof(value) === 'symbol') {
+  if (typeof_typeof(value) === 'symbol') {
     // symbol.description is part of ES2019+
     return '[Symbol] ' + value.description || 0;
   }
@@ -3070,7 +3127,7 @@ function warnOverCharacterLimit(maxCharacterCount, changeType, source) {
 
 
 var NO_ERROR_STACK_PRESENT_MESSAGE = 'No stack, consider using an instance of Error';
-var errorTools_ErrorSource = {
+var ErrorSource = {
   AGENT: 'agent',
   CONSOLE: 'console',
   NETWORK: 'network',
@@ -3078,7 +3135,7 @@ var errorTools_ErrorSource = {
   LOGGER: 'logger',
   CUSTOM: 'custom'
 };
-function errorTools_computeRawError(data) {
+function computeRawError(data) {
   var stackTrace = data.stackTrace;
   var originalError = data.originalError;
   var handlingStack = data.handlingStack;
@@ -3088,8 +3145,8 @@ function errorTools_computeRawError(data) {
   var handling = data.handling;
   var isErrorInstance = originalError instanceof Error;
   var message = computeMessage(stackTrace, isErrorInstance, nonErrorPrefix, originalError);
-  var stack = hasUsableStack(isErrorInstance, stackTrace) ? errorTools_toStackTraceString(stackTrace) : NO_ERROR_STACK_PRESENT_MESSAGE;
-  var causes = isErrorInstance ? errorTools_flattenErrorCauses(originalError, source) : undefined;
+  var stack = hasUsableStack(isErrorInstance, stackTrace) ? toStackTraceString(stackTrace) : NO_ERROR_STACK_PRESENT_MESSAGE;
+  var causes = isErrorInstance ? flattenErrorCauses(originalError, source) : undefined;
   var type = stackTrace && stackTrace.name;
   return {
     startClocks: startClocks,
@@ -3106,7 +3163,7 @@ function errorTools_computeRawError(data) {
 function computeMessage(stackTrace, isErrorInstance, nonErrorPrefix, originalError) {
   // Favor stackTrace message only if tracekit has really been able to extract something meaningful (message + name)
   // TODO rework tracekit integration to avoid scattering error building logic
-  return stackTrace && stackTrace.message && stackTrace && stackTrace.name ? stackTrace.message : !isErrorInstance ? nonErrorPrefix + ' ' + jsonStringify(sanitize(originalError)) : 'Empty message';
+  return stackTrace && stackTrace.message && stackTrace && stackTrace.name ? stackTrace.message : !isErrorInstance ? nonErrorPrefix + ' ' + jsonStringify_jsonStringify(sanitize(originalError)) : 'Empty message';
 }
 function hasUsableStack(isErrorInstance, stackTrace) {
   if (stackTrace === undefined) {
@@ -3130,7 +3187,7 @@ function formatUnknownError(stackTrace, errorObject, nonErrorPrefix, handlingSta
   }
   return {
     message: stackTrace.message || 'Empty message',
-    stack: errorTools_toStackTraceString(stackTrace),
+    stack: toStackTraceString(stackTrace),
     handlingStack: handlingStack,
     type: stackTrace.name
   };
@@ -3142,7 +3199,7 @@ function formatUnknownError(stackTrace, errorObject, nonErrorPrefix, handlingSta
  - Has to be called at the utmost position of the call stack.
  - No internal monitoring should encapsulate the function, that is why we need to use callMonitored inside of it.
  */
-function errorTools_createHandlingStack() {
+function createHandlingStack() {
   /**
    * Skip the two internal frames:
    * - SDK API (console.error, ...)
@@ -3158,18 +3215,18 @@ function errorTools_createHandlingStack() {
     try {
       throw error;
     } catch (e) {
-      tools_noop();
+      noop();
     }
   }
-  monitor_callMonitored(function () {
-    var stackTrace = computeStackTrace_computeStackTrace(error);
+  callMonitored(function () {
+    var stackTrace = computeStackTrace(error);
     stackTrace.stack = stackTrace.stack.slice(internalFramesToSkip);
-    formattedStack = errorTools_toStackTraceString(stackTrace);
+    formattedStack = toStackTraceString(stackTrace);
   });
   return formattedStack;
 }
-function errorTools_toStackTraceString(stack) {
-  var result = errorTools_formatErrorMessage(stack);
+function toStackTraceString(stack) {
+  var result = formatErrorMessage(stack);
   tools_each(stack.stack, function (frame) {
     var func = frame.func === '?' ? '<anonymous>' : frame.func;
     var args = frame.args && frame.args.length > 0 ? '(' + frame.args.join(', ') + ')' : '';
@@ -3179,111 +3236,27 @@ function errorTools_toStackTraceString(stack) {
   });
   return result;
 }
-function errorTools_formatErrorMessage(stack) {
+function formatErrorMessage(stack) {
   return (stack.name || 'Error') + ': ' + stack.message;
 }
 function getFileFromStackTraceString(stack) {
   var execResult = /@ (.+)/.exec(stack);
   return execResult && execResult[1];
 }
-function errorTools_flattenErrorCauses(error, parentSource) {
+function flattenErrorCauses(error, parentSource) {
   var currentError = error;
   var causes = [];
   while (currentError && currentError.cause instanceof Error && causes.length < 10) {
-    var stackTrace = computeStackTrace(currentError.cause);
+    var stackTrace = computeStackTrace_computeStackTrace(currentError.cause);
     causes.push({
       message: currentError.cause.message,
       source: parentSource,
       type: stackTrace && stackTrace.name,
-      stack: stackTrace && errorTools_toStackTraceString(stackTrace)
+      stack: stackTrace && toStackTraceString(stackTrace)
     });
     currentError = currentError.cause;
   }
   return causes.length ? causes : undefined;
-}
-;// CONCATENATED MODULE: ../core/esm/helper/instrumentMethod.js
-
-
-
-
-function instrumentMethod_instrumentMethod(targetPrototype, method, onPreCall, opts) {
-  var computeHandlingStack = opts && opts.computeHandlingStack;
-  var original = targetPrototype[method];
-  if (typeof original !== 'function') {
-    if (startsWith(method, 'on')) {
-      original = tools_noop;
-    } else {
-      return {
-        stop: tools_noop
-      };
-    }
-  }
-  var stopped = false;
-  var instrumentation = function instrumentation() {
-    if (stopped) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
-      return original.apply(this, arguments);
-    }
-    var parameters = arrayFrom(arguments);
-    var postCallCallback;
-    monitor_callMonitored(onPreCall, null, [{
-      target: this,
-      parameters: parameters,
-      onPostCall: function onPostCall(callback) {
-        postCallCallback = callback;
-      },
-      handlingStack: computeHandlingStack ? errorTools_createHandlingStack() : undefined
-    }]);
-    var result = original.apply(this, parameters);
-    if (postCallCallback) {
-      monitor_callMonitored(postCallCallback, null, [result]);
-    }
-
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    return result;
-  };
-  targetPrototype[method] = instrumentation;
-  return {
-    stop: function stop() {
-      stopped = true;
-      // If the instrumentation has been removed by a third party, keep the last one
-      if (targetPrototype[method] === instrumentation) {
-        targetPrototype[method] = original;
-      }
-    }
-  };
-}
-function instrumentSetter(targetPrototype, property, after) {
-  var originalDescriptor = Object.getOwnPropertyDescriptor(targetPrototype, property);
-  if (!originalDescriptor || !originalDescriptor.set || !originalDescriptor.configurable) {
-    return {
-      stop: noop
-    };
-  }
-  var stoppedInstrumentation = noop;
-  var _instrumentation = function instrumentation(target, value) {
-    // put hooked setter into event loop to avoid of set latency
-    setTimeout(function () {
-      if (_instrumentation !== stoppedInstrumentation) {
-        after(target, value);
-      }
-    }, 0);
-  };
-  var instrumentationWrapper = function instrumentationWrapper(value) {
-    originalDescriptor.set.call(this, value);
-    _instrumentation(this, value);
-  };
-  Object.defineProperty(targetPrototype, property, {
-    set: instrumentationWrapper
-  });
-  return {
-    stop: function stop() {
-      if (Object.getOwnPropertyDescriptor(targetPrototype, property) && Object.getOwnPropertyDescriptor(targetPrototype, property).set === instrumentationWrapper) {
-        Object.defineProperty(targetPrototype, property, originalDescriptor);
-      }
-      _instrumentation = stoppedInstrumentation;
-    }
-  };
 }
 ;// CONCATENATED MODULE: ../core/esm/error/trackRuntimeError.js
 
@@ -3295,276 +3268,11 @@ function trackRuntimeError(errorObservable) {
     errorObservable.notify(computeRawError({
       stackTrace: stackTrace,
       originalError: originalError,
-      startClocks: clocksNow(),
+      startClocks: tools_clocksNow(),
       nonErrorPrefix: NonErrorPrefix.UNCAUGHT,
       source: ErrorSource.SOURCE,
       handling: ErrorHandling.UNHANDLED
     }));
-  });
-}
-;// CONCATENATED MODULE: ../core/esm/helper/observable.js
-
-var _Observable = function _Observable(onFirstSubscribe) {
-  this.observers = [];
-  this.onLastUnsubscribe = undefined;
-  this.onFirstSubscribe = onFirstSubscribe;
-};
-_Observable.prototype = {
-  subscribe: function subscribe(f) {
-    this.observers.push(f);
-    if (this.observers.length === 1 && this.onFirstSubscribe) {
-      this.onLastUnsubscribe = this.onFirstSubscribe(this) || undefined;
-    }
-    var _this = this;
-    return {
-      unsubscribe: function unsubscribe() {
-        _this.observers = tools_filter(_this.observers, function (other) {
-          return f !== other;
-        });
-        if (!_this.observers.length && _this.onLastUnsubscribe) {
-          _this.onLastUnsubscribe();
-        }
-      }
-    };
-  },
-  notify: function notify(data) {
-    tools_each(this.observers, function (observer) {
-      observer(data);
-    });
-  }
-};
-var observable_Observable = _Observable;
-function observable_mergeObservables() {
-  var observables = [].slice.call(arguments);
-  return new observable_Observable(function (globalObservable) {
-    var subscriptions = map(observables, function (observable) {
-      return observable.subscribe(function (data) {
-        return globalObservable.notify(data);
-      });
-    });
-    return function () {
-      return each(subscriptions, function (subscription) {
-        return subscription.unsubscribe();
-      });
-    };
-  });
-}
-;// CONCATENATED MODULE: ../core/esm/console/consoleObservable.js
-
-
-
-
-
-
-
-
-
-var consoleObservablesByApi = {};
-function initConsoleObservable(apis) {
-  var consoleObservables = map(apis, function (api) {
-    if (!consoleObservablesByApi[api]) {
-      consoleObservablesByApi[api] = createConsoleObservable(api);
-    }
-    return consoleObservablesByApi[api];
-  });
-  return mergeObservables.apply(this, consoleObservables);
-}
-function resetConsoleObservable() {
-  consoleObservablesByApi = {};
-}
-/* eslint-disable no-console */
-function createConsoleObservable(api) {
-  return new Observable(function (observable) {
-    var originalConsoleApi = console[api];
-    console[api] = function () {
-      var params = [].slice.call(arguments);
-      originalConsoleApi.apply(console, arguments);
-      var handlingStack = createHandlingStack();
-      callMonitored(function () {
-        observable.notify(buildConsoleLog(params, api, handlingStack));
-      });
-    };
-    return function () {
-      console[api] = originalConsoleApi;
-    };
-  });
-}
-function buildConsoleLog(params, api, handlingStack) {
-  var message = map(params, function (param) {
-    return formatConsoleParameters(param);
-  }).join(' ');
-  var error;
-  if (api === ConsoleApiName.error) {
-    var firstErrorParam = find(params, function (param) {
-      return param instanceof Error;
-    });
-    error = {
-      stack: firstErrorParam ? toStackTraceString(computeStackTrace(firstErrorParam)) : undefined,
-      causes: firstErrorParam ? flattenErrorCauses(firstErrorParam, 'console') : undefined,
-      startClocks: clocksNow(),
-      message: message,
-      source: ErrorSource.CONSOLE,
-      handling: ErrorHandling.HANDLED,
-      handlingStack: handlingStack
-    };
-  }
-  return {
-    api: api,
-    message: message,
-    error: error,
-    handlingStack: handlingStack
-  };
-}
-function formatConsoleParameters(param) {
-  if (typeof param === 'string') {
-    return param;
-  }
-  if (param instanceof Error) {
-    return formatErrorMessage(computeStackTrace(param));
-  }
-  return jsonStringify(param, undefined, 2);
-}
-;// CONCATENATED MODULE: ../core/esm/browser/addEventListener.js
-
-
-
-function addEventListener_addEventListener(eventTarget, event, listener, options) {
-  return addEventListeners(eventTarget, [event], listener, options);
-}
-
-/**
- * Add event listeners to an event emitter object (Window, Element, mock object...).  This provides
- * a few conveniences compared to using `element.addEventListener` directly:
- *
- * * supports IE11 by:
- *   * using an option object only if needed
- *   * emulating the `once` option
- *
- * * wraps the listener with a `monitor` function
- *
- * * returns a `stop` function to remove the listener
- *
- * * with `once: true`, the listener will be called at most once, even if different events are
- *   listened
- */
-
-function addEventListeners(eventTarget, eventNames, listener, options) {
-  var wrappedListener = monitor_monitor(options && options.once ? function (event) {
-    stop();
-    listener(event);
-  } : listener);
-  options = options && options.passive ? {
-    capture: options.capture,
-    passive: options.passive
-  } : options && options.capture;
-  // Use the window.EventTarget.prototype when possible to avoid wrong overrides (e.g: https://github.com/salesforce/lwc/issues/1824)
-  var listenerTarget = window.EventTarget && eventTarget instanceof EventTarget ? window.EventTarget.prototype : eventTarget;
-  var add = getZoneJsOriginalValue(listenerTarget, 'addEventListener');
-  tools_each(eventNames, function (eventName) {
-    add.call(eventTarget, eventName, wrappedListener, options);
-  });
-  var stop = function stop() {
-    var remove = getZoneJsOriginalValue(listenerTarget, 'removeEventListener');
-    tools_each(eventNames, function (eventName) {
-      remove.call(eventTarget, eventName, wrappedListener, options);
-    });
-  };
-  return {
-    stop: stop
-  };
-}
-;// CONCATENATED MODULE: ../core/esm/report/reportObservable.js
-
-
-
-
-
-
-var RawReportType = {
-  intervention: 'intervention',
-  deprecation: 'deprecation',
-  cspViolation: 'csp_violation'
-};
-function initReportObservable(configuration, apis) {
-  var observables = [];
-  if (includes(apis, RawReportType.cspViolation)) {
-    observables.push(createCspViolationReportObservable(configuration));
-  }
-  var reportTypes = filter(apis, function (api) {
-    return api !== RawReportType.cspViolation;
-  });
-  if (reportTypes.length) {
-    observables.push(createReportObservable(reportTypes));
-  }
-  return mergeObservables.apply(this, observables);
-}
-function createReportObservable(reportTypes) {
-  return new Observable(function (observable) {
-    if (!window.ReportingObserver) {
-      return;
-    }
-    var handleReports = monitor(function (reports) {
-      each(reports, function (report) {
-        observable.notify(buildRawReportErrorFromReport(report));
-      });
-    });
-    var observer = new window.ReportingObserver(handleReports, {
-      types: reportTypes,
-      buffered: true
-    });
-    observer.observe();
-    return function () {
-      observer.disconnect();
-    };
-  });
-}
-function createCspViolationReportObservable(configuration) {
-  return new Observable(function (observable) {
-    var _addEventListener = addEventListener(document, DOM_EVENT.SECURITY_POLICY_VIOLATION, function (event) {
-      observable.notify(buildRawReportErrorFromCspViolation(event));
-    });
-    return _addEventListener.stop;
-  });
-}
-function buildRawReportErrorFromReport(report) {
-  var body = report.body;
-  var type = report.type;
-  return buildRawReportError({
-    type: body.id,
-    message: type + ': ' + body.message,
-    originalError: report,
-    stack: buildStack(body.id, body.message, body.sourceFile, body.lineNumber, body.columnNumber)
-  });
-}
-function buildRawReportError(partial) {
-  return assign({
-    startClocks: clocksNow(),
-    source: ErrorSource.REPORT,
-    handling: ErrorHandling.UNHANDLED
-  }, partial);
-}
-function buildRawReportErrorFromCspViolation(event) {
-  var message = "'" + event.blockedURI + "' blocked by '" + event.effectiveDirective + "' directive";
-  return buildRawReportError({
-    type: event.effectiveDirective,
-    message: RawReportType.cspViolation + ': ' + message,
-    originalError: event,
-    csp: {
-      disposition: event.disposition
-    },
-    stack: buildStack(event.effectiveDirective, event.originalPolicy ? "".concat(message, " of the policy \"").concat(safeTruncate(event.originalPolicy, 100, '...'), "\"") : 'no policy', event.sourceFile, event.lineNumber, event.columnNumber)
-  });
-}
-function buildStack(name, message, sourceFile, lineNumber, columnNumber) {
-  return sourceFile && toStackTraceString({
-    name: name,
-    message: message,
-    stack: [{
-      func: '?',
-      url: sourceFile,
-      line: lineNumber,
-      column: columnNumber
-    }]
   });
 }
 ;// CONCATENATED MODULE: ../core/esm/helper/lifeCycle.js
@@ -3608,26 +3316,32 @@ LifeCycle.prototype = {
     var _this = this;
     return {
       unsubscribe: function unsubscribe() {
-        _this.callbacks[eventType] = tools_filter(_this.callbacks[eventType], function (other) {
+        _this.callbacks[eventType] = filter(_this.callbacks[eventType], function (other) {
           return other !== callback;
         });
       }
     };
   }
 };
-;// CONCATENATED MODULE: ../core/esm/helper/limitModification.js
-function _toArray(r) {
-  return _arrayWithHoles(r) || _iterableToArray(r) || _unsupportedIterableToArray(r) || _nonIterableRest();
+;// CONCATENATED MODULE: ../../node_modules/@babel/runtime/helpers/esm/arrayWithHoles.js
+function _arrayWithHoles(r) {
+  if (Array.isArray(r)) return r;
 }
+
+;// CONCATENATED MODULE: ../../node_modules/@babel/runtime/helpers/esm/iterableToArray.js
 function _iterableToArray(r) {
   if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r);
 }
-function _slicedToArray(r, e) {
-  return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest();
+
+;// CONCATENATED MODULE: ../../node_modules/@babel/runtime/helpers/esm/arrayLikeToArray.js
+function _arrayLikeToArray(r, a) {
+  (null == a || a > r.length) && (a = r.length);
+  for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e];
+  return n;
 }
-function _nonIterableRest() {
-  throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
-}
+
+;// CONCATENATED MODULE: ../../node_modules/@babel/runtime/helpers/esm/unsupportedIterableToArray.js
+
 function _unsupportedIterableToArray(r, a) {
   if (r) {
     if ("string" == typeof r) return _arrayLikeToArray(r, a);
@@ -3635,11 +3349,22 @@ function _unsupportedIterableToArray(r, a) {
     return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0;
   }
 }
-function _arrayLikeToArray(r, a) {
-  (null == a || a > r.length) && (a = r.length);
-  for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e];
-  return n;
+
+;// CONCATENATED MODULE: ../../node_modules/@babel/runtime/helpers/esm/nonIterableRest.js
+function _nonIterableRest() {
+  throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
 }
+
+;// CONCATENATED MODULE: ../../node_modules/@babel/runtime/helpers/esm/toArray.js
+
+
+
+
+function _toArray(r) {
+  return _arrayWithHoles(r) || _iterableToArray(r) || _unsupportedIterableToArray(r) || _nonIterableRest();
+}
+
+;// CONCATENATED MODULE: ../../node_modules/@babel/runtime/helpers/esm/iterableToArrayLimit.js
 function _iterableToArrayLimit(r, l) {
   var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"];
   if (null != t) {
@@ -3667,9 +3392,19 @@ function _iterableToArrayLimit(r, l) {
     return a;
   }
 }
-function _arrayWithHoles(r) {
-  if (Array.isArray(r)) return r;
+
+;// CONCATENATED MODULE: ../../node_modules/@babel/runtime/helpers/esm/slicedToArray.js
+
+
+
+
+function _slicedToArray(r, e) {
+  return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest();
 }
+
+;// CONCATENATED MODULE: ../core/esm/helper/limitModification.js
+
+
 
 
 function limitModification(object, modifiableFieldPaths, modifier) {
@@ -3709,7 +3444,7 @@ function setValueAtPath(object, clone, pathSegments, fieldType) {
 function setNestedValue(object, field, value, fieldType) {
   var newType = tools_getType(value);
   if (newType === fieldType) {
-    object[field] = sanitize_sanitize(value);
+    object[field] = sanitize(value);
   } else if (fieldType === 'object' && (newType === 'undefined' || newType === 'null')) {
     object[field] = {};
   }
@@ -3741,7 +3476,7 @@ function createEventRateLimiter(eventType, limit, onLimitReached) {
         try {
           onLimitReached({
             message: 'Reached max number of ' + eventType + 's by minute: ' + limit,
-            source: errorTools_ErrorSource.AGENT,
+            source: ErrorSource.AGENT,
             startClocks: tools_clocksNow()
           });
         } finally {
@@ -3751,6 +3486,53 @@ function createEventRateLimiter(eventType, limit, onLimitReached) {
       return true;
     }
   };
+}
+;// CONCATENATED MODULE: ../core/esm/helper/observable.js
+
+var _Observable = function _Observable(onFirstSubscribe) {
+  this.observers = [];
+  this.onLastUnsubscribe = undefined;
+  this.onFirstSubscribe = onFirstSubscribe;
+};
+_Observable.prototype = {
+  subscribe: function subscribe(f) {
+    this.observers.push(f);
+    if (this.observers.length === 1 && this.onFirstSubscribe) {
+      this.onLastUnsubscribe = this.onFirstSubscribe(this) || undefined;
+    }
+    var _this = this;
+    return {
+      unsubscribe: function unsubscribe() {
+        _this.observers = filter(_this.observers, function (other) {
+          return f !== other;
+        });
+        if (!_this.observers.length && _this.onLastUnsubscribe) {
+          _this.onLastUnsubscribe();
+        }
+      }
+    };
+  },
+  notify: function notify(data) {
+    tools_each(this.observers, function (observer) {
+      observer(data);
+    });
+  }
+};
+var observable_Observable = _Observable;
+function mergeObservables() {
+  var observables = [].slice.call(arguments);
+  return new observable_Observable(function (globalObservable) {
+    var subscriptions = map(observables, function (observable) {
+      return observable.subscribe(function (data) {
+        return globalObservable.notify(data);
+      });
+    });
+    return function () {
+      return each(subscriptions, function (subscription) {
+        return subscription.unsubscribe();
+      });
+    };
+  });
 }
 ;// CONCATENATED MODULE: ../core/esm/helper/urlPolyfill.js
 
@@ -3814,6 +3596,66 @@ function checkURLSupported() {
     isURLSupported = false;
   }
   return isURLSupported;
+}
+;// CONCATENATED MODULE: ../core/esm/helper/readBytesFromStream.js
+
+
+/**
+ * Read bytes from a ReadableStream until at least `limit` bytes have been read (or until the end of
+ * the stream). The callback is invoked with the at most `limit` bytes, and indicates that the limit
+ * has been exceeded if more bytes were available.
+ */
+function readBytesFromStream(stream, callback, options) {
+  var reader = stream.getReader();
+  var chunks = [];
+  var readBytesCount = 0;
+  readMore();
+  function readMore() {
+    reader.read().then(monitor(function (result) {
+      if (result.done) {
+        onDone();
+        return;
+      }
+      if (options.collectStreamBody) {
+        chunks.push(result.value);
+      }
+      readBytesCount += result.value.length;
+      if (readBytesCount > options.bytesLimit) {
+        onDone();
+      } else {
+        readMore();
+      }
+    }), monitor(function (error) {
+      callback(error);
+    }));
+  }
+  function onDone() {
+    reader.cancel()["catch"](
+    // we don't care if cancel fails, but we still need to catch the error to avoid reporting it
+    // as an unhandled rejection
+    noop);
+    var bytes;
+    var limitExceeded;
+    if (options.collectStreamBody) {
+      var completeBuffer;
+      if (chunks.length === 1) {
+        // optimization: if the response is small enough to fit in a single buffer (provided by the browser), just
+        // use it directly.
+        completeBuffer = chunks[0];
+      } else {
+        // else, we need to copy buffers into a larger buffer to concatenate them.
+        completeBuffer = new Uint8Array(readBytesCount);
+        var offset = 0;
+        each(chunks, function (chunk) {
+          completeBuffer.set(chunk, offset);
+          offset += chunk.length;
+        });
+      }
+      bytes = completeBuffer.slice(0, options.bytesLimit);
+      limitExceeded = completeBuffer.length > options.bytesLimit;
+    }
+    callback(undefined, bytes, limitExceeded);
+  }
 }
 ;// CONCATENATED MODULE: ../core/esm/helper/requestIdleCallback.js
 
@@ -4058,54 +3900,7 @@ var SESSION_TIME_OUT_DELAY = 4 * ONE_HOUR;
 var SESSION_EXPIRATION_DELAY = 15 * ONE_MINUTE;
 var SESSION_STORE_KEY = '_gc_s';
 ;// CONCATENATED MODULE: ../core/esm/session/sessionState.js
-function sessionState_slicedToArray(r, e) {
-  return sessionState_arrayWithHoles(r) || sessionState_iterableToArrayLimit(r, e) || sessionState_unsupportedIterableToArray(r, e) || sessionState_nonIterableRest();
-}
-function sessionState_nonIterableRest() {
-  throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
-}
-function sessionState_unsupportedIterableToArray(r, a) {
-  if (r) {
-    if ("string" == typeof r) return sessionState_arrayLikeToArray(r, a);
-    var t = {}.toString.call(r).slice(8, -1);
-    return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? sessionState_arrayLikeToArray(r, a) : void 0;
-  }
-}
-function sessionState_arrayLikeToArray(r, a) {
-  (null == a || a > r.length) && (a = r.length);
-  for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e];
-  return n;
-}
-function sessionState_iterableToArrayLimit(r, l) {
-  var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"];
-  if (null != t) {
-    var e,
-      n,
-      i,
-      u,
-      a = [],
-      f = !0,
-      o = !1;
-    try {
-      if (i = (t = t.call(r)).next, 0 === l) {
-        if (Object(t) !== t) return;
-        f = !1;
-      } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0);
-    } catch (r) {
-      o = !0, n = r;
-    } finally {
-      try {
-        if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return;
-      } finally {
-        if (o) throw n;
-      }
-    }
-    return a;
-  }
-}
-function sessionState_arrayWithHoles(r) {
-  if (Array.isArray(r)) return r;
-}
+
 
 
 var SESSION_ENTRY_REGEXP = /^([a-zA-Z]+)=([a-z0-9-]+)$/;
@@ -4142,7 +3937,7 @@ function toSessionState(sessionString) {
     sessionString.split(SESSION_ENTRY_SEPARATOR).forEach(function (entry) {
       var matches = SESSION_ENTRY_REGEXP.exec(entry);
       if (matches !== null) {
-        var _matches = sessionState_slicedToArray(matches, 3),
+        var _matches = _slicedToArray(matches, 3),
           key = _matches[1],
           value = _matches[2];
         session[key] = value;
@@ -4708,6 +4503,55 @@ function afterSend(observable, responsePromise, startContext) {
     });
   }));
 }
+;// CONCATENATED MODULE: ../core/esm/browser/addEventListener.js
+
+
+
+function addEventListener_addEventListener(eventTarget, event, listener, options) {
+  return addEventListeners(eventTarget, [event], listener, options);
+}
+
+/**
+ * Add event listeners to an event emitter object (Window, Element, mock object...).  This provides
+ * a few conveniences compared to using `element.addEventListener` directly:
+ *
+ * * supports IE11 by:
+ *   * using an option object only if needed
+ *   * emulating the `once` option
+ *
+ * * wraps the listener with a `monitor` function
+ *
+ * * returns a `stop` function to remove the listener
+ *
+ * * with `once: true`, the listener will be called at most once, even if different events are
+ *   listened
+ */
+
+function addEventListeners(eventTarget, eventNames, listener, options) {
+  var wrappedListener = monitor_monitor(options && options.once ? function (event) {
+    stop();
+    listener(event);
+  } : listener);
+  options = options && options.passive ? {
+    capture: options.capture,
+    passive: options.passive
+  } : options && options.capture;
+  // Use the window.EventTarget.prototype when possible to avoid wrong overrides (e.g: https://github.com/salesforce/lwc/issues/1824)
+  var listenerTarget = window.EventTarget && eventTarget instanceof EventTarget ? window.EventTarget.prototype : eventTarget;
+  var add = getZoneJsOriginalValue(listenerTarget, 'addEventListener');
+  tools_each(eventNames, function (eventName) {
+    add.call(eventTarget, eventName, wrappedListener, options);
+  });
+  var stop = function stop() {
+    var remove = getZoneJsOriginalValue(listenerTarget, 'removeEventListener');
+    tools_each(eventNames, function (eventName) {
+      remove.call(eventTarget, eventName, wrappedListener, options);
+    });
+  };
+  return {
+    stop: stop
+  };
+}
 ;// CONCATENATED MODULE: ../core/esm/browser/xhrObservable.js
 
 
@@ -4850,7 +4694,7 @@ function createPageExitObservable() {
   });
 }
 function isPageExitReason(reason) {
-  return tools_includes(values(PageExitReason), reason);
+  return includes(values(PageExitReason), reason);
 }
 ;// CONCATENATED MODULE: ../core/esm/browser/runOnReadyState.js
 
@@ -5276,7 +5120,7 @@ function retryQueuedPayloads(reason, state, sendStrategy, endpointUrl, reportErr
   if (reason === RetryReason.AFTER_SUCCESS && state.queuedPayloads.isFull() && !state.queueFullReported) {
     reportError({
       message: 'Reached max ' + endpointUrl + ' events size queued for upload: ' + MAX_QUEUE_BYTES_COUNT / ONE_MEBI_BYTE + 'MiB',
-      source: errorTools_ErrorSource.AGENT,
+      source: ErrorSource.AGENT,
       startClocks: tools_clocksNow()
     });
     state.queueFullReported = true;
@@ -5482,19 +5326,11 @@ function sendXHR(url, payload, onResponse) {
   request.send(data);
 }
 ;// CONCATENATED MODULE: ../core/esm/helper/serialisation/rowData.js
-function rowData_typeof(o) {
-  "@babel/helpers - typeof";
 
-  return rowData_typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) {
-    return typeof o;
-  } : function (o) {
-    return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o;
-  }, rowData_typeof(o);
-}
 
 
 function escapeRowData(str) {
-  if (rowData_typeof(str) === 'object' && str) {
+  if (typeof_typeof(str) === 'object' && str) {
     str = jsonStringify_jsonStringify(str);
   } else if (!isString(str)) {
     return str;
@@ -5505,7 +5341,7 @@ function escapeRowData(str) {
   });
 }
 function escapeJsonValue(value, isTag) {
-  if (rowData_typeof(value) === 'object' && value) {
+  if (typeof_typeof(value) === 'object' && value) {
     value = jsonStringify_jsonStringify(value);
   } else if (isTag) {
     // tag  json  只能是字符串
@@ -5517,7 +5353,7 @@ function escapeFieldValueStr(str) {
   return '"' + str.replace(/\\/g, '\\\\').replace(/"/g, '\\"') + '"';
 }
 function escapeRowField(value) {
-  if (rowData_typeof(value) === 'object' && value) {
+  if (typeof_typeof(value) === 'object' && value) {
     return escapeFieldValueStr(jsonStringify_jsonStringify(value));
   } else if (isString(value)) {
     return escapeFieldValueStr(value);
@@ -5997,64 +5833,41 @@ function getSyntheticsResultId() {
   var value = window._GUANCE_SYNTHETICS_RESULT_ID || getCookie(SYNTHETICS_RESULT_ID_COOKIE_NAME);
   return typeof value === 'string' ? value : undefined;
 }
-;// CONCATENATED MODULE: ../core/esm/helper/serialisation/contextManager.js
-function contextManager_typeof(o) {
-  "@babel/helpers - typeof";
+;// CONCATENATED MODULE: ../../node_modules/@babel/runtime/helpers/esm/toPrimitive.js
 
-  return contextManager_typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) {
-    return typeof o;
-  } : function (o) {
-    return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o;
-  }, contextManager_typeof(o);
-}
-function contextManager_slicedToArray(r, e) {
-  return contextManager_arrayWithHoles(r) || contextManager_iterableToArrayLimit(r, e) || contextManager_unsupportedIterableToArray(r, e) || contextManager_nonIterableRest();
-}
-function contextManager_nonIterableRest() {
-  throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
-}
-function contextManager_unsupportedIterableToArray(r, a) {
-  if (r) {
-    if ("string" == typeof r) return contextManager_arrayLikeToArray(r, a);
-    var t = {}.toString.call(r).slice(8, -1);
-    return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? contextManager_arrayLikeToArray(r, a) : void 0;
+function toPrimitive(t, r) {
+  if ("object" != typeof_typeof(t) || !t) return t;
+  var e = t[Symbol.toPrimitive];
+  if (void 0 !== e) {
+    var i = e.call(t, r || "default");
+    if ("object" != typeof_typeof(i)) return i;
+    throw new TypeError("@@toPrimitive must return a primitive value.");
   }
+  return ("string" === r ? String : Number)(t);
 }
-function contextManager_arrayLikeToArray(r, a) {
-  (null == a || a > r.length) && (a = r.length);
-  for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e];
-  return n;
+
+;// CONCATENATED MODULE: ../../node_modules/@babel/runtime/helpers/esm/toPropertyKey.js
+
+
+function toPropertyKey(t) {
+  var i = toPrimitive(t, "string");
+  return "symbol" == typeof_typeof(i) ? i : i + "";
 }
-function contextManager_iterableToArrayLimit(r, l) {
-  var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"];
-  if (null != t) {
-    var e,
-      n,
-      i,
-      u,
-      a = [],
-      f = !0,
-      o = !1;
-    try {
-      if (i = (t = t.call(r)).next, 0 === l) {
-        if (Object(t) !== t) return;
-        f = !1;
-      } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0);
-    } catch (r) {
-      o = !0, n = r;
-    } finally {
-      try {
-        if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return;
-      } finally {
-        if (o) throw n;
-      }
-    }
-    return a;
-  }
+
+;// CONCATENATED MODULE: ../../node_modules/@babel/runtime/helpers/esm/defineProperty.js
+
+function _defineProperty(e, r, t) {
+  return (r = toPropertyKey(r)) in e ? Object.defineProperty(e, r, {
+    value: t,
+    enumerable: !0,
+    configurable: !0,
+    writable: !0
+  }) : e[r] = t, e;
 }
-function contextManager_arrayWithHoles(r) {
-  if (Array.isArray(r)) return r;
-}
+
+;// CONCATENATED MODULE: ../core/esm/helper/serialisation/contextManager.js
+
+
 function ownKeys(e, r) {
   var t = Object.keys(e);
   if (Object.getOwnPropertySymbols) {
@@ -6076,28 +5889,6 @@ function _objectSpread(e) {
   }
   return e;
 }
-function _defineProperty(e, r, t) {
-  return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, {
-    value: t,
-    enumerable: !0,
-    configurable: !0,
-    writable: !0
-  }) : e[r] = t, e;
-}
-function _toPropertyKey(t) {
-  var i = _toPrimitive(t, "string");
-  return "symbol" == contextManager_typeof(i) ? i : i + "";
-}
-function _toPrimitive(t, r) {
-  if ("object" != contextManager_typeof(t) || !t) return t;
-  var e = t[Symbol.toPrimitive];
-  if (void 0 !== e) {
-    var i = e.call(t, r || "default");
-    if ("object" != contextManager_typeof(i)) return i;
-    throw new TypeError("@@toPrimitive must return a primitive value.");
-  }
-  return ("string" === r ? String : Number)(t);
-}
 
 
 
@@ -6105,7 +5896,7 @@ function _toPrimitive(t, r) {
 function ensureProperties(context, propertiesConfig, name) {
   var newContext = _objectSpread({}, context);
   for (var _i = 0, _Object$entries = Object.entries(propertiesConfig); _i < _Object$entries.length; _i++) {
-    var _Object$entries$_i = contextManager_slicedToArray(_Object$entries[_i], 2),
+    var _Object$entries$_i = _slicedToArray(_Object$entries[_i], 2),
       key = _Object$entries$_i[0],
       _Object$entries$_i$ = _Object$entries$_i[1],
       required = _Object$entries$_i$.required,
@@ -6136,7 +5927,7 @@ function createContextManager() {
     },
     setContext: function setContext(newContext) {
       if (tools_getType(newContext) === 'object') {
-        context = sanitize_sanitize(ensureProperties(newContext, propertiesConfig, name));
+        context = sanitize(ensureProperties(newContext, propertiesConfig, name));
         customerDataTracker === null || customerDataTracker === void 0 || customerDataTracker.updateCustomerData(context);
       } else {
         contextManager.clearContext();
@@ -6144,7 +5935,7 @@ function createContextManager() {
       changeObservable.notify();
     },
     setContextProperty: function setContextProperty(key, property) {
-      context[key] = sanitize_sanitize(ensureProperties(_defineProperty({}, key, property), propertiesConfig, name)[key]);
+      context[key] = sanitize(ensureProperties(_defineProperty({}, key, property), propertiesConfig, name)[key]);
       customerDataTracker === null || customerDataTracker === void 0 || customerDataTracker.updateCustomerData(context);
       changeObservable.notify();
     },
@@ -6436,8 +6227,8 @@ function displayAlreadyInitializedError(sdkName, initConfiguration) {
 
 
 
-
-
+// export * from './console/consoleObservable'
+// export * from './report/reportObservable'
 
 
 
@@ -6450,7 +6241,7 @@ function displayAlreadyInitializedError(sdkName, initConfiguration) {
 // export * from './helper/mobileUtil'
 
 
-// export * from './helper/readBytesFromStream'
+
 
 
 
@@ -6568,24 +6359,25 @@ function startRumSessionManager(configuration, lifeCycle) {
  * It needs to be a premium plan in order to get long tasks
  */
 function startRumSessionManagerStub() {
-  var session = {
-    id: '00000000-aaaa-0000-aaaa-000000000000',
-    plan: RumSessionPlan.WITHOUT_SESSION_REPLAY,
-    // plan value should not be taken into account for mobile
-    isErrorSession: false,
-    sessionErrorTimestamp: 0,
-    sessionReplayAllowed: bridgeSupports(BridgeCapability.RECORDS) ? true : false,
-    errorSessionReplayAllowed: false,
-    sessionHasError: false
-  };
-  return {
-    findTrackedSession: function findTrackedSession() {
-      return session;
-    },
-    expire: tools_noop,
-    expireObservable: new observable_Observable(),
-    setErrorForSession: function setErrorForSession() {}
-  };
+  // var session = {
+  //   id: '00000000-aaaa-0000-aaaa-000000000000',
+  //   plan: RumSessionPlan.WITHOUT_SESSION_REPLAY, // plan value should not be taken into account for mobile
+  //   isErrorSession: false,
+  //   sessionErrorTimestamp: 0,
+  //   sessionReplayAllowed: bridgeSupports(BridgeCapability.RECORDS)
+  //     ? true
+  //     : false,
+  //   errorSessionReplayAllowed: false,
+  //   sessionHasError: false
+  // }
+  // return {
+  //   findTrackedSession: function () {
+  //     return session
+  //   },
+  //   expire: noop,
+  //   expireObservable: new Observable(),
+  //   setErrorForSession: function () {}
+  // }
 }
 function computeSessionState(configuration, rawTrackingType) {
   var sessionSampleRate = configuration.sessionSampleRate,
@@ -6742,53 +6534,10 @@ function startRumBatch(configuration, lifeCycle, telemetryEventObservable, repor
   // })
   return batch;
 }
-;// CONCATENATED MODULE: ../../node_modules/@babel/runtime/helpers/esm/typeof.js
-function typeof_typeof(o) {
-  "@babel/helpers - typeof";
-
-  return typeof_typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) {
-    return typeof o;
-  } : function (o) {
-    return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o;
-  }, typeof_typeof(o);
-}
-
-;// CONCATENATED MODULE: ../../node_modules/@babel/runtime/helpers/esm/toPrimitive.js
-
-function toPrimitive(t, r) {
-  if ("object" != typeof_typeof(t) || !t) return t;
-  var e = t[Symbol.toPrimitive];
-  if (void 0 !== e) {
-    var i = e.call(t, r || "default");
-    if ("object" != typeof_typeof(i)) return i;
-    throw new TypeError("@@toPrimitive must return a primitive value.");
-  }
-  return ("string" === r ? String : Number)(t);
-}
-
-;// CONCATENATED MODULE: ../../node_modules/@babel/runtime/helpers/esm/toPropertyKey.js
-
-
-function toPropertyKey(t) {
-  var i = toPrimitive(t, "string");
-  return "symbol" == typeof_typeof(i) ? i : i + "";
-}
-
-;// CONCATENATED MODULE: ../../node_modules/@babel/runtime/helpers/esm/defineProperty.js
-
-function defineProperty_defineProperty(e, r, t) {
-  return (r = toPropertyKey(r)) in e ? Object.defineProperty(e, r, {
-    value: t,
-    enumerable: !0,
-    configurable: !0,
-    writable: !0
-  }) : e[r] = t, e;
-}
-
 ;// CONCATENATED MODULE: ./src/domain/assembly.js
 
 function assembly_ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
-function assembly_objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? assembly_ownKeys(Object(t), !0).forEach(function (r) { defineProperty_defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : assembly_ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+function assembly_objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? assembly_ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : assembly_ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
 
 var SessionType = {
   SYNTHETICS: 'synthetics',
@@ -7260,6 +7009,91 @@ function getPageState() {
   }
   return PageState.PASSIVE;
 }
+;// CONCATENATED MODULE: ./src/domain/rumEventsCollection/error/errorCollection.js
+
+// import { trackConsoleError } from './trackConsoleError'
+// import { trackReportError } from './trackReportError'
+
+function startErrorCollection(lifeCycle, configuration, sessionManager, pageStateHistory) {
+  var errorObservable = new observable_Observable();
+
+  // trackConsoleError(errorObservable)
+  trackRuntimeError(errorObservable);
+  // trackReportError(configuration, errorObservable)
+  var session = sessionManager.findTrackedSession();
+  var hasError = session.isErrorSession && session.sessionHasError;
+  if (session.isErrorSession) {
+    lifeCycle.subscribe(LifeCycleEventType.SESSION_RENEWED, function () {
+      hasError = false;
+    });
+  }
+  errorObservable.subscribe(function (error) {
+    if (session.isErrorSession && !hasError) {
+      sessionManager.setErrorForSession();
+      hasError = true;
+    }
+    lifeCycle.notify(LifeCycleEventType.RAW_ERROR_COLLECTED, {
+      error: error
+    });
+  });
+  return doStartErrorCollection(lifeCycle, pageStateHistory);
+}
+function doStartErrorCollection(lifeCycle, pageStateHistory) {
+  lifeCycle.subscribe(LifeCycleEventType.RAW_ERROR_COLLECTED, function (error) {
+    lifeCycle.notify(LifeCycleEventType.RAW_RUM_EVENT_COLLECTED, tools_assign({
+      customerContext: error.customerContext,
+      savedCommonContext: error.savedCommonContext
+    }, processError(error.error, pageStateHistory)));
+  });
+  return {
+    addError: function addError(providedError, savedCommonContext) {
+      var error = providedError.error;
+      var stackTrace = error instanceof Error ? computeStackTrace_computeStackTrace(error) : undefined;
+      var rawError = computeRawError({
+        stackTrace: stackTrace,
+        originalError: error,
+        handlingStack: providedError.handlingStack,
+        startClocks: providedError.startClocks,
+        nonErrorPrefix: NonErrorPrefix.PROVIDED,
+        source: ErrorSource.CUSTOM,
+        handling: ErrorHandling.HANDLED
+      });
+      lifeCycle.notify(LifeCycleEventType.RAW_ERROR_COLLECTED, {
+        customerContext: providedError.context,
+        savedCommonContext: savedCommonContext,
+        error: rawError
+      });
+    }
+  };
+}
+function processError(error, pageStateHistory) {
+  console.trace('domain/rumEventsCollection/error/errorCollection.js::processError', error);
+  var rawRumEvent = {
+    date: error.startClocks.timeStamp,
+    error: {
+      id: UUID(),
+      message: error.message,
+      source: error.source,
+      stack: error.stack,
+      handling_stack: error.handlingStack,
+      type: error.type,
+      handling: error.handling,
+      causes: error.causes,
+      source_type: 'browser'
+    },
+    type: RumEventType.ERROR,
+    view: {
+      in_foreground: pageStateHistory.wasInPageStateAt(PageState.ACTIVE, error.startClocks.relative)
+    }
+  };
+  return {
+    rawRumEvent: rawRumEvent,
+    startTime: error.startClocks.relative,
+    domainContext: {
+      error: error.originalError
+    }
+  };
+}
 ;// CONCATENATED MODULE: ./src/domain/rumEventsCollection/view/trackViews.js
 
 
@@ -7548,103 +7382,182 @@ function startViewCollection(lifeCycle, configuration, location, domMutationObse
   });
   return trackViews(location, lifeCycle, 'domMutationObservable', configuration, locationChangeObservable, !configuration.trackViewsManually, initialViewOptions);
 }
-function computePerformanceViewDetails(navigationTimings) {
-  if (!navigationTimings) {
-    return undefined;
-  }
-  var fetchStart = navigationTimings.fetchStart,
-    responseEnd = navigationTimings.responseEnd,
-    domInteractive = navigationTimings.domInteractive,
-    domContentLoaded = navigationTimings.domContentLoaded,
-    domComplete = navigationTimings.domComplete,
-    loadEventEnd = navigationTimings.loadEventEnd,
-    loadEventStart = navigationTimings.loadEventStart,
-    domContentLoadedEventEnd = navigationTimings.domContentLoadedEventEnd;
-  var details = {};
-  if (isNumber(responseEnd) && isNumber(fetchStart) && responseEnd !== fetchStart && responseEnd > fetchStart) {
-    details.fpt = toServerDuration(responseEnd - fetchStart);
-    var apdexLevel = parseInt((responseEnd - fetchStart) / 1000); // 秒数取整
-    details.apdexLevel = apdexLevel > 9 ? 9 : apdexLevel;
-  }
-  if (isNumber(domInteractive) && isNumber(fetchStart) && domInteractive !== fetchStart && domInteractive > fetchStart) {
-    details.tti = toServerDuration(domInteractive - fetchStart);
-  }
-  if (isNumber(domContentLoaded) && isNumber(fetchStart) && domContentLoaded !== fetchStart && domContentLoaded > fetchStart) {
-    details.dom_ready = toServerDuration(domContentLoaded - fetchStart);
-  }
-  // Make sure a connection occurred
-  if (isNumber(loadEventEnd) && isNumber(fetchStart) && loadEventEnd !== fetchStart && loadEventEnd > fetchStart) {
-    details.load = toServerDuration(loadEventEnd - fetchStart);
-  }
-  if (isNumber(loadEventStart) && isNumber(domContentLoadedEventEnd) && loadEventStart !== domContentLoadedEventEnd && loadEventStart > domContentLoadedEventEnd) {
-    details.resource_load_time = toServerDuration(loadEventStart - domContentLoadedEventEnd);
-  }
-  if (isNumber(domComplete) && isNumber(domInteractive) && domComplete !== domInteractive && domComplete > domInteractive) {
-    details.dom = toServerDuration(domComplete - domInteractive);
-  }
-  return details;
-}
+// function computePerformanceViewDetails(navigationTimings) {
+//   if (!navigationTimings) {
+//     return undefined
+//   }
+//   var fetchStart = navigationTimings.fetchStart,
+//     responseEnd = navigationTimings.responseEnd,
+//     domInteractive = navigationTimings.domInteractive,
+//     domContentLoaded = navigationTimings.domContentLoaded,
+//     domComplete = navigationTimings.domComplete,
+//     loadEventEnd = navigationTimings.loadEventEnd,
+//     loadEventStart = navigationTimings.loadEventStart,
+//     domContentLoadedEventEnd = navigationTimings.domContentLoadedEventEnd
+//   var details = {}
+//   if (
+//     isNumber(responseEnd) &&
+//     isNumber(fetchStart) &&
+//     responseEnd !== fetchStart &&
+//     responseEnd > fetchStart
+//   ) {
+//     details.fpt = toServerDuration(responseEnd - fetchStart)
+//     var apdexLevel = parseInt((responseEnd - fetchStart) / 1000) // 秒数取整
+//     details.apdexLevel = apdexLevel > 9 ? 9 : apdexLevel
+//   }
+//   if (
+//     isNumber(domInteractive) &&
+//     isNumber(fetchStart) &&
+//     domInteractive !== fetchStart &&
+//     domInteractive > fetchStart
+//   ) {
+//     details.tti = toServerDuration(domInteractive - fetchStart)
+//   }
+//   if (
+//     isNumber(domContentLoaded) &&
+//     isNumber(fetchStart) &&
+//     domContentLoaded !== fetchStart &&
+//     domContentLoaded > fetchStart
+//   ) {
+//     details.dom_ready = toServerDuration(domContentLoaded - fetchStart)
+//   }
+//   // Make sure a connection occurred
+//   if (
+//     isNumber(loadEventEnd) &&
+//     isNumber(fetchStart) &&
+//     loadEventEnd !== fetchStart &&
+//     loadEventEnd > fetchStart
+//   ) {
+//     details.load = toServerDuration(loadEventEnd - fetchStart)
+//   }
+//   if (
+//     isNumber(loadEventStart) &&
+//     isNumber(domContentLoadedEventEnd) &&
+//     loadEventStart !== domContentLoadedEventEnd &&
+//     loadEventStart > domContentLoadedEventEnd
+//   ) {
+//     details.resource_load_time = toServerDuration(
+//       loadEventStart - domContentLoadedEventEnd
+//     )
+//   }
+//   if (
+//     isNumber(domComplete) &&
+//     isNumber(domInteractive) &&
+//     domComplete !== domInteractive &&
+//     domComplete > domInteractive
+//   ) {
+//     details.dom = toServerDuration(domComplete - domInteractive)
+//   }
+//   return details
+// }
+
 function processViewUpdate(view, configuration, recorderApi, pageStateHistory) {
   // var replayStats = recorderApi.getReplayStats(view.id)
   var pageStates = pageStateHistory.findAll(view.startClocks.relative, view.duration);
   var viewEvent = {
     _gc: {
       document_version: view.documentVersion,
-      replay_stats: new Map(),
-      // replayStats,
+      // replay_stats: replayStats,
       page_states: pageStates
     },
     date: view.startClocks.timeStamp,
     type: RumEventType.VIEW,
     view: {
-      action: {
-        count: view.eventCounts.actionCount
-      },
-      frustration: {
-        count: view.eventCounts.frustrationCount
-      },
-      cumulative_layout_shift: findByPath(view.commonViewMetrics, 'cumulativeLayoutShift.value'),
-      cumulative_layout_shift_time: findByPath(view.commonViewMetrics, 'cumulativeLayoutShift.time'),
-      cumulative_layout_shift_target_selector: findByPath(view.commonViewMetrics, 'cumulativeLayoutShift.targetSelector'),
-      first_byte: toServerDuration(findByPath(view.initialViewMetrics, 'navigationTimings.firstByte')),
-      dom_complete: toServerDuration(findByPath(view.initialViewMetrics, 'navigationTimings.domComplete')),
-      dom_content_loaded: toServerDuration(findByPath(view.initialViewMetrics, 'navigationTimings.domContentLoaded')),
-      dom_interactive: toServerDuration(findByPath(view.initialViewMetrics, 'navigationTimings.domInteractive')),
-      error: {
-        count: view.eventCounts.errorCount
-      },
-      first_contentful_paint: toServerDuration(findByPath(view.initialViewMetrics, 'firstContentfulPaint')),
-      first_input_delay: toServerDuration(findByPath(view.initialViewMetrics, 'firstInput.delay')),
-      first_input_time: toServerDuration(findByPath(view.initialViewMetrics, 'firstInput.time')),
-      first_input_target_selector: findByPath(view.initialViewMetrics, 'firstInput.targetSelector'),
-      interaction_to_next_paint: toServerDuration(findByPath(view.commonViewMetrics, 'interactionToNextPaint.value')),
-      interaction_to_next_paint_target_selector: findByPath(view.commonViewMetrics, 'interactionToNextPaint.targetSelector'),
+      // action: {
+      //   count: view.eventCounts.actionCount
+      // },
+      // frustration: {
+      //   count: view.eventCounts.frustrationCount
+      // },
+      // cumulative_layout_shift: findByPath(
+      //   view.commonViewMetrics,
+      //   'cumulativeLayoutShift.value'
+      // ),
+      // cumulative_layout_shift_time: findByPath(
+      //   view.commonViewMetrics,
+      //   'cumulativeLayoutShift.time'
+      // ),
+      // cumulative_layout_shift_target_selector: findByPath(
+      //   view.commonViewMetrics,
+      //   'cumulativeLayoutShift.targetSelector'
+      // ),
+      // first_byte: toServerDuration(
+      //   findByPath(view.initialViewMetrics, 'navigationTimings.firstByte')
+      // ),
+      // dom_complete: toServerDuration(
+      //   findByPath(view.initialViewMetrics, 'navigationTimings.domComplete')
+      // ),
+      // dom_content_loaded: toServerDuration(
+      //   findByPath(
+      //     view.initialViewMetrics,
+      //     'navigationTimings.domContentLoaded'
+      //   )
+      // ),
+      // dom_interactive: toServerDuration(
+      //   findByPath(view.initialViewMetrics, 'navigationTimings.domInteractive')
+      // ),
+      // error: {
+      //   count: view.eventCounts.errorCount
+      // },
+      // first_contentful_paint: toServerDuration(
+      //   findByPath(view.initialViewMetrics, 'firstContentfulPaint')
+      // ),
+      // first_input_delay: toServerDuration(
+      //   findByPath(view.initialViewMetrics, 'firstInput.delay')
+      // ),
+      // first_input_time: toServerDuration(
+      //   findByPath(view.initialViewMetrics, 'firstInput.time')
+      // ),
+      // first_input_target_selector: findByPath(
+      //   view.initialViewMetrics,
+      //   'firstInput.targetSelector'
+      // ),
+      // interaction_to_next_paint: toServerDuration(
+      //   findByPath(view.commonViewMetrics, 'interactionToNextPaint.value')
+      // ),
+      // interaction_to_next_paint_target_selector: findByPath(
+      //   view.commonViewMetrics,
+      //   'interactionToNextPaint.targetSelector'
+      // ),
       is_active: view.isActive,
       name: view.name,
-      largest_contentful_paint: toServerDuration(findByPath(view.initialViewMetrics, 'largestContentfulPaint.value')),
-      largest_contentful_paint_element_selector: findByPath(view.initialViewMetrics, 'largestContentfulPaint.targetSelector'),
-      load_event: toServerDuration(findByPath(view.initialViewMetrics, 'navigationTimings.loadEvent')),
-      loading_time: discardNegativeDuration(toServerDuration(view.commonViewMetrics.loadingTime)),
+      // largest_contentful_paint: toServerDuration(
+      //   findByPath(view.initialViewMetrics, 'largestContentfulPaint.value')
+      // ),
+      // largest_contentful_paint_element_selector: findByPath(
+      //   view.initialViewMetrics,
+      //   'largestContentfulPaint.targetSelector'
+      // ),
+      // load_event: toServerDuration(
+      //   findByPath(view.initialViewMetrics, 'navigationTimings.loadEvent')
+      // ),
+      // loading_time: discardNegativeDuration(
+      //   toServerDuration(view.commonViewMetrics.loadingTime)
+      // ),
       loading_type: view.loadingType,
-      long_task: {
-        count: view.eventCounts.longTaskCount
-      },
-      resource: {
-        count: view.eventCounts.resourceCount
-      },
+      // long_task: {
+      //   count: view.eventCounts.longTaskCount
+      // },
+      // resource: {
+      //   count: view.eventCounts.resourceCount
+      // },
       time_spent: toServerDuration(view.duration)
     },
-    display: view.commonViewMetrics.scroll ? {
-      scroll: {
-        max_depth: view.commonViewMetrics.scroll.maxDepth,
-        max_depth_scroll_top: view.commonViewMetrics.scroll.maxDepthScrollTop,
-        max_scroll_height: view.commonViewMetrics.scroll.maxScrollHeight,
-        max_scroll_height_time: toServerDuration(view.commonViewMetrics.scroll.maxScrollHeightTime)
-      }
-    } : undefined,
+    // display: view.commonViewMetrics.scroll
+    //   ? {
+    //       scroll: {
+    //         max_depth: view.commonViewMetrics.scroll.maxDepth,
+    //         max_depth_scroll_top:
+    //           view.commonViewMetrics.scroll.maxDepthScrollTop,
+    //         max_scroll_height: view.commonViewMetrics.scroll.maxScrollHeight,
+    //         max_scroll_height_time: toServerDuration(
+    //           view.commonViewMetrics.scroll.maxScrollHeightTime
+    //         )
+    //       }
+    //     }
+    //   : undefined,
     session: {
-      has_replay: false,
-      // replayStats ? true : undefined,
+      // has_replay: replayStats ? true : undefined,
       is_active: view.sessionIsActive ? undefined : false
     },
     privacy: {
@@ -7654,9 +7567,11 @@ function processViewUpdate(view, configuration, recorderApi, pageStateHistory) {
   if (!tools_isEmptyObject(view.customTimings)) {
     viewEvent.view.custom_timings = mapValues(view.customTimings, toServerDuration);
   }
-  viewEvent = extend2Lev(viewEvent, {
-    view: computePerformanceViewDetails(view.initialViewMetrics.navigationTimings)
-  });
+  // viewEvent = extend2Lev(viewEvent, {
+  //   view: computePerformanceViewDetails(
+  //     view.initialViewMetrics.navigationTimings
+  //   )
+  // })
   return {
     rawRumEvent: viewEvent,
     startTime: view.startClocks.relative,
@@ -7683,7 +7598,7 @@ function processViewUpdate(view, configuration, recorderApi, pageStateHistory) {
 
 
 
-// import { startErrorCollection } from '../domain/rumEventsCollection/error/errorCollection'
+
 
 // import { startRequestCollection } from '../domain/requestCollection'
 // import { startResourceCollection } from '../domain/rumEventsCollection/resource/resourceCollection'
@@ -7775,13 +7690,8 @@ function startRum(configuration, recorderApi, customerDataTrackerManager, getCom
   //   startLongTaskCollection(lifeCycle, configuration)
   // }
 
-  // var _startErrorCollection = startErrorCollection(
-  //   lifeCycle,
-  //   configuration,
-  //   session,
-  //   pageStateHistory
-  // )
-  // var addError = _startErrorCollection.addError
+  var _startErrorCollection = startErrorCollection(lifeCycle, configuration, session, pageStateHistory);
+  var addError = _startErrorCollection.addError;
   // startRequestCollection(lifeCycle, configuration, session)
 
   var internalContext = startInternalContext(configuration.applicationId, session, viewContexts, 'actionContexts', urlContexts);
@@ -8111,10 +8021,14 @@ function createPreStartStrategy(rumPublicApiOptions, getCommonContext, doStartRu
     if (!configuration) {
       return;
     }
-    if (!eventBridgeAvailable && !configuration.sessionStoreStrategyType) {
-      display_display.warn('No storage available for session. We will not send any data.');
-      return;
-    }
+
+    // if (!eventBridgeAvailable && !configuration.sessionStoreStrategyType) {
+    //   display.warn(
+    //     'No storage available for session. We will not send any data.'
+    //   )
+    //   return
+    // }
+
     if (configuration.compressIntakeRequests && !configuration.sendContentTypeByJson && !eventBridgeAvailable && startDeflateWorker) {
       deflateWorker = startDeflateWorker(configuration, 'RUM',
       // Worker initialization can fail asynchronously, especially in Firefox where even CSP
