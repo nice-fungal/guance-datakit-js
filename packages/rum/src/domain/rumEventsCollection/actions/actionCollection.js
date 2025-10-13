@@ -79,7 +79,7 @@ function processAction(action, pageStateHistory) {
       }
     : {
         action: {
-          loadingTime: 0
+          loadingTime: action.context?.duration || 0
         }
       }
   var customerContext = !isAutoAction(action) ? action.context : undefined
@@ -115,5 +115,6 @@ function processAction(action, pageStateHistory) {
 }
 
 function isAutoAction(action) {
-  return action.type !== ActionType.CUSTOM
+  return action.type === ActionType.CLICK
+  //   return action.type !== ActionType.CUSTOM
 }

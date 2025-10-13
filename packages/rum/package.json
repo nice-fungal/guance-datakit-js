@@ -1,6 +1,6 @@
 {
     "name": "@cloudcare/browser-rum",
-    "version": "3.2.36",
+    "version": "3.2.37",
     "main": "cjs/index.js",
     "module": "esm/index.js",
     "types": "types/index.d.ts",
@@ -33,5 +33,5 @@
     "author": "dataflux",
     "license": "MIT",
     "homepage": "https://github.com/DataFlux-cn/datakit-js/README.md",
-    "gitHead": "2e71187db3e296d45f2a16b4c08d82283d924b81"
+    "gitHead": "2d2515414175d42f03d1ba996a359f4701e9a15a"
 }

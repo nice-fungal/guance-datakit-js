@@ -17,7 +17,8 @@ import {
   sanitize,
   createCustomerDataTrackerManager,
   CustomerDataCompressionStatus,
-  displayAlreadyInitializedError
+  displayAlreadyInitializedError,
+  getType
 } from '@cloudcare/browser-core'
 import { buildCommonContext } from '../domain/contexts/commonContext'
 import { createPreStartStrategy } from './perStartRum'
@@ -184,9 +185,24 @@ export function makeRumPublicApi(startRumImpl, recorderApi, options) {
     addDebugSession: monitor(function (id) {}),
     clearDebugSession: monitor(function () {}),
     getDebugSession: monitor(function () {}),
-    addAction: monitor(function (name, context) {
+    addTypeAction: monitor(function (name, type, context) {
       const handlingStack = createHandlingStack()
 
+      callMonitored(function () {
+        const sourceType = sanitize(type)
+        strategy.addAction({
+          name: sanitize(name),
+          context: sanitize(context),
+          startClocks: clocksNow(),
+          type:
+            getType(sourceType) === 'string' ? sourceType : ActionType.CUSTOM,
+          handlingStack: handlingStack
+        })
+        addTelemetryUsage({ feature: 'add-type-action' })
+      })
+    }),
+    addAction: monitor(function (name, context) {
+      const handlingStack = createHandlingStack()
       callMonitored(function () {
         strategy.addAction({
           name: sanitize(name),
