@@ -78,7 +78,7 @@ export function validateAndBuildConfiguration(initConfiguration) {
        * flush automatically, aim to be lower than ALB connection timeout
        * to maximize connection reuse.
        */
-      flushTimeout: 30 * ONE_SECOND,
+      flushTimeout: 5 * ONE_SECOND,
 
       /**
        * Logs intake limit
