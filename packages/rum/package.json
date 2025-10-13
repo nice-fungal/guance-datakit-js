@@ -33,5 +33,5 @@
   "license": "MIT",
   "homepage": "https://github.com/CloudCare/dataflux-rum-sdk-javascript/blob/master/packages/rum/README.md",
   "description": "DataFlux RUM Web 端数据指标监控",
-  "gitHead": "47f9fa1890683efb7cf6995e4d038eb5dec7113a"
+  "gitHead": "83768d4a80a1c3699a88ae0b38f43fe506ec87dc"
 }
