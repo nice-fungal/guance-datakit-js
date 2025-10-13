@@ -234,9 +234,8 @@ export function createBatch(options) {
       if (encoderResult.outputBytesCount) {
         send(formatPayloadFromEncoder(encoderResult, sendContentTypeByJson))
       }
-
       // Send messages that are not yet encoded at this point
-      var pendingMessages = [encoderResult.pendingData, upsertMessages]
+      var pendingMessages = [...encoderResult.pendingData, upsertMessages]
         .filter(Boolean)
         .join('\n')
 
@@ -292,8 +291,6 @@ function formatPayloadFromEncoder(encoderResult, sendContentTypeByJson) {
     data: data,
     type: sendContentTypeByJson ? 'application/json;UTF-8' : undefined,
     bytesCount: encoderResult.outputBytesCount,
-    encoding: encoderResult.encoding,
-    outputBase64Head: encoderResult.outputBase64Head,
-    outputBase64Tail: encoderResult.outputBase64Tail
+    encoding: encoderResult.encoding
   }
 }
