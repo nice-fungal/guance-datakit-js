@@ -8,45 +8,45 @@ export var commonTags = {
   version: 'version',
   source: 'source',
   userid: 'user.id',
-  user_email: 'user.email',
-  user_name: 'user.name',
-  session_id: 'session.id',
-  session_type: 'session.type',
+  // user_email: 'user.email',
+  // user_name: 'user.name',
+  // session_id: 'session.id',
+  // session_type: 'session.type',
   session_sampling: 'session.is_sampling',
-  is_signin: 'user.is_signin',
+  // is_signin: 'user.is_signin',
   os: 'device.os',
-  os_version: 'device.os_version',
+  // os_version: 'device.os_version',
   os_version_major: 'device.os_version_major',
   browser: 'device.browser',
-  browser_version: 'device.browser_version',
+  // browser_version: 'device.browser_version',
   browser_version_major: 'device.browser_version_major',
-  screen_size: 'device.screen_size',
-  network_type: 'device.network_type',
-  time_zone: 'device.time_zone',
+  // screen_size: 'device.screen_size',
+  // network_type: 'device.network_type',
+  // time_zone: 'device.time_zone',
   device: 'device.device',
   view_id: 'view.id',
-  view_referrer: 'view.referrer',
+  // view_referrer: 'view.referrer',
   view_url: 'view.url',
-  view_host: 'view.host',
+  // view_host: 'view.host',
   view_path: 'view.path',
-  view_name: 'view.name', // 冗余一个字段
-  view_path_group: 'view.path_group'
+  // view_name: 'view.name', // 冗余一个字段
+  // view_path_group: 'view.path_group'
 }
 export var commonFields = {
   view_url_query: 'view.url_query',
-  action_id: 'action.id',
-  action_ids: 'action.ids',
-  view_in_foreground: 'view.in_foreground',
-  display: 'display',
-  session_has_replay: 'session.has_replay',
-  is_login: 'user.is_login',
-  page_states: '_gc.page_states',
-  session_sample_rate: '_gc.configuration.session_sample_rate',
-  session_replay_sample_rate: '_gc.configuration.session_replay_sample_rate',
-  session_on_error_sample_rate:
-    '_gc.configuration.session_on_error_sample_rate',
-  session_replay_on_error_sample_rate:
-    '_gc.configuration.session_replay_on_error_sample_rate',
+  // action_id: 'action.id',
+  // action_ids: 'action.ids',
+  // view_in_foreground: 'view.in_foreground',
+  // display: 'display',
+  // session_has_replay: 'session.has_replay',
+  // is_login: 'user.is_login',
+  // page_states: '_gc.page_states',
+  // session_sample_rate: '_gc.configuration.session_sample_rate',
+  // session_replay_sample_rate: '_gc.configuration.session_replay_sample_rate',
+  // session_on_error_sample_rate:
+  //   '_gc.configuration.session_on_error_sample_rate',
+  // session_replay_on_error_sample_rate:
+  //   '_gc.configuration.session_replay_on_error_sample_rate',
   drift: '_gc.drift'
 }
 // 需要用双引号将字符串类型的field value括起来， 这里有数组标示[string, path]
@@ -55,17 +55,17 @@ export var dataMap = {
     type: RumEventType.VIEW,
     tags: {
       view_loading_type: 'view.loading_type',
-      view_apdex_level: 'view.apdex_level',
-      view_privacy_replay_level: 'privacy.replay_level'
+      // view_apdex_level: 'view.apdex_level',
+      // view_privacy_replay_level: 'privacy.replay_level'
     },
     fields: {
-      sampled_for_replay: 'session.sampled_for_replay',
-      sampled_for_error_replay: 'session.sampled_for_error_replay',
-      sampled_for_error_session: 'session.sampled_for_error_session',
-      session_error_timestamp: 'session.error_timestamp_for_session',
-      is_active: 'view.is_active',
-      session_replay_stats: '_gc.replay_stats',
-      session_is_active: 'session.is_active',
+      // sampled_for_replay: 'session.sampled_for_replay',
+      // sampled_for_error_replay: 'session.sampled_for_error_replay',
+      // sampled_for_error_session: 'session.sampled_for_error_session',
+      // session_error_timestamp: 'session.error_timestamp_for_session',
+      // is_active: 'view.is_active',
+      // session_replay_stats: '_gc.replay_stats',
+      // session_is_active: 'session.is_active',
       view_error_count: 'view.error.count',
       view_resource_count: 'view.resource.count',
       view_long_task_count: 'view.long_task.count',
@@ -94,7 +94,7 @@ export var dataMap = {
       time_to_interactive: 'view.tti',
       dom: 'view.dom',
       dom_ready: 'view.dom_ready',
-      time_spent: 'view.time_spent',
+      // time_spent: 'view.time_spent',
       first_byte: 'view.first_byte',
       frustration_count: 'view.frustration.count',
       custom_timings: 'view.custom_timings'
