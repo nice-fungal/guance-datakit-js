@@ -86,13 +86,13 @@ export function makeRumPublicApi(startRumImpl, recorderApi, options) {
             }
           : createIdentityEncoder
       )
-      recorderApi.onRumStart(
-        startRumResult.lifeCycle,
-        configuration,
-        startRumResult.session,
-        startRumResult.viewContexts,
-        deflateWorker
-      )
+      // recorderApi.onRumStart(
+      //   startRumResult.lifeCycle,
+      //   configuration,
+      //   startRumResult.session,
+      //   startRumResult.viewContexts,
+      //   deflateWorker
+      // )
 
       strategy = createPostStartStrategy(strategy, startRumResult)
 
@@ -245,14 +245,14 @@ export function makeRumPublicApi(startRumImpl, recorderApi, options) {
       strategy.stopSession()
       addTelemetryUsage({ feature: 'stop-session' })
     }),
-    startSessionReplayRecording: monitor(function (options) {
-      recorderApi.start(options)
-      addTelemetryUsage({
-        feature: 'start-session-replay-recording',
-        force: options && options.force
-      })
-    }),
-    stopSessionReplayRecording: monitor(recorderApi.stop)
+    // startSessionReplayRecording: monitor(function (options) {
+    //   recorderApi.start(options)
+    //   addTelemetryUsage({
+    //     feature: 'start-session-replay-recording',
+    //     force: options && options.force
+    //   })
+    // }),
+    // stopSessionReplayRecording: monitor(recorderApi.stop)
   })
   return rumPublicApi
 }
