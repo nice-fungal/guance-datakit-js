@@ -612,6 +612,16 @@ export function UUID(placeholder) {
     : `${1e7}-${1e3}-${4e3}-${8e3}-${1e11}`.replace(/[018]/g, UUID)
 }
 
+/**
+ * 替换url包含数字的路由, e.g.
+ * 
+ * /authors/345             ->  /authors/?
+ * /authors/abc             ->  /authors/abc
+ * /authors/a4c             ->  /authors/?
+ * /v2/authors/345          ->  /?/authors/?
+ * /authors/abc#/books/678  ->  /authors/abc#/books/?
+ * /authors/345#/books/678  ->  /authors/?/books/?
+ */
 export function replaceNumberCharByPath(path) {
   var pathGroup = ''
   if (path) {
