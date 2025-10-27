@@ -5,6 +5,7 @@ import { catchUserErrors } from './helper/catchUserErrors'
 export function makePublicApi(stub) {
   var publicApi = assign(
     {
+      // 把 snippet 定义的 onReady 覆盖掉，但保留了 q
       onReady: function (callback) {
         callback()
       }

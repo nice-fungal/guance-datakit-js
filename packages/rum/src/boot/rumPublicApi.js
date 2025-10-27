@@ -56,7 +56,7 @@ export function makeRumPublicApi(startRumImpl, recorderApi, options) {
   let strategy = createPreStartStrategy(
     options,
     getCommonContext,
-    function (configuration, deflateWorker, initialViewOptions) {
+    function doStartRum(configuration, deflateWorker, initialViewOptions) {
       if (configuration.storeContextsToLocal) {
         storeContextManager(
           configuration,
