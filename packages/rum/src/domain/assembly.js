@@ -194,6 +194,12 @@ export function startRumAssembly(
           serverRumEvent.session.error_timestamp_for_session =
             session.sessionErrorTimestamp
         }
+        if (!isEmptyObject(commonContext.context.device)) {
+          serverRumEvent.device = extend2Lev(
+            serverRumEvent.device,
+            commonContext.context.device
+          )
+        }
         if (!isEmptyObject(commonContext.user)) {
           // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
           serverRumEvent.user = extend2Lev(
