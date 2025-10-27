@@ -195,8 +195,8 @@ export function startRumAssembly(
         if (!isEmptyObject(commonContext.user)) {
           // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
           serverRumEvent.user = extend2Lev(
+            serverRumEvent.user,
             {
-              // id: session.getAnonymousID(),
               is_signin: 'T',
               is_login: true
             },
