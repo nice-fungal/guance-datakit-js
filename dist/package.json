@@ -1,0 +1,15 @@
+{
+  "name": "@head.js/guancecom-browser-rum-slim",
+  "version": "3.2.24-3",
+  "description": "",
+  "author": "hbrls <shuaizhexu@gmail.com>",
+  "license": "MIT",
+  "main": "dataflux-rum.js",
+  "scripts": {
+    "build": "terser --comments false --compress --timings --format beautify --output ./guancecom-browser-rum-slim.js ./dataflux-rum.js",
+    "dist": "terser --comments false --compress --mangle --timings --output ./guancecom-browser-rum-slim.min.js ./dataflux-rum.js"
+  },
+  "devDependencies": {
+    "terser": "5.5.1"
+  }
+}
