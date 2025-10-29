@@ -308,8 +308,8 @@ function newView(
         endClocks: endClocks
       })
       clearInterval(keepAliveIntervalId)
-      setViewEnd(endClocks.relative)
-      stopCommonViewMetricsTracking()
+      // setViewEnd(endClocks.relative)
+      // stopCommonViewMetricsTracking()
       pageMayExitSubscription.unsubscribe()
       triggerViewUpdate()
       setTimeout(function () {
