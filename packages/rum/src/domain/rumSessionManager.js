@@ -5,7 +5,7 @@ import {
   noop,
   Observable,
   timeStampNow,
-  bridgeSupports,
+  // bridgeSupports,
   BridgeCapability
 } from '@cloudcare/browser-core'
 
@@ -115,25 +115,25 @@ export function startRumSessionManager(configuration, lifeCycle) {
  * It needs to be a premium plan in order to get long tasks
  */
 export function startRumSessionManagerStub() {
-  var session = {
-    id: '00000000-aaaa-0000-aaaa-000000000000',
-    plan: RumSessionPlan.WITHOUT_SESSION_REPLAY, // plan value should not be taken into account for mobile
-    isErrorSession: false,
-    sessionErrorTimestamp: 0,
-    sessionReplayAllowed: bridgeSupports(BridgeCapability.RECORDS)
-      ? true
-      : false,
-    errorSessionReplayAllowed: false,
-    sessionHasError: false
-  }
-  return {
-    findTrackedSession: function () {
-      return session
-    },
-    expire: noop,
-    expireObservable: new Observable(),
-    setErrorForSession: function () {}
-  }
+  // var session = {
+  //   id: '00000000-aaaa-0000-aaaa-000000000000',
+  //   plan: RumSessionPlan.WITHOUT_SESSION_REPLAY, // plan value should not be taken into account for mobile
+  //   isErrorSession: false,
+  //   sessionErrorTimestamp: 0,
+  //   sessionReplayAllowed: bridgeSupports(BridgeCapability.RECORDS)
+  //     ? true
+  //     : false,
+  //   errorSessionReplayAllowed: false,
+  //   sessionHasError: false
+  // }
+  // return {
+  //   findTrackedSession: function () {
+  //     return session
+  //   },
+  //   expire: noop,
+  //   expireObservable: new Observable(),
+  //   setErrorForSession: function () {}
+  // }
 }
 
 function computeSessionState(configuration, rawTrackingType) {
