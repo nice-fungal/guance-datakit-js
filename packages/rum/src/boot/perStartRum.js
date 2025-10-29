@@ -8,7 +8,7 @@ import {
   timeStampNow,
   clocksNow,
   assign,
-  addTelemetryConfiguration,
+  // addTelemetryConfiguration,
   initFetchObservable,
   deepClone,
   // fetchAndApplyRemoteConfiguration,
@@ -71,7 +71,7 @@ export function createPreStartStrategy(
 
     // Update the exposed initConfiguration to reflect the bridge and remote configuration overrides
     cachedInitConfiguration = initConfiguration
-    addTelemetryConfiguration(deepClone(initConfiguration))
+    // addTelemetryConfiguration(deepClone(initConfiguration))
     if (cachedConfiguration) {
       displayAlreadyInitializedError('DATAFLUX_RUM', initConfiguration)
       return
