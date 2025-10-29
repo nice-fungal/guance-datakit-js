@@ -5,7 +5,7 @@ import {
   forEachChildNodes,
   hasChildNodes
 } from '@cloudcare/browser-core'
-import { STABLE_ATTRIBUTES } from '../../rumEventsCollection/actions/getSelectorsFromElement'
+import { STABLE_ATTRIBUTES } from '../../rumEventsCollection/actions/__constants'
 import {
   NodePrivacyLevel,
   PRIVACY_ATTR_NAME,

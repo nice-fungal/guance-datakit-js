@@ -1,25 +1,6 @@
 import { cssEscape } from '@cloudcare/browser-core'
-import { DEFAULT_PROGRAMMATIC_ACTION_NAME_ATTRIBUTE } from './getActionNameFromElement'
-/**
- * Stable attributes are attributes that are commonly used to identify parts of a UI (ex:
- * component). Those attribute values should not be generated randomly (hardcoded most of the time)
- * and stay the same across deploys. They are not necessarily unique across the document.
- */
-export var STABLE_ATTRIBUTES = [
-  DEFAULT_PROGRAMMATIC_ACTION_NAME_ATTRIBUTE,
-  // Common test attributes (list provided by google recorder)
-  'data-testid',
-  'data-test',
-  'data-qa',
-  'data-cy',
-  'data-test-id',
-  'data-qa-id',
-  'data-testing',
-  // FullStory decorator attributes:
-  'data-component',
-  'data-element',
-  'data-source-file'
-]
+import { STABLE_ATTRIBUTES } from './__constants'
+
 // Selectors to use if they target a single element on the whole document. Those selectors are
 // considered as "stable" and uniquely identify an element regardless of the page state. If we find
 // one, we should consider the selector "complete" and stop iterating over ancestors.
