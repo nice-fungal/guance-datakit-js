@@ -1,7 +1,7 @@
 import {
   createBoundedBuffer,
   display,
-  canUseEventBridge,
+  // canUseEventBridge,
   displayAlreadyInitializedError,
   willSyntheticsInjectRum,
   noop,
@@ -65,10 +65,10 @@ export function createPreStartStrategy(
   }
 
   function doInit(initConfiguration, remoteConfiguration) {
-    var eventBridgeAvailable = canUseEventBridge()
-    if (eventBridgeAvailable) {
-      initConfiguration = overrideInitConfigurationForBridge(initConfiguration)
-    }
+    // var eventBridgeAvailable = canUseEventBridge()
+    // if (eventBridgeAvailable) {
+    //   initConfiguration = overrideInitConfigurationForBridge(initConfiguration)
+    // }
 
     // Update the exposed initConfiguration to reflect the bridge and remote configuration overrides
     cachedInitConfiguration = initConfiguration
@@ -84,12 +84,12 @@ export function createPreStartStrategy(
       return
     }
 
-    if (!eventBridgeAvailable && !configuration.sessionStoreStrategyType) {
-      display.warn(
-        'No storage available for session. We will not send any data.'
-      )
-      return
-    }
+    // if (!eventBridgeAvailable && !configuration.sessionStoreStrategyType) {
+    //   display.warn(
+    //     'No storage available for session. We will not send any data.'
+    //   )
+    //   return
+    // }
 
     // if (
     //   configuration.compressIntakeRequests &&
@@ -237,13 +237,13 @@ export function createPreStartStrategy(
   }
 }
 
-function overrideInitConfigurationForBridge(initConfiguration) {
-  return assign({}, initConfiguration, {
-    applicationId: '00000000-aaaa-0000-aaaa-000000000000',
-    clientToken: 'empty',
-    sessionSampleRate: 100,
-    defaultPrivacyLevel:
-      initConfiguration.defaultPrivacyLevel ??
-      getEventBridge()?.getPrivacyLevel()
-  })
-}
+// function overrideInitConfigurationForBridge(initConfiguration) {
+//   return assign({}, initConfiguration, {
+//     applicationId: '00000000-aaaa-0000-aaaa-000000000000',
+//     clientToken: 'empty',
+//     sessionSampleRate: 100,
+//     defaultPrivacyLevel:
+//       initConfiguration.defaultPrivacyLevel ??
+//       getEventBridge()?.getPrivacyLevel()
+//   })
+// }
