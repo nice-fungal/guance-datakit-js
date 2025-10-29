@@ -19,7 +19,7 @@ import { startLongAnimationFrameCollection } from '../domain/rumEventsCollection
 import { RumPerformanceEntryType } from '../domain/performanceObservable'
 import { startActionCollection } from '../domain/rumEventsCollection/actions/actionCollection'
 import { startRumBatch } from '../transport/startRumBatch'
-import { startRumEventBridge } from '../transport/startRumEventBridge'
+// import { startRumEventBridge } from '../transport/startRumEventBridge'
 import { startRumAssembly } from '../domain/assembly'
 import { startDisplayContext } from '../domain/contexts/displayContext.js'
 import { startInternalContext } from '../domain/contexts/internalContext'
@@ -69,8 +69,8 @@ export function startRum(
     cleanupTasks.push(function () {
       batch.stop()
     })
-  } else {
-    startRumEventBridge(lifeCycle)
+  // } else {
+  //   startRumEventBridge(lifeCycle)
   }
 
   var userSession = startCacheUsrCache(configuration)
