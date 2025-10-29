@@ -9,7 +9,7 @@ import {
   noop,
   discardNegativeDuration
 } from '@cloudcare/browser-core'
-import { trackClickActions } from './trackClickActions'
+// import { trackClickActions } from './trackClickActions'
 import { PageState } from '../../contexts/pageStateHistory'
 export function startActionCollection(
   lifeCycle,
@@ -28,13 +28,13 @@ export function startActionCollection(
   )
 
   var actionContexts = { findActionId: noop, findAllActionId: noop }
-  if (configuration.trackUserInteractions) {
-    actionContexts = trackClickActions(
-      lifeCycle,
-      domMutationObservable,
-      configuration
-    ).actionContexts
-  }
+  // if (configuration.trackUserInteractions) {
+  //   actionContexts = trackClickActions(
+  //     lifeCycle,
+  //     domMutationObservable,
+  //     configuration
+  //   ).actionContexts
+  // }
   return {
     actionContexts: actionContexts,
     addAction: function (action, savedCommonContext) {
