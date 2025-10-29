@@ -5,6 +5,6 @@ export { createFlushController } from './flushController'
 export {
   getEventBridge,
   canUseEventBridge,
-  bridgeSupports,
+  // bridgeSupports,
   BridgeCapability
 } from './eventBridge'
