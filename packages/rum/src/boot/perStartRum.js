@@ -8,7 +8,7 @@ import {
   timeStampNow,
   clocksNow,
   assign,
-  addTelemetryConfiguration,
+  // addTelemetryConfiguration,
   initFetchObservable,
   deepClone,
   // fetchAndApplyRemoteConfiguration,
@@ -72,9 +72,9 @@ export function createPreStartStrategy(
 
     // Update the exposed initConfiguration to reflect the bridge and remote configuration overrides
     cachedInitConfiguration = initConfiguration
-    cachedRemoteConfiguration = remoteConfiguration
-    remoteConfigrationCallbacks.drain(cachedRemoteConfiguration)
-    addTelemetryConfiguration(deepClone(initConfiguration))
+    // cachedRemoteConfiguration = remoteConfiguration
+    // remoteConfigrationCallbacks.drain(cachedRemoteConfiguration)
+    // addTelemetryConfiguration(deepClone(initConfiguration))
     if (cachedConfiguration) {
       displayAlreadyInitializedError('DATAFLUX_RUM', initConfiguration)
       return
@@ -148,15 +148,15 @@ export function createPreStartStrategy(
     getInitConfiguration: function () {
       return cachedInitConfiguration
     },
-    getRemoteConfiguration: function (callback) {
-      if (getType(callback) === 'function') {
-        if (cachedRemoteConfiguration) {
-          callback(cachedRemoteConfiguration)
-        } else {
-          remoteConfigrationCallbacks.add(callback)
-        }
-      }
-    },
+    // getRemoteConfiguration: function (callback) {
+    //   if (getType(callback) === 'function') {
+    //     if (cachedRemoteConfiguration) {
+    //       callback(cachedRemoteConfiguration)
+    //     } else {
+    //       remoteConfigrationCallbacks.add(callback)
+    //     }
+    //   }
+    // },
     getInternalContext: noop,
 
     stopSession: noop,

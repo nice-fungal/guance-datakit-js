@@ -8,9 +8,9 @@ import {
   LifeCycleEventType,
   createPageExitObservable,
   canUseEventBridge,
-  startTelemetry,
-  TelemetryService,
-  drainPreStartTelemetry
+  // startTelemetry,
+  // TelemetryService,
+  // drainPreStartTelemetry
 } from '@cloudcare/browser-core'
 import { createDOMMutationObservable } from '../domain/domMutationObservable.js'
 import { createLocationChangeObservable } from '../domain/locationChangeObservable'
@@ -41,7 +41,7 @@ export function startRum(
 ) {
   var cleanupTasks = []
   var lifeCycle = new LifeCycle()
-  var telemetry = startRumTelemetry(configuration)
+  // var telemetry = startRumTelemetry(configuration)
 
   var reportError = function (error) {
     lifeCycle.notify(LifeCycleEventType.RAW_ERROR_COLLECTED, { error: error })
@@ -60,7 +60,7 @@ export function startRum(
     var batch = startRumBatch(
       configuration,
       lifeCycle,
-      telemetry.observable,
+      'telemetry.observable',
       reportError,
       pageExitObservable,
       session.expireObservable,
@@ -95,25 +95,25 @@ export function startRum(
   var stopRumEventCollection = _startRumEventCollection.stop
   var addAction = _startRumEventCollection.addAction
   cleanupTasks.push(stopRumEventCollection)
-  drainPreStartTelemetry()
+  // drainPreStartTelemetry()
 
-  telemetry.setContextProvider(function () {
-    return {
-      application: {
-        id: configuration.applicationId
-      },
-      session: {
-        id: session.findTrackedSession() && session.findTrackedSession().id
-      },
-      view: {
-        id: viewContexts.findView() && viewContexts.findView().id
-      },
-      action: {
-        id: actionContexts.findActionId(),
-        ids: actionContexts.findAllActionId()
-      }
-    }
-  })
+  // telemetry.setContextProvider(function () {
+  //   return {
+  //     application: {
+  //       id: configuration.applicationId
+  //     },
+  //     session: {
+  //       id: session.findTrackedSession() && session.findTrackedSession().id
+  //     },
+  //     view: {
+  //       id: viewContexts.findView() && viewContexts.findView().id
+  //     },
+  //     action: {
+  //       id: actionContexts.findActionId(),
+  //       ids: actionContexts.findAllActionId()
+  //     }
+  //   }
+  // })
   const {
     addTiming,
     startView,
@@ -200,16 +200,16 @@ export function startRum(
     }
   }
 }
-function startRumTelemetry(configuration) {
-  const telemetry = startTelemetry(TelemetryService.RUM, configuration)
-  //   if (canUseEventBridge()) {
-  //     const bridge = getEventBridge()
-  //     telemetry.observable.subscribe((event) =>
-  //       bridge.send('internal_telemetry', event)
-  //     )
-  //   }
-  return telemetry
-}
+// function startRumTelemetry(configuration) {
+//   const telemetry = startTelemetry(TelemetryService.RUM, configuration)
+//   //   if (canUseEventBridge()) {
+//   //     const bridge = getEventBridge()
+//   //     telemetry.observable.subscribe((event) =>
+//   //       bridge.send('internal_telemetry', event)
+//   //     )
+//   //   }
+//   return telemetry
+// }
 
 export function startRumEventCollection(
   lifeCycle,

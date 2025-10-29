@@ -3,7 +3,7 @@ import {
   each,
   shallowClone,
   isArray,
-  TraceType,
+  // TraceType,
   performDraw,
   isNumber,
   getType,
@@ -12,13 +12,13 @@ import {
   matchList,
   isString
 } from '@cloudcare/browser-core'
-import { DDtraceTracer } from './ddtraceTracer'
-import { SkyWalkingTracer } from './skywalkingTracer'
-import { JaegerTracer } from './jaegerTracer'
-import { ZipkinSingleTracer } from './zipkinSingleTracer'
-import { ZipkinMultiTracer } from './zipkinMultiTracer'
-import { W3cTraceParentTracer } from './w3cTraceParentTracer'
-import { isTraceSampled } from './sampler'
+// import { DDtraceTracer } from './ddtraceTracer'
+// import { SkyWalkingTracer } from './skywalkingTracer'
+// import { JaegerTracer } from './jaegerTracer'
+// import { ZipkinSingleTracer } from './zipkinSingleTracer'
+// import { ZipkinMultiTracer } from './zipkinMultiTracer'
+// import { W3cTraceParentTracer } from './w3cTraceParentTracer'
+// import { isTraceSampled } from './sampler'
 export function isTracingOption(item) {
   var expectedItem = item
   return (
@@ -102,69 +102,70 @@ export function injectHeadersIfTracingAllowed(
   sessionManager,
   inject
 ) {
-  const session = sessionManager.findTrackedSession()
-  if (!session) {
-    return
-  }
-  var tracingOption = find(
-    configuration.allowedTracingUrls,
-    function (tracingOption) {
-      return matchList([tracingOption.match], context.url, true)
-    }
-  )
-  if (!tracingOption) {
-    return
-  }
-  const traceSampled = isTraceSampled(
-    session.id,
-    configuration.tracingSampleRate
-  )
+  return
+  // const session = sessionManager.findTrackedSession()
+  // if (!session) {
+  //   return
+  // }
+  // var tracingOption = find(
+  //   configuration.allowedTracingUrls,
+  //   function (tracingOption) {
+  //     return matchList([tracingOption.match], context.url, true)
+  //   }
+  // )
+  // if (!tracingOption) {
+  //   return
+  // }
+  // const traceSampled = isTraceSampled(
+  //   session.id,
+  //   configuration.tracingSampleRate
+  // )
 
-  if (!traceSampled) return
-  var tracer,
-    traceType = tracingOption.traceType
-  switch (traceType) {
-    case TraceType.DDTRACE:
-      tracer = new DDtraceTracer(configuration, traceSampled)
-      break
-    case TraceType.SKYWALKING_V3:
-      tracer = new SkyWalkingTracer(configuration, context.url, traceSampled)
-      break
-    case TraceType.ZIPKIN_MULTI_HEADER:
-      tracer = new ZipkinMultiTracer(configuration, traceSampled)
-      break
-    case TraceType.JAEGER:
-      tracer = new JaegerTracer(configuration, traceSampled)
-      break
-    case TraceType.W3C_TRACEPARENT:
-      tracer = new W3cTraceParentTracer(configuration, traceSampled)
-      break
-    case TraceType.W3C_TRACEPARENT_64:
-      tracer = new W3cTraceParentTracer(configuration, traceSampled, true)
-      break
-    case TraceType.ZIPKIN_SINGLE_HEADER:
-      tracer = new ZipkinSingleTracer(configuration, traceSampled)
-      break
-    default:
-      break
-  }
-  if (!tracer || !tracer.isTracingSupported()) {
-    return
-  }
+  // if (!traceSampled) return
+  // var tracer,
+  //   traceType = tracingOption.traceType
+  // switch (traceType) {
+  //   case TraceType.DDTRACE:
+  //     tracer = new DDtraceTracer(configuration, traceSampled)
+  //     break
+  //   case TraceType.SKYWALKING_V3:
+  //     tracer = new SkyWalkingTracer(configuration, context.url, traceSampled)
+  //     break
+  //   case TraceType.ZIPKIN_MULTI_HEADER:
+  //     tracer = new ZipkinMultiTracer(configuration, traceSampled)
+  //     break
+  //   case TraceType.JAEGER:
+  //     tracer = new JaegerTracer(configuration, traceSampled)
+  //     break
+  //   case TraceType.W3C_TRACEPARENT:
+  //     tracer = new W3cTraceParentTracer(configuration, traceSampled)
+  //     break
+  //   case TraceType.W3C_TRACEPARENT_64:
+  //     tracer = new W3cTraceParentTracer(configuration, traceSampled, true)
+  //     break
+  //   case TraceType.ZIPKIN_SINGLE_HEADER:
+  //     tracer = new ZipkinSingleTracer(configuration, traceSampled)
+  //     break
+  //   default:
+  //     break
+  // }
+  // if (!tracer || !tracer.isTracingSupported()) {
+  //   return
+  // }
 
-  context.traceId = tracer.getTraceId()
-  context.spanId = tracer.getSpanId()
-  context.traceSampled = traceSampled
-  var headers = tracer.makeTracingHeaders()
-  if (configuration.injectTraceHeader) {
-    var result = configuration.injectTraceHeader(shallowClone(context))
-    if (getType(result) === 'object') {
-      each(result, function (value, key) {
-        if (getType(value) === 'string') {
-          headers[key] = value
-        }
-      })
-    }
-  }
-  inject(headers)
+  // context.traceId = tracer.getTraceId()
+  // context.spanId = tracer.getSpanId()
+  // context.traceSampled = traceSampled
+  // var headers = tracer.makeTracingHeaders()
+  // if (configuration.injectTraceHeader) {
+  //   var result = configuration.injectTraceHeader(shallowClone(context))
+  //   if (getType(result) === 'object') {
+  //     each(result, function (value, key) {
+  //       if (getType(value) === 'string') {
+  //         headers[key] = value
+  //       }
+  //     })
+  //   }
+  // }
+  // inject(headers)
 }

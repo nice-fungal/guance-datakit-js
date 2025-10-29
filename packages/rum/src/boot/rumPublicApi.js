@@ -14,7 +14,7 @@ import {
   monitor,
   storeContextManager,
   createIdentityEncoder,
-  addTelemetryUsage,
+  // addTelemetryUsage,
   sanitize,
   createCustomerDataTrackerManager,
   CustomerDataCompressionStatus,
@@ -111,7 +111,7 @@ export function makeRumPublicApi(startRumImpl, recorderApi, options) {
         .getOrCreateTracker(CustomerDataType.View)
         .updateCustomerData(sanitizedOptions.context)
     }
-    addTelemetryUsage({ feature: 'start-view' })
+    // addTelemetryUsage({ feature: 'start-view' })
   })
 
   var rumPublicApi = makePublicApi({
@@ -120,21 +120,21 @@ export function makeRumPublicApi(startRumImpl, recorderApi, options) {
     }),
     setViewName: monitor((name) => {
       strategy.setViewName(name)
-      addTelemetryUsage({ feature: 'set-view-name' })
+      // addTelemetryUsage({ feature: 'set-view-name' })
     }),
 
     setViewContext: monitor((context) => {
       strategy.setViewContext(context)
-      addTelemetryUsage({ feature: 'set-view-context' })
+      // addTelemetryUsage({ feature: 'set-view-context' })
     }),
 
     setViewContextProperty: monitor((key, value) => {
       strategy.setViewContextProperty(key, value)
-      addTelemetryUsage({ feature: 'set-view-context-property' })
+      // addTelemetryUsage({ feature: 'set-view-context-property' })
     }),
 
     getViewContext: monitor(() => {
-      addTelemetryUsage({ feature: 'set-view-context-property' })
+      // addTelemetryUsage({ feature: 'set-view-context-property' })
       return strategy.getViewContext()
     }),
     // /** @deprecated: use setGlobalContextProperty instead */
@@ -144,7 +144,7 @@ export function makeRumPublicApi(startRumImpl, recorderApi, options) {
     // }),
     setGlobalContextProperty: monitor(function (key, value) {
       globalContextManager.setContextProperty(key, value)
-      addTelemetryUsage({ feature: 'set-global-context' })
+      // addTelemetryUsage({ feature: 'set-global-context' })
     }),
 
     // /** @deprecated: use removeGlobalContextProperty instead */
@@ -170,7 +170,7 @@ export function makeRumPublicApi(startRumImpl, recorderApi, options) {
     // }),
     setGlobalContext: monitor(function (context) {
       globalContextManager.setContext(context)
-      addTelemetryUsage({ feature: 'set-global-context' })
+      // addTelemetryUsage({ feature: 'set-global-context' })
     }),
 
     clearGlobalContext: monitor(function () {
@@ -227,7 +227,7 @@ export function makeRumPublicApi(startRumImpl, recorderApi, options) {
           type: ActionType.CUSTOM,
           handlingStack: handlingStack
         })
-        addTelemetryUsage({ feature: 'add-action' })
+        // addTelemetryUsage({ feature: 'add-action' })
       })
     }),
     addError: monitor(function (error, context) {
@@ -239,7 +239,7 @@ export function makeRumPublicApi(startRumImpl, recorderApi, options) {
           context: sanitize(context),
           startClocks: clocksNow()
         })
-        addTelemetryUsage({ feature: 'add-error' })
+        // addTelemetryUsage({ feature: 'add-error' })
       })
     }),
     addTiming: monitor(function (name, time) {
@@ -249,7 +249,7 @@ export function makeRumPublicApi(startRumImpl, recorderApi, options) {
       if (checkUser(newUser)) {
         userContextManager.setContext(sanitizeUser(newUser))
       }
-      addTelemetryUsage({ feature: 'set-user' })
+      // addTelemetryUsage({ feature: 'set-user' })
     }),
     getUser: monitor(function () {
       return userContextManager.getContext()
@@ -259,7 +259,7 @@ export function makeRumPublicApi(startRumImpl, recorderApi, options) {
       newUser[key] = property
       var sanitizedProperty = sanitizeUser(newUser)[key]
       userContextManager.setContextProperty(key, sanitizedProperty)
-      addTelemetryUsage({ feature: 'set-user' })
+      // addTelemetryUsage({ feature: 'set-user' })
     }),
     removeUserProperty: monitor(function (key) {
       return userContextManager.removeContextProperty(key)
@@ -275,7 +275,7 @@ export function makeRumPublicApi(startRumImpl, recorderApi, options) {
     startView: startView,
     stopSession: monitor(function () {
       strategy.stopSession()
-      addTelemetryUsage({ feature: 'stop-session' })
+      // addTelemetryUsage({ feature: 'stop-session' })
     }),
     setForcedSession: monitor(function () {
       strategy.setForcedSession()

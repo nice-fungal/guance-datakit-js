@@ -1,7 +1,7 @@
 import { newRetryState, sendWithRetryStrategy } from './sendWithRetryStrategy'
 import { addEventListener } from '../browser/addEventListener'
 import { monitor } from '../helper/monitor'
-import { addTelemetryError } from '../telemetry/telemetry'
+// import { addTelemetryError } from '../telemetry/telemetry'
 /**
  * Use POST request without content type to:
  * - avoid CORS preflight requests
@@ -84,7 +84,7 @@ var hasReportedBeaconError = false
 function reportBeaconError(e) {
   if (!hasReportedBeaconError) {
     hasReportedBeaconError = true
-    addTelemetryError(e)
+    // addTelemetryError(e)
   }
 }
 export function fetchKeepAliveStrategy(
