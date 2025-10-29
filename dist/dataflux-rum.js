@@ -696,7 +696,7 @@ var utf8Encode = function utf8Encode(string) {
   }
   return utftext;
 };
-var tools_base64Encode = function base64Encode(data) {
+var base64Encode = function base64Encode(data) {
   if (typeof btoa === 'function') {
     return btoa(encodeURIComponent(data).replace(/%([0-9A-F]{2})/g, function (match, p1) {
       return String.fromCharCode('0x' + p1);
@@ -3272,98 +3272,6 @@ function checkURLSupported() {
   }
   return isURLSupported;
 }
-;// CONCATENATED MODULE: ../core/esm/helper/mobileUtil.js
-var userAgent = navigator.userAgent.toLowerCase();
-var isAndroid = function isAndroid() {
-  return /android/.test(userAgent);
-};
-var isIos = function isIos() {
-  return /iphone os/.test(userAgent);
-};
-var JsBirdge = function JsBirdge() {
-  this.bridge = window['FTWebViewJavascriptBridge'];
-  this.tagMaps = {};
-  window.mapWebViewCallBack = {};
-  try {
-    this.initBridge();
-  } catch (err) {}
-};
-JsBirdge.prototype = {
-  initBridge: function initBridge() {
-    var _this = this;
-    if (isIos()) {
-      if (!_this.bridge) {
-        if (window.WVJBCallbacks) {
-          window.WVJBCallbacks.push(function (bridge) {
-            _this.bridge = bridge;
-          });
-          return;
-        } else {
-          window.WVJBCallbacks = [function (bridge) {
-            _this.bridge = bridge;
-            return;
-          }];
-          var WVJBIframe = document.createElement('iframe');
-          WVJBIframe.style.display = 'none';
-          WVJBIframe.src = 'wvjbscheme://__BRIDGE_LOADED__';
-          document.documentElement.appendChild(WVJBIframe);
-          setTimeout(function () {
-            document.documentElement.removeChild(WVJBIframe);
-          }, 0);
-        }
-      }
-    }
-  },
-  sendEvent: function sendEvent(params, callback) {
-    if (typeof params === 'undefined') {
-      params = {};
-    }
-    var _this = this;
-    var tag = 'Unique id:' + new Date().getTime();
-    if (params.name) {
-      _this.tagMaps[params.name] = tag;
-      window.mapWebViewCallBack[tag] = function (ret, err) {
-        return Promise.resolve(ret, err);
-      };
-      params['_tag'] = tag;
-      try {
-        if (isIos()) {
-          _this.bridge.callHandler('sendEvent', JSON.stringify(params), 'mapWebViewCallBack');
-        } else {
-          _this.bridge.sendEvent(JSON.stringify(params), 'mapWebViewCallBack');
-        }
-      } catch (err) {}
-    } else {
-      callback({
-        error: '请传入发送事件的名称！！'
-      });
-    }
-  },
-  addEventListener: function addEventListener(params, callback) {
-    var tag = 'Unique id:' + new Date().getTime();
-    var _this = this;
-    if (params.name) {
-      _this.tagMaps[params.name] = tag;
-      window.mapWebViewCallBack[tag] = function (ret, err) {
-        callback(ret, err);
-        return;
-      };
-      params['_tag'] = tag;
-      try {
-        if (isIos()) {
-          _this.bridge.callHandler('addEventListener', JSON.stringify(params), 'mapWebViewCallBack');
-        } else {
-          _this.bridge.addEventListener(JSON.stringify(params), 'mapWebViewCallBack');
-        }
-      } catch (err) {}
-    } else {
-      callback({
-        error: '请传入监听事件的名称！！'
-      });
-    }
-  }
-};
-var JsBirdge = JsBirdge;
 ;// CONCATENATED MODULE: ../core/esm/helper/readBytesFromStream.js
 
 
@@ -5545,54 +5453,75 @@ function getEventBridgeGlobal() {
   // return getGlobalObject().FTWebViewJavascriptBridge
   return null;
 }
-function eventBridge_getEventBridge() {
+function getEventBridge() {
   var eventBridgeGlobal = getEventBridgeGlobal();
   if (!eventBridgeGlobal) {
     return;
   }
-  return {
-    getCapabilities: function getCapabilities() {
-      return JSON.parse(eventBridgeGlobal.getCapabilities && eventBridgeGlobal.getCapabilities() || '[]');
-    },
-    getPrivacyLevel: function getPrivacyLevel() {
-      return eventBridgeGlobal.getPrivacyLevel && eventBridgeGlobal.getPrivacyLevel();
-    },
-    getAllowedWebViewHosts: function getAllowedWebViewHosts() {
-      return JSON.parse(eventBridgeGlobal.getAllowedWebViewHosts && eventBridgeGlobal.getAllowedWebViewHosts() || '[]');
-    },
-    send: function send(eventType, event, viewId) {
-      var view = viewId ? {
-        id: viewId
-      } : undefined;
-      eventBridgeGlobal.sendEvent(JSON.stringify({
-        name: eventType,
-        data: event,
-        view: view
-      }));
-    }
-  };
+
+  // return {
+  //   getCapabilities() {
+  //     return JSON.parse(
+  //       (eventBridgeGlobal.getCapabilities &&
+  //         eventBridgeGlobal.getCapabilities()) ||
+  //         '[]'
+  //     )
+  //   },
+  //   getPrivacyLevel() {
+  //     return (
+  //       eventBridgeGlobal.getPrivacyLevel && eventBridgeGlobal.getPrivacyLevel()
+  //     )
+  //   },
+  //   getAllowedWebViewHosts() {
+  //     return JSON.parse(
+  //       (eventBridgeGlobal.getAllowedWebViewHosts &&
+  //         eventBridgeGlobal.getAllowedWebViewHosts()) ||
+  //         '[]'
+  //     )
+  //   },
+  //   send(eventType, event, viewId) {
+  //     const view = viewId ? { id: viewId } : undefined
+  //     eventBridgeGlobal.sendEvent(
+  //       JSON.stringify({ name: eventType, data: event, view })
+  //     )
+  //   }
+  // }
 }
 var BridgeCapability = {
   RECORDS: 'records'
 };
 function bridgeSupports(capability) {
-  var bridge = eventBridge_getEventBridge();
+  var bridge = getEventBridge();
   return !!bridge && bridge.getCapabilities().includes(capability);
 }
 function canUseEventBridge() {
   var _getGlobalObject$loca;
   var currentHost = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : (_getGlobalObject$loca = getGlobalObject().location) === null || _getGlobalObject$loca === void 0 ? void 0 : _getGlobalObject$loca.hostname;
-  var eventBridgeGlobal = getEventBridgeGlobal();
-  if (eventBridgeGlobal && eventBridgeGlobal.getAllowedWebViewHosts === undefined) {
-    return true;
-  }
-  if (eventBridgeGlobal && eventBridgeGlobal.getAllowedWebViewHosts && eventBridgeGlobal.getAllowedWebViewHosts() === null) {
-    return true;
-  }
-  var bridge = eventBridge_getEventBridge();
-  return !!bridge && bridge.getAllowedWebViewHosts().some(function (allowedHost) {
-    return currentHost === allowedHost || currentHost.endsWith(".".concat(allowedHost));
-  });
+  return false;
+  // const eventBridgeGlobal = getEventBridgeGlobal()
+  // if (
+  //   eventBridgeGlobal &&
+  //   eventBridgeGlobal.getAllowedWebViewHosts === undefined
+  // ) {
+  //   return true
+  // }
+  // if (
+  //   eventBridgeGlobal &&
+  //   eventBridgeGlobal.getAllowedWebViewHosts &&
+  //   eventBridgeGlobal.getAllowedWebViewHosts() === null
+  // ) {
+  //   return true
+  // }
+  // var bridge = getEventBridge()
+  // return (
+  //   !!bridge &&
+  //   bridge
+  //     .getAllowedWebViewHosts()
+  //     .some(
+  //       (allowedHost) =>
+  //         currentHost === allowedHost || currentHost.endsWith(`.${allowedHost}`)
+  //     )
+  // )
 }
 ;// CONCATENATED MODULE: ../core/esm/transport/index.js
 
@@ -6021,7 +5950,7 @@ function displayAlreadyInitializedError(sdkName, initConfiguration) {
 
 
 
-
+// export * from './helper/mobileUtil'
 
 
 
@@ -7178,9 +7107,22 @@ function areEventsSimilar(first, second) {
 function mouseEventDistance(origin, other) {
   return Math.sqrt(Math.pow(origin.clientX - other.clientX, 2) + Math.pow(origin.clientY - other.clientY, 2));
 }
+;// CONCATENATED MODULE: ./src/domain/rumEventsCollection/actions/__constants.js
+var DEFAULT_PROGRAMMATIC_ACTION_NAME_ATTRIBUTE = 'data-guance-action-name';
+
+/**
+ * Stable attributes are attributes that are commonly used to identify parts of a UI (ex:
+ * component). Those attribute values should not be generated randomly (hardcoded most of the time)
+ * and stay the same across deploys. They are not necessarily unique across the document.
+ */
+var STABLE_ATTRIBUTES = [DEFAULT_PROGRAMMATIC_ACTION_NAME_ATTRIBUTE,
+// Common test attributes (list provided by google recorder)
+'data-testid', 'data-test', 'data-qa', 'data-cy', 'data-test-id', 'data-qa-id', 'data-testing',
+// FullStory decorator attributes:
+'data-component', 'data-element', 'data-source-file'];
 ;// CONCATENATED MODULE: ./src/domain/rumEventsCollection/actions/getActionNameFromElement.js
 
-var DEFAULT_PROGRAMMATIC_ACTION_NAME_ATTRIBUTE = 'data-guance-action-name';
+
 function getActionNameFromElement(element, userProgrammaticAttribute) {
   // Proceed to get the action name in two steps:
   // * first, get the name programmatically, explicitly defined by the user.
@@ -7406,16 +7348,7 @@ function supportsElementClosest() {
 ;// CONCATENATED MODULE: ./src/domain/rumEventsCollection/actions/getSelectorsFromElement.js
 
 
-/**
- * Stable attributes are attributes that are commonly used to identify parts of a UI (ex:
- * component). Those attribute values should not be generated randomly (hardcoded most of the time)
- * and stay the same across deploys. They are not necessarily unique across the document.
- */
-var STABLE_ATTRIBUTES = [DEFAULT_PROGRAMMATIC_ACTION_NAME_ATTRIBUTE,
-// Common test attributes (list provided by google recorder)
-'data-testid', 'data-test', 'data-qa', 'data-cy', 'data-test-id', 'data-qa-id', 'data-testing',
-// FullStory decorator attributes:
-'data-component', 'data-element', 'data-source-file'];
+
 // Selectors to use if they target a single element on the whole document. Those selectors are
 // considered as "stable" and uniquely identify an element regardless of the page state. If we find
 // one, we should consider the selector "complete" and stop iterating over ancestors.
@@ -9875,439 +9808,15 @@ function processViewUpdate(view, configuration, recorderApi, pageStateHistory) {
     }
   };
 }
-;// CONCATENATED MODULE: ./src/domain/tracing/traceIdentifier.js
-function TraceIdentifier() {
-  this.buffer = new Uint8Array(8);
-  getCrypto().getRandomValues(this.buffer);
-  this.buffer[0] = this.buffer[0] & 0x7f;
-}
-TraceIdentifier.prototype = {
-  // buffer: new Uint8Array(8),
-  toString: function toString(radix) {
-    var high = this.readInt32(0);
-    var low = this.readInt32(4);
-    var str = '';
-    do {
-      var mod = high % radix * 4294967296 + low;
-      high = Math.floor(high / radix);
-      low = Math.floor(mod / radix);
-      str = (mod % radix).toString(radix) + str;
-    } while (high || low);
-    return str;
-  },
-  toDecimalString: function toDecimalString() {
-    return this.toString(10);
-  },
-  /**
-   * Format used by OTel headers
-   */
-  toPaddedHexadecimalString: function toPaddedHexadecimalString() {
-    var traceId = this.toString(16);
-    return Array(17 - traceId.length).join('0') + traceId;
-  },
-  readInt32: function readInt32(offset) {
-    return this.buffer[offset] * 16777216 + (this.buffer[offset + 1] << 16) + (this.buffer[offset + 2] << 8) + this.buffer[offset + 3];
-  }
-};
-function getCrypto() {
-  return window.crypto || window.msCrypto;
-}
-;// CONCATENATED MODULE: ./src/domain/tracing/ddtraceTracer.js
-
-
-/**
- *
- * @param {*} configuration  配置信息
- */
-function DDtraceTracer(configuration, traceSampled) {
-  this._spanId = new TraceIdentifier();
-  this._traceId = new TraceIdentifier();
-  this._traceSampled = traceSampled;
-  if (configuration.generateTraceId && getType(configuration.generateTraceId) === 'function') {
-    var customTraceId = configuration.generateTraceId();
-    if (getType(customTraceId) === 'string') {
-      this.customTraceId = customTraceId;
-    }
-  }
-}
-DDtraceTracer.prototype = {
-  isTracingSupported: function isTracingSupported() {
-    return getCrypto() !== undefined;
-  },
-  getSpanId: function getSpanId() {
-    return this._spanId.toDecimalString();
-  },
-  getTraceId: function getTraceId() {
-    if (this.customTraceId) {
-      return this.customTraceId;
-    }
-    return this._traceId.toDecimalString();
-  },
-  makeTracingHeaders: function makeTracingHeaders() {
-    return {
-      'x-datadog-origin': 'rum',
-      'x-datadog-parent-id': this.getSpanId(),
-      'x-datadog-sampling-priority': this._traceSampled ? '2' : '-1',
-      'x-datadog-trace-id': this.getTraceId()
-    };
-  }
-};
-;// CONCATENATED MODULE: ./src/domain/tracing/skywalkingTracer.js
-
-// start SkyWalking
-function uuid() {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-    /* tslint:disable */
-    var r = Math.random() * 16 | 0;
-    /* tslint:disable */
-    var v = c === 'x' ? r : r & 0x3 | 0x8;
-    return v.toString(16);
-  });
-}
-/**
- *
- * @param {*} traceId
- * @param {*} traceSegmentId
- * @param {*} applicationId
- * @param {*} version
- * @param {*} requestUrlHost
- */
-function getSkyWalkingSw8(traceId, traceSegmentId, applicationId, env, version, requestUrlHost) {
-  try {
-    var traceIdStr = String(base64Encode(traceId));
-    var segmentId = String(base64Encode(traceSegmentId));
-    var service = String(base64Encode(applicationId + '_rum_' + env));
-    var instance = String(base64Encode(version));
-    var endpoint = String(base64Encode(window.location.href));
-    var peer = String(base64Encode(requestUrlHost));
-    var index = '0';
-    // var values = `${1}-${traceIdStr}-${segmentId}-${index}-${service}-${instance}-${endpoint}-${peer}`;
-    return '1-' + traceIdStr + '-' + segmentId + '-' + index + '-' + service + '-' + instance + '-' + endpoint + '-' + peer;
-  } catch (err) {
-    return '';
-  }
-}
-/**
- *
- * @param {*} configuration  配置信息
- * @param {*} requestUrl 请求的url
- */
-function SkyWalkingTracer(configuration, requestUrl, traceSampled) {
-  this._spanId = uuid();
-  this._traceId = uuid();
-  this._applicationId = configuration.applicationId;
-  this._env = configuration.env;
-  this._version = configuration.version;
-  this._urlParse = urlParse(requestUrl).getParse();
-  this._traceSampled = traceSampled;
-  if (configuration.generateTraceId && getType(configuration.generateTraceId) === 'function') {
-    var customTraceId = configuration.generateTraceId();
-    if (getType(customTraceId) === 'string') {
-      this.customTraceId = customTraceId;
-    }
-  }
-}
-SkyWalkingTracer.prototype = {
-  isTracingSupported: function isTracingSupported() {
-    if (this._env && this._version && this._urlParse) return true;
-    return false;
-  },
-  getSpanId: function getSpanId() {
-    return this._spanId;
-  },
-  getTraceId: function getTraceId() {
-    if (this.customTraceId) {
-      return this.customTraceId;
-    }
-    return this._traceId;
-  },
-  getSkyWalkingSw8: function getSkyWalkingSw8() {
-    try {
-      var traceIdStr = String(tools_base64Encode(this.getTraceId()));
-      var segmentId = String(tools_base64Encode(this.getSpanId()));
-      var service = String(tools_base64Encode(this._applicationId + '_rum_' + this.env));
-      var instance = String(tools_base64Encode(this._version));
-      var endpoint = String(tools_base64Encode(window.location.href));
-      var peer = String(tools_base64Encode(this._urlParse.Host));
-      var index = '0';
-      // var values = `${1}-${traceIdStr}-${segmentId}-${index}-${service}-${instance}-${endpoint}-${peer}`;
-      return (this._traceSampled ? '1' : '0') + '-' + traceIdStr + '-' + segmentId + '-' + index + '-' + service + '-' + instance + '-' + endpoint + '-' + peer;
-    } catch (err) {
-      return '';
-    }
-  },
-  makeTracingHeaders: function makeTracingHeaders() {
-    return {
-      sw8: this.getSkyWalkingSw8()
-    };
-  }
-};
-;// CONCATENATED MODULE: ./src/domain/tracing/jaegerTracer.js
-
-
-/**
- *
- * @param {*} configuration  配置信息
- */
-function JaegerTracer(configuration, traceSampled) {
-  this._traceId = new TraceIdentifier();
-  this._spanId = new TraceIdentifier();
-  this._traceSampled = traceSampled;
-  this.is128Bit = configuration.traceId128Bit;
-  if (configuration.generateTraceId && getType(configuration.generateTraceId) === 'function') {
-    var customTraceId = configuration.generateTraceId();
-    if (getType(customTraceId) === 'string') {
-      this.customTraceId = customTraceId;
-    }
-  }
-}
-JaegerTracer.prototype = {
-  isTracingSupported: function isTracingSupported() {
-    return getCrypto() !== undefined;
-  },
-  getSpanId: function getSpanId() {
-    return this._spanId.toPaddedHexadecimalString();
-  },
-  getTraceId: function getTraceId() {
-    if (this.customTraceId) {
-      return this.customTraceId;
-    }
-    return this.is128Bit ? '0000000000000000' + this._traceId.toPaddedHexadecimalString() : this._traceId.toPaddedHexadecimalString();
-  },
-  getUberTraceId: function getUberTraceId() {
-    //{trace-id}:{span-id}:{parent-span-id}:{flags}
-    return this.getTraceId() + ':' + this.getSpanId() + ':' + '0' + ':' + (this._traceSampled ? '1' : '0');
-  },
-  makeTracingHeaders: function makeTracingHeaders() {
-    return {
-      'uber-trace-id': this.getUberTraceId()
-    };
-  }
-};
-;// CONCATENATED MODULE: ./src/domain/tracing/zipkinSingleTracer.js
-
-
-/**
- *
- * @param {*} configuration  配置信息
- */
-function ZipkinSingleTracer(configuration, traceSampled) {
-  this._traceId = new TraceIdentifier();
-  this._spanId = new TraceIdentifier();
-  this._traceSampled = traceSampled;
-  if (configuration.generateTraceId && getType(configuration.generateTraceId) === 'function') {
-    var customTraceId = configuration.generateTraceId();
-    if (getType(customTraceId) === 'string') {
-      this.customTraceId = customTraceId;
-    }
-  }
-}
-ZipkinSingleTracer.prototype = {
-  isTracingSupported: function isTracingSupported() {
-    return getCrypto() !== undefined;
-  },
-  getSpanId: function getSpanId() {
-    return this._spanId.toPaddedHexadecimalString();
-  },
-  getTraceId: function getTraceId() {
-    if (this.customTraceId) {
-      return this.customTraceId;
-    }
-    return this._traceId.toPaddedHexadecimalString();
-  },
-  getB3Str: function getB3Str() {
-    //{TraceId}-{SpanId}-{SamplingState}-{ParentSpanId}
-    return this.getTraceId() + '-' + this.getSpanId() + '-' + (this._traceSampled ? '1' : '0');
-  },
-  makeTracingHeaders: function makeTracingHeaders() {
-    return {
-      b3: this.getB3Str()
-    };
-  }
-};
-;// CONCATENATED MODULE: ./src/domain/tracing/zipkinMultiTracer.js
-
-
-/**
- *
- * @param {*} configuration  配置信息
- */
-function ZipkinMultiTracer(configuration, traceSampled) {
-  this._traceId = new TraceIdentifier();
-  this._spanId = new TraceIdentifier();
-  this._traceSampled = traceSampled;
-  this.is128Bit = configuration.traceId128Bit;
-  if (configuration.generateTraceId && getType(configuration.generateTraceId) === 'function') {
-    var customTraceId = configuration.generateTraceId();
-    if (getType(customTraceId) === 'string') {
-      this.customTraceId = customTraceId;
-    }
-  }
-}
-ZipkinMultiTracer.prototype = {
-  isTracingSupported: function isTracingSupported() {
-    return getCrypto() !== undefined;
-  },
-  getSpanId: function getSpanId() {
-    return this._spanId.toPaddedHexadecimalString();
-  },
-  getTraceId: function getTraceId() {
-    if (this.customTraceId) {
-      return this.customTraceId;
-    }
-    return this.is128Bit ? '0000000000000000' + this._traceId.toPaddedHexadecimalString() : this._traceId.toPaddedHexadecimalString();
-  },
-  makeTracingHeaders: function makeTracingHeaders() {
-    return {
-      'X-B3-TraceId': this.getSpanId(),
-      'X-B3-SpanId': this.getTraceId(),
-      //  'X-B3-ParentSpanId': '',
-      'X-B3-Sampled': this._traceSampled ? '1' : '0'
-      //  'X-B3-Flags': '0'
-    };
-  }
-};
-;// CONCATENATED MODULE: ./src/domain/tracing/w3cTraceParentTracer.js
-
-
-
-// === Generate a random 64-bit number in fixed-length hex format
-function randomTraceId() {
-  var digits = '0123456789abcdef';
-  var n = '';
-  for (var i = 0; i < 16; i += 1) {
-    var rand = Math.floor(Math.random() * 16);
-    n += digits[rand];
-  }
-  return n;
-}
-/**
- *
- * @param {*} traceSampled
- * @param {*} isHexTraceId 是否需要转换成10进制上报数据
- */
-function W3cTraceParentTracer(configuration, traceSampled, isHexTraceId) {
-  this._traceId = new TraceIdentifier();
-  this._spanId = new TraceIdentifier();
-  this._traceSampled = traceSampled;
-  this.isHexTraceId = isHexTraceId;
-  if (configuration.generateTraceId && getType(configuration.generateTraceId) === 'function') {
-    var customTraceId = configuration.generateTraceId();
-    if (getType(customTraceId) === 'string') {
-      this.customTraceId = customTraceId;
-    }
-  }
-}
-W3cTraceParentTracer.prototype = {
-  isTracingSupported: function isTracingSupported() {
-    return getCrypto() !== undefined;
-  },
-  getSpanId: function getSpanId() {
-    return this.isHexTraceId ? this._spanId.toDecimalString() : this._spanId.toPaddedHexadecimalString();
-  },
-  getTraceId: function getTraceId() {
-    if (this.customTraceId) {
-      return this.customTraceId;
-    }
-    if (this.isHexTraceId) {
-      // 转化为二进制之后上报
-      return this._traceId.toDecimalString();
-    } else {
-      return this._traceId.toPaddedHexadecimalString() + this._spanId.toPaddedHexadecimalString();
-    }
-  },
-  getTraceParent: function getTraceParent() {
-    // '{version}-{traceId}-{spanId}-{sampleDecision}'
-    if (this.isHexTraceId) {
-      // 短64位，前面补0
-      return '00-0000000000000000' + this._traceId.toPaddedHexadecimalString() + '-' + this._spanId.toPaddedHexadecimalString() + '-' + (this._traceSampled ? '01' : '00');
-    } else {
-      return '00-' + this.getTraceId() + '-' + this.getSpanId() + '-' + (this._traceSampled ? '01' : '00');
-    }
-  },
-  makeTracingHeaders: function makeTracingHeaders() {
-    var baseHeaders = {
-      traceparent: this.getTraceParent()
-    };
-    if (this.isHexTraceId) {
-      return tools_assign(baseHeaders, {
-        'x-gc-trace-id': this.getTraceId(),
-        'x-gc-span-id': this.getSpanId()
-      });
-    }
-    return baseHeaders;
-  }
-};
-;// CONCATENATED MODULE: ./src/domain/tracing/sampler.js
-
-var sampleDecisionCache;
-function isTraceSampled(sessionId, sampleRate) {
-  // Shortcuts for common cases. This is not strictly necessary, but it makes the code faster for
-  // customers willing to ingest all traces.
-  if (sampleRate === 100) {
-    return true;
-  }
-  if (sampleRate === 0) {
-    return false;
-  }
-  if (sampleDecisionCache && sessionId === sampleDecisionCache.sessionId) {
-    return sampleDecisionCache.decision;
-  }
-  var decision;
-  // @ts-expect-error BigInt might not be defined in every browser we support
-  if (window.BigInt) {
-    decision = sampleUsingKnuthFactor(BigInt("0x".concat(sessionId.split('-')[4])), sampleRate);
-  } else {
-    // For simplicity, we don't use consistent sampling for browser without BigInt support
-    // TODO: remove this when all browser we support have BigInt support
-    decision = performDraw(sampleRate);
-  }
-  sampleDecisionCache = {
-    sessionId: sessionId,
-    decision: decision
-  };
-  return decision;
-}
-
-// Exported for tests
-function resetSampleDecisionCache() {
-  sampleDecisionCache = undefined;
-}
-
-/**
- * Perform sampling using the Knuth factor method. This method offer consistent sampling result
- * based on the provided identifier.
- *
- * @param identifier The identifier to use for sampling.
- * @param sampleRate The sample rate in percentage between 0 and 100.
- */
-function sampleUsingKnuthFactor(identifier, sampleRate) {
-  // The formula is:
-  //
-  //   (identifier * knuthFactor) % 2^64 < sampleRate * 2^64
-  //
-  // Because JavaScript numbers are 64-bit floats, we can't represent 64-bit integers, and the
-  // modulo would be incorrect. Thus, we are using BigInts here.
-
-  // Note: All implementations have slight variations. Some of them use '<=' instead of '<', and
-  // use `sampleRate * 2^64 - 1` instead of `sampleRate * 2^64`. The following implementation
-  // should adhere to the spec and is a bit simpler than using a 2^64-1 limit as there are less
-  // BigInt arithmetic to write. In practice this does not matter, as we are using floating point
-  // numbers in the end, and Number(2n**64n-1n) === Number(2n**64n).
-  var knuthFactor = BigInt('1111111111111111111');
-  var twoPow64 = BigInt('0x10000000000000000'); // 2n ** 64n
-  var hash = identifier * knuthFactor % twoPow64;
-  return Number(hash) <= sampleRate / 100 * Number(twoPow64);
-}
 ;// CONCATENATED MODULE: ./src/domain/tracing/tracer.js
 
-
-
-
-
-
-
-
+// import { DDtraceTracer } from './ddtraceTracer'
+// import { SkyWalkingTracer } from './skywalkingTracer'
+// import { JaegerTracer } from './jaegerTracer'
+// import { ZipkinSingleTracer } from './zipkinSingleTracer'
+// import { ZipkinMultiTracer } from './zipkinMultiTracer'
+// import { W3cTraceParentTracer } from './w3cTraceParentTracer'
+// import { isTraceSampled } from './sampler'
 function isTracingOption(item) {
   var expectedItem = item;
   return getType(expectedItem) === 'object' && isMatchOption(expectedItem.match) && isString(expectedItem.traceType);
@@ -10365,63 +9874,72 @@ function startTracer(configuration, sessionManager) {
   };
 }
 function injectHeadersIfTracingAllowed(configuration, context, sessionManager, inject) {
-  var session = sessionManager.findTrackedSession();
-  if (!session) {
-    return;
-  }
-  var tracingOption = find(configuration.allowedTracingUrls, function (tracingOption) {
-    return matchList([tracingOption.match], context.url, true);
-  });
-  if (!tracingOption) {
-    return;
-  }
-  var traceSampled = isTraceSampled(session.id, configuration.tracingSampleRate);
-  if (!traceSampled) return;
-  var tracer,
-    traceType = tracingOption.traceType;
-  switch (traceType) {
-    case TraceType.DDTRACE:
-      tracer = new DDtraceTracer(configuration, traceSampled);
-      break;
-    case TraceType.SKYWALKING_V3:
-      tracer = new SkyWalkingTracer(configuration, context.url, traceSampled);
-      break;
-    case TraceType.ZIPKIN_MULTI_HEADER:
-      tracer = new ZipkinMultiTracer(configuration, traceSampled);
-      break;
-    case TraceType.JAEGER:
-      tracer = new JaegerTracer(configuration, traceSampled);
-      break;
-    case TraceType.W3C_TRACEPARENT:
-      tracer = new W3cTraceParentTracer(configuration, traceSampled);
-      break;
-    case TraceType.W3C_TRACEPARENT_64:
-      tracer = new W3cTraceParentTracer(configuration, traceSampled, true);
-      break;
-    case TraceType.ZIPKIN_SINGLE_HEADER:
-      tracer = new ZipkinSingleTracer(configuration, traceSampled);
-      break;
-    default:
-      break;
-  }
-  if (!tracer || !tracer.isTracingSupported()) {
-    return;
-  }
-  context.traceId = tracer.getTraceId();
-  context.spanId = tracer.getSpanId();
-  context.traceSampled = traceSampled;
-  var headers = tracer.makeTracingHeaders();
-  if (configuration.injectTraceHeader) {
-    var result = configuration.injectTraceHeader(shallowClone(context));
-    if (getType(result) === 'object') {
-      each(result, function (value, key) {
-        if (getType(value) === 'string') {
-          headers[key] = value;
-        }
-      });
-    }
-  }
-  inject(headers);
+  return;
+  // const session = sessionManager.findTrackedSession()
+  // if (!session) {
+  //   return
+  // }
+  // var tracingOption = find(
+  //   configuration.allowedTracingUrls,
+  //   function (tracingOption) {
+  //     return matchList([tracingOption.match], context.url, true)
+  //   }
+  // )
+  // if (!tracingOption) {
+  //   return
+  // }
+  // const traceSampled = isTraceSampled(
+  //   session.id,
+  //   configuration.tracingSampleRate
+  // )
+
+  // if (!traceSampled) return
+  // var tracer,
+  //   traceType = tracingOption.traceType
+  // switch (traceType) {
+  //   case TraceType.DDTRACE:
+  //     tracer = new DDtraceTracer(configuration, traceSampled)
+  //     break
+  //   case TraceType.SKYWALKING_V3:
+  //     tracer = new SkyWalkingTracer(configuration, context.url, traceSampled)
+  //     break
+  //   case TraceType.ZIPKIN_MULTI_HEADER:
+  //     tracer = new ZipkinMultiTracer(configuration, traceSampled)
+  //     break
+  //   case TraceType.JAEGER:
+  //     tracer = new JaegerTracer(configuration, traceSampled)
+  //     break
+  //   case TraceType.W3C_TRACEPARENT:
+  //     tracer = new W3cTraceParentTracer(configuration, traceSampled)
+  //     break
+  //   case TraceType.W3C_TRACEPARENT_64:
+  //     tracer = new W3cTraceParentTracer(configuration, traceSampled, true)
+  //     break
+  //   case TraceType.ZIPKIN_SINGLE_HEADER:
+  //     tracer = new ZipkinSingleTracer(configuration, traceSampled)
+  //     break
+  //   default:
+  //     break
+  // }
+  // if (!tracer || !tracer.isTracingSupported()) {
+  //   return
+  // }
+
+  // context.traceId = tracer.getTraceId()
+  // context.spanId = tracer.getSpanId()
+  // context.traceSampled = traceSampled
+  // var headers = tracer.makeTracingHeaders()
+  // if (configuration.injectTraceHeader) {
+  //   var result = configuration.injectTraceHeader(shallowClone(context))
+  //   if (getType(result) === 'object') {
+  //     each(result, function (value, key) {
+  //       if (getType(value) === 'string') {
+  //         headers[key] = value
+  //       }
+  //     })
+  //   }
+  // }
+  // inject(headers)
 }
 ;// CONCATENATED MODULE: ./src/domain/requestCollection.js
 
@@ -11299,15 +10817,17 @@ function createPreStartStrategy(rumPublicApiOptions, getCommonContext, doStartRu
     }
   };
 }
-function overrideInitConfigurationForBridge(initConfiguration) {
-  var _initConfiguration$de, _getEventBridge;
-  return assign({}, initConfiguration, {
-    applicationId: '00000000-aaaa-0000-aaaa-000000000000',
-    clientToken: 'empty',
-    sessionSampleRate: 100,
-    defaultPrivacyLevel: (_initConfiguration$de = initConfiguration.defaultPrivacyLevel) !== null && _initConfiguration$de !== void 0 ? _initConfiguration$de : (_getEventBridge = getEventBridge()) === null || _getEventBridge === void 0 ? void 0 : _getEventBridge.getPrivacyLevel()
-  });
-}
+
+// function overrideInitConfigurationForBridge(initConfiguration) {
+//   return assign({}, initConfiguration, {
+//     applicationId: '00000000-aaaa-0000-aaaa-000000000000',
+//     clientToken: 'empty',
+//     sessionSampleRate: 100,
+//     defaultPrivacyLevel:
+//       initConfiguration.defaultPrivacyLevel ??
+//       getEventBridge()?.getPrivacyLevel()
+//   })
+// }
 ;// CONCATENATED MODULE: ./src/boot/rumPublicApi.js
 
 

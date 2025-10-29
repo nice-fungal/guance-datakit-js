@@ -149,17 +149,6 @@
             }
         }
         return flag;
-    }, matchList = function(list, value, useStartsWith) {
-        return void 0 === useStartsWith && (useStartsWith = !1), some(list, (function(item) {
-            try {
-                if ("function" == typeof item) return item(value);
-                if (item instanceof RegExp) return item.test(value);
-                if ("string" == typeof item) return useStartsWith ? startsWith(value, item) : item === value;
-            } catch (e) {
-                display.error(e);
-            }
-            return !1;
-        }));
     }, cssEscape = function(str) {
         return str += "", window.CSS && window.CSS.escape ? window.CSS.escape(str) : str.replace(/([\0-\x1f\x7f]|^-?\d)|^-$|[^\x80-\uFFFF\w-]/g, (function(ch, asCodePoint) {
             return asCodePoint ? "\0" === ch ? "�" : ch.slice(0, -1) + "\\" + ch.charCodeAt(ch.length - 1).toString(16) + " " : "\\" + ch;
@@ -197,37 +186,7 @@
                 timer_clearTimeout(pendingTimeoutId), inWaitPeriod = !1, pendingExecutionWithParameters = void 0;
             }
         };
-    }), tools_base64Encode = function(data) {
-        if ("function" == typeof btoa) return btoa(encodeURIComponent(data).replace(/%([0-9A-F]{2})/g, (function(match, p1) {
-            return String.fromCharCode("0x" + p1);
-        })));
-        var h1, h2, h3, h4, bits, b64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=", i = 0, ac = 0, enc = "", tmp_arr = [];
-        if (!(data = String(data))) return data;
-        data = function(string) {
-            var start, end, stringl, n, utftext = "";
-            for (start = end = 0, stringl = (string = (string + "").replace(/\r\n/g, "\n").replace(/\r/g, "\n")).length, 
-            n = 0; n < stringl; n++) {
-                var c1 = string.charCodeAt(n), enc = null;
-                c1 < 128 ? end++ : enc = c1 > 127 && c1 < 2048 ? String.fromCharCode(c1 >> 6 | 192, 63 & c1 | 128) : String.fromCharCode(c1 >> 12 | 224, c1 >> 6 & 63 | 128, 63 & c1 | 128), 
-                null !== enc && (end > start && (utftext += string.substring(start, end)), utftext += enc, 
-                start = end = n + 1);
-            }
-            return end > start && (utftext += string.substring(start, string.length)), utftext;
-        }(data);
-        do {
-            h1 = (bits = data.charCodeAt(i++) << 16 | data.charCodeAt(i++) << 8 | data.charCodeAt(i++)) >> 18 & 63, 
-            h2 = bits >> 12 & 63, h3 = bits >> 6 & 63, h4 = 63 & bits, tmp_arr[ac++] = b64.charAt(h1) + b64.charAt(h2) + b64.charAt(h3) + b64.charAt(h4);
-        } while (i < data.length);
-        switch (enc = tmp_arr.join(""), data.length % 3) {
-          case 1:
-            enc = enc.slice(0, -2) + "==";
-            break;
-
-          case 2:
-            enc = enc.slice(0, -1) + "=";
-        }
-        return enc;
-    };
+    });
     function UUID(placeholder) {
         return placeholder ? (parseInt(placeholder, 10) ^ 16 * Math.random() >> parseInt(placeholder, 10) / 4).toString(16) : "".concat(1e7, "-", 1e3, "-", 4e3, "-", 8e3, "-", 1e11).replace(/[018]/g, UUID);
     }
@@ -610,7 +569,7 @@
     }, RumLongTaskEntryType_LONG_TASK = "long-task", RumLongTaskEntryType_LONG_ANIMATION_FRAME = "long-animation-frame", ViewLoadingType_INITIAL_LOAD = "initial_load", ViewLoadingType_ROUTE_CHANGE = "route_change", RequestType = {
         FETCH: ResourceType_FETCH,
         XHR: ResourceType_XHR
-    }, TraceType_DDTRACE = "ddtrace", TraceType_ZIPKIN_MULTI_HEADER = "zipkin", TraceType_ZIPKIN_SINGLE_HEADER = "zipkin_single_header", TraceType_W3C_TRACEPARENT = "w3c_traceparent", TraceType_W3C_TRACEPARENT_64 = "w3c_traceparent_64bit", TraceType_SKYWALKING_V3 = "skywalking_v3", TraceType_JAEGER = "jaeger", enums_ErrorHandling_HANDLED = "handled", enums_ErrorHandling_UNHANDLED = "unhandled", NonErrorPrefix_UNCAUGHT = "Uncaught", NonErrorPrefix_PROVIDED = "Provided";
+    }, TraceType_DDTRACE = "ddtrace", enums_ErrorHandling_HANDLED = "handled", enums_ErrorHandling_UNHANDLED = "unhandled", NonErrorPrefix_UNCAUGHT = "Uncaught", NonErrorPrefix_PROVIDED = "Provided";
     function jsonStringify_jsonStringify(value, replacer, space) {
         if ("object" !== typeof_typeof(value) || null === value) return JSON.stringify(value);
         var restoreObjectPrototypeToJson = detachToJsonMethod(Object.prototype), restoreArrayPrototypeToJson = detachToJsonMethod(Array.prototype), restoreValuePrototypeToJson = detachToJsonMethod(Object.getPrototypeOf(value)), restoreValueToJson = detachToJsonMethod(value);
@@ -1197,28 +1156,6 @@
         }
         return anchorElement.href = url, anchorElement;
     }
-    LifeCycle.prototype = {
-        notify: function(eventType, data) {
-            var eventCallbacks = this.callbacks[eventType];
-            eventCallbacks && each(eventCallbacks, (function(callback) {
-                callback(data);
-            }));
-        },
-        subscribe: function(eventType, callback) {
-            this.callbacks[eventType] || (this.callbacks[eventType] = []), this.callbacks[eventType].push(callback);
-            var _this = this;
-            return {
-                unsubscribe: function() {
-                    _this.callbacks[eventType] = filter(_this.callbacks[eventType], (function(other) {
-                        return other !== callback;
-                    }));
-                }
-            };
-        }
-    };
-    var userAgent = navigator.userAgent.toLowerCase(), isIos = function() {
-        return /iphone os/.test(userAgent);
-    };
     function requestIdleCallback(callback, opts) {
         if (window.requestIdleCallback && window.cancelIdleCallback) {
             var id = window.requestIdleCallback(monitor(callback), opts);
@@ -1240,6 +1177,25 @@
             };
         }(callback);
     }
+    LifeCycle.prototype = {
+        notify: function(eventType, data) {
+            var eventCallbacks = this.callbacks[eventType];
+            eventCallbacks && each(eventCallbacks, (function(callback) {
+                callback(data);
+            }));
+        },
+        subscribe: function(eventType, callback) {
+            this.callbacks[eventType] || (this.callbacks[eventType] = []), this.callbacks[eventType].push(callback);
+            var _this = this;
+            return {
+                unsubscribe: function() {
+                    _this.callbacks[eventType] = filter(_this.callbacks[eventType], (function(other) {
+                        return other !== callback;
+                    }));
+                }
+            };
+        }
+    };
     var getCurrentSiteCache, TRIM_REGIX = /^\s+|\s+$/g, typeMap = {
         rum: "/rum",
         log: "/logging",
@@ -2294,38 +2250,10 @@
             }
         };
     }
-    function eventBridge_getEventBridge() {
-        var eventBridgeGlobal = null;
-        if (eventBridgeGlobal) return {
-            getCapabilities: function() {
-                return JSON.parse(eventBridgeGlobal.getCapabilities && eventBridgeGlobal.getCapabilities() || "[]");
-            },
-            getPrivacyLevel: function() {
-                return eventBridgeGlobal.getPrivacyLevel && eventBridgeGlobal.getPrivacyLevel();
-            },
-            getAllowedWebViewHosts: function() {
-                return JSON.parse(eventBridgeGlobal.getAllowedWebViewHosts && eventBridgeGlobal.getAllowedWebViewHosts() || "[]");
-            },
-            send: function(eventType, event, viewId) {
-                var view = viewId ? {
-                    id: viewId
-                } : void 0;
-                eventBridgeGlobal.sendEvent(JSON.stringify({
-                    name: eventType,
-                    data: event,
-                    view: view
-                }));
-            }
-        };
-    }
     function canUseEventBridge() {
-        var _getGlobalObject$loca, currentHost = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : null === (_getGlobalObject$loca = getGlobalObject().location) || void 0 === _getGlobalObject$loca ? void 0 : _getGlobalObject$loca.hostname, eventBridgeGlobal = null;
-        if (eventBridgeGlobal && void 0 === eventBridgeGlobal.getAllowedWebViewHosts) return !0;
-        if (eventBridgeGlobal && eventBridgeGlobal.getAllowedWebViewHosts && null === eventBridgeGlobal.getAllowedWebViewHosts()) return !0;
-        var bridge = eventBridge_getEventBridge();
-        return !!bridge && bridge.getAllowedWebViewHosts().some((function(allowedHost) {
-            return currentHost === allowedHost || currentHost.endsWith(".".concat(allowedHost));
-        }));
+        var _getGlobalObject$loca;
+        arguments.length > 0 && void 0 !== arguments[0] || null === (_getGlobalObject$loca = getGlobalObject().location) || void 0 === _getGlobalObject$loca || _getGlobalObject$loca.hostname;
+        return !1;
     }
     function toPropertyKey(t) {
         var i = function(t, r) {
@@ -2929,7 +2857,18 @@
         }(lifeCycle, domMutationObservable, configuration), pageActivityEndCallback, maxDuration);
     }
     function isExcludedUrl(configuration, requestUrl) {
-        return matchList(configuration.excludedActivityUrls, requestUrl);
+        return list = configuration.excludedActivityUrls, value = requestUrl, void 0 === useStartsWith && (useStartsWith = !1), 
+        some(list, (function(item) {
+            try {
+                if ("function" == typeof item) return item(value);
+                if (item instanceof RegExp) return item.test(value);
+                if ("string" == typeof item) return useStartsWith ? startsWith(value, item) : item === value;
+            } catch (e) {
+                display.error(e);
+            }
+            return !1;
+        }));
+        var list, value, useStartsWith;
     }
     var ClickChainStatus_WaitingForMoreClicks = 0, ClickChainStatus_WaitingForClicksToStop = 1, ClickChainStatus_Finalized = 2;
     function createClickChain(firstClick, onFinalize) {
@@ -2970,6 +2909,7 @@
             }
         };
     }
+    var STABLE_ATTRIBUTES = [ "data-guance-action-name", "data-testid", "data-test", "data-qa", "data-cy", "data-test-id", "data-qa-id", "data-testing", "data-component", "data-element", "data-source-file" ];
     function getActionNameFromElement(element, userProgrammaticAttribute) {
         return getActionNameFromElementProgrammatically(element, "data-guance-action-name") || userProgrammaticAttribute && getActionNameFromElementProgrammatically(element, userProgrammaticAttribute) || getActionNameFromElementForStrategies(element, userProgrammaticAttribute, priorityStrategies) || getActionNameFromElementForStrategies(element, userProgrammaticAttribute, fallbackStrategies) || "";
     }
@@ -3071,7 +3011,7 @@
             return element.textContent;
         }
     }
-    var supportScopeSelectorCache, STABLE_ATTRIBUTES = [ "data-guance-action-name", "data-testid", "data-test", "data-qa", "data-cy", "data-test-id", "data-qa-id", "data-testing", "data-component", "data-element", "data-source-file" ], GLOBALLY_UNIQUE_SELECTOR_GETTERS = [ getStableAttributeSelector, function(element) {
+    var supportScopeSelectorCache, GLOBALLY_UNIQUE_SELECTOR_GETTERS = [ getStableAttributeSelector, function(element) {
         if (element.id && !isGeneratedValue(element.id)) return "#" + cssEscape(element.id);
     } ], UNIQUE_AMONG_CHILDREN_SELECTOR_GETTERS = [ getStableAttributeSelector, function(element) {
         if ("BODY" === element.tagName) return;
@@ -4190,7 +4130,6 @@
             }
         };
     }
-    var sampleDecisionCache;
     function trackViews(location, lifeCycle, domMutationObservable, configuration, locationChangeObservable, areViewsTrackedAutomatically, initialViewOptions) {
         var activeViews = new Set;
         function startNewView(loadingType, startClocks, viewOptions) {
@@ -4451,300 +4390,17 @@
             details;
         }
     }
-    function TraceIdentifier() {
-        this.buffer = new Uint8Array(8), getCrypto().getRandomValues(this.buffer), this.buffer[0] = 127 & this.buffer[0];
-    }
-    function getCrypto() {
-        return window.crypto || window.msCrypto;
-    }
-    function DDtraceTracer(configuration, traceSampled) {
-        if (this._spanId = new TraceIdentifier, this._traceId = new TraceIdentifier, this._traceSampled = traceSampled, 
-        configuration.generateTraceId && "function" === getType(configuration.generateTraceId)) {
-            var customTraceId = configuration.generateTraceId();
-            "string" === getType(customTraceId) && (this.customTraceId = customTraceId);
-        }
-    }
-    function uuid() {
-        return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (function(c) {
-            var r = 16 * Math.random() | 0;
-            return ("x" === c ? r : 3 & r | 8).toString(16);
-        }));
-    }
-    function SkyWalkingTracer(configuration, requestUrl, traceSampled) {
-        if (this._spanId = uuid(), this._traceId = uuid(), this._applicationId = configuration.applicationId, 
-        this._env = configuration.env, this._version = configuration.version, this._urlParse = urlParse(requestUrl).getParse(), 
-        this._traceSampled = traceSampled, configuration.generateTraceId && "function" === getType(configuration.generateTraceId)) {
-            var customTraceId = configuration.generateTraceId();
-            "string" === getType(customTraceId) && (this.customTraceId = customTraceId);
-        }
-    }
-    function JaegerTracer(configuration, traceSampled) {
-        if (this._traceId = new TraceIdentifier, this._spanId = new TraceIdentifier, this._traceSampled = traceSampled, 
-        this.is128Bit = configuration.traceId128Bit, configuration.generateTraceId && "function" === getType(configuration.generateTraceId)) {
-            var customTraceId = configuration.generateTraceId();
-            "string" === getType(customTraceId) && (this.customTraceId = customTraceId);
-        }
-    }
-    function ZipkinSingleTracer(configuration, traceSampled) {
-        if (this._traceId = new TraceIdentifier, this._spanId = new TraceIdentifier, this._traceSampled = traceSampled, 
-        configuration.generateTraceId && "function" === getType(configuration.generateTraceId)) {
-            var customTraceId = configuration.generateTraceId();
-            "string" === getType(customTraceId) && (this.customTraceId = customTraceId);
-        }
-    }
-    function ZipkinMultiTracer(configuration, traceSampled) {
-        if (this._traceId = new TraceIdentifier, this._spanId = new TraceIdentifier, this._traceSampled = traceSampled, 
-        this.is128Bit = configuration.traceId128Bit, configuration.generateTraceId && "function" === getType(configuration.generateTraceId)) {
-            var customTraceId = configuration.generateTraceId();
-            "string" === getType(customTraceId) && (this.customTraceId = customTraceId);
-        }
-    }
-    function W3cTraceParentTracer(configuration, traceSampled, isHexTraceId) {
-        if (this._traceId = new TraceIdentifier, this._spanId = new TraceIdentifier, this._traceSampled = traceSampled, 
-        this.isHexTraceId = isHexTraceId, configuration.generateTraceId && "function" === getType(configuration.generateTraceId)) {
-            var customTraceId = configuration.generateTraceId();
-            "string" === getType(customTraceId) && (this.customTraceId = customTraceId);
-        }
-    }
-    function isTraceSampled(sessionId, sampleRate) {
-        return 100 === sampleRate || 0 !== sampleRate && (sampleDecisionCache && sessionId === sampleDecisionCache.sessionId ? sampleDecisionCache.decision : (decision = window.BigInt ? function(identifier, sampleRate) {
-            var knuthFactor = BigInt("1111111111111111111"), twoPow64 = BigInt("0x10000000000000000");
-            return Number(identifier * knuthFactor % twoPow64) <= sampleRate / 100 * Number(twoPow64);
-        }(BigInt("0x".concat(sessionId.split("-")[4])), sampleRate) : performDraw(sampleRate), 
-        sampleDecisionCache = {
-            sessionId: sessionId,
-            decision: decision
-        }, decision));
-        var decision;
-    }
     function clearTracingIfNeeded(context) {
         0 !== context.status || context.isAborted || (context.traceId = void 0, context.spanId = void 0, 
         context.traceSampled = void 0);
     }
-    function injectHeadersIfTracingAllowed(configuration, context, sessionManager, inject) {
-        var session = sessionManager.findTrackedSession();
-        if (session) {
-            var tracingOption = find(configuration.allowedTracingUrls, (function(tracingOption) {
-                return matchList([ tracingOption.match ], context.url, !0);
-            }));
-            if (tracingOption) {
-                var traceSampled = isTraceSampled(session.id, configuration.tracingSampleRate);
-                if (traceSampled) {
-                    var tracer;
-                    switch (tracingOption.traceType) {
-                      case TraceType_DDTRACE:
-                        tracer = new DDtraceTracer(configuration, traceSampled);
-                        break;
-
-                      case TraceType_SKYWALKING_V3:
-                        tracer = new SkyWalkingTracer(configuration, context.url, traceSampled);
-                        break;
-
-                      case TraceType_ZIPKIN_MULTI_HEADER:
-                        tracer = new ZipkinMultiTracer(configuration, traceSampled);
-                        break;
-
-                      case TraceType_JAEGER:
-                        tracer = new JaegerTracer(configuration, traceSampled);
-                        break;
-
-                      case TraceType_W3C_TRACEPARENT:
-                        tracer = new W3cTraceParentTracer(configuration, traceSampled);
-                        break;
-
-                      case TraceType_W3C_TRACEPARENT_64:
-                        tracer = new W3cTraceParentTracer(configuration, traceSampled, !0);
-                        break;
-
-                      case TraceType_ZIPKIN_SINGLE_HEADER:
-                        tracer = new ZipkinSingleTracer(configuration, traceSampled);
-                    }
-                    if (tracer && tracer.isTracingSupported()) {
-                        context.traceId = tracer.getTraceId(), context.spanId = tracer.getSpanId(), context.traceSampled = traceSampled;
-                        var headers = tracer.makeTracingHeaders();
-                        if (configuration.injectTraceHeader) {
-                            var result = configuration.injectTraceHeader(shallowClone(context));
-                            "object" === getType(result) && each(result, (function(value, key) {
-                                "string" === getType(value) && (headers[key] = value);
-                            }));
-                        }
-                        inject(headers);
-                    }
-                }
-            }
-        }
-    }
-    TraceIdentifier.prototype = {
-        toString: function(radix) {
-            var high = this.readInt32(0), low = this.readInt32(4), str = "";
-            do {
-                var mod = high % radix * 4294967296 + low;
-                high = Math.floor(high / radix), low = Math.floor(mod / radix), str = (mod % radix).toString(radix) + str;
-            } while (high || low);
-            return str;
-        },
-        toDecimalString: function() {
-            return this.toString(10);
-        },
-        toPaddedHexadecimalString: function() {
-            var traceId = this.toString(16);
-            return Array(17 - traceId.length).join("0") + traceId;
-        },
-        readInt32: function(offset) {
-            return 16777216 * this.buffer[offset] + (this.buffer[offset + 1] << 16) + (this.buffer[offset + 2] << 8) + this.buffer[offset + 3];
-        }
-    }, DDtraceTracer.prototype = {
-        isTracingSupported: function() {
-            return void 0 !== getCrypto();
-        },
-        getSpanId: function() {
-            return this._spanId.toDecimalString();
-        },
-        getTraceId: function() {
-            return this.customTraceId ? this.customTraceId : this._traceId.toDecimalString();
-        },
-        makeTracingHeaders: function() {
-            return {
-                "x-datadog-origin": "rum",
-                "x-datadog-parent-id": this.getSpanId(),
-                "x-datadog-sampling-priority": this._traceSampled ? "2" : "-1",
-                "x-datadog-trace-id": this.getTraceId()
-            };
-        }
-    }, SkyWalkingTracer.prototype = {
-        isTracingSupported: function() {
-            return !!(this._env && this._version && this._urlParse);
-        },
-        getSpanId: function() {
-            return this._spanId;
-        },
-        getTraceId: function() {
-            return this.customTraceId ? this.customTraceId : this._traceId;
-        },
-        getSkyWalkingSw8: function() {
-            try {
-                var traceIdStr = String(tools_base64Encode(this.getTraceId())), segmentId = String(tools_base64Encode(this.getSpanId())), service = String(tools_base64Encode(this._applicationId + "_rum_" + this.env)), instance = String(tools_base64Encode(this._version)), endpoint = String(tools_base64Encode(window.location.href)), peer = String(tools_base64Encode(this._urlParse.Host));
-                return (this._traceSampled ? "1" : "0") + "-" + traceIdStr + "-" + segmentId + "-0-" + service + "-" + instance + "-" + endpoint + "-" + peer;
-            } catch (err) {
-                return "";
-            }
-        },
-        makeTracingHeaders: function() {
-            return {
-                sw8: this.getSkyWalkingSw8()
-            };
-        }
-    }, JaegerTracer.prototype = {
-        isTracingSupported: function() {
-            return void 0 !== getCrypto();
-        },
-        getSpanId: function() {
-            return this._spanId.toPaddedHexadecimalString();
-        },
-        getTraceId: function() {
-            return this.customTraceId ? this.customTraceId : this.is128Bit ? "0000000000000000" + this._traceId.toPaddedHexadecimalString() : this._traceId.toPaddedHexadecimalString();
-        },
-        getUberTraceId: function() {
-            return this.getTraceId() + ":" + this.getSpanId() + ":0:" + (this._traceSampled ? "1" : "0");
-        },
-        makeTracingHeaders: function() {
-            return {
-                "uber-trace-id": this.getUberTraceId()
-            };
-        }
-    }, ZipkinSingleTracer.prototype = {
-        isTracingSupported: function() {
-            return void 0 !== getCrypto();
-        },
-        getSpanId: function() {
-            return this._spanId.toPaddedHexadecimalString();
-        },
-        getTraceId: function() {
-            return this.customTraceId ? this.customTraceId : this._traceId.toPaddedHexadecimalString();
-        },
-        getB3Str: function() {
-            return this.getTraceId() + "-" + this.getSpanId() + "-" + (this._traceSampled ? "1" : "0");
-        },
-        makeTracingHeaders: function() {
-            return {
-                b3: this.getB3Str()
-            };
-        }
-    }, ZipkinMultiTracer.prototype = {
-        isTracingSupported: function() {
-            return void 0 !== getCrypto();
-        },
-        getSpanId: function() {
-            return this._spanId.toPaddedHexadecimalString();
-        },
-        getTraceId: function() {
-            return this.customTraceId ? this.customTraceId : this.is128Bit ? "0000000000000000" + this._traceId.toPaddedHexadecimalString() : this._traceId.toPaddedHexadecimalString();
-        },
-        makeTracingHeaders: function() {
-            return {
-                "X-B3-TraceId": this.getSpanId(),
-                "X-B3-SpanId": this.getTraceId(),
-                "X-B3-Sampled": this._traceSampled ? "1" : "0"
-            };
-        }
-    }, W3cTraceParentTracer.prototype = {
-        isTracingSupported: function() {
-            return void 0 !== getCrypto();
-        },
-        getSpanId: function() {
-            return this.isHexTraceId ? this._spanId.toDecimalString() : this._spanId.toPaddedHexadecimalString();
-        },
-        getTraceId: function() {
-            return this.customTraceId ? this.customTraceId : this.isHexTraceId ? this._traceId.toDecimalString() : this._traceId.toPaddedHexadecimalString() + this._spanId.toPaddedHexadecimalString();
-        },
-        getTraceParent: function() {
-            return this.isHexTraceId ? "00-0000000000000000" + this._traceId.toPaddedHexadecimalString() + "-" + this._spanId.toPaddedHexadecimalString() + "-" + (this._traceSampled ? "01" : "00") : "00-" + this.getTraceId() + "-" + this.getSpanId() + "-" + (this._traceSampled ? "01" : "00");
-        },
-        makeTracingHeaders: function() {
-            var baseHeaders = {
-                traceparent: this.getTraceParent()
-            };
-            return this.isHexTraceId ? tools_assign(baseHeaders, {
-                "x-gc-trace-id": this.getTraceId(),
-                "x-gc-span-id": this.getSpanId()
-            }) : baseHeaders;
-        }
-    };
     var nextRequestIndex = 1;
     function startRequestCollection(lifeCycle, configuration, sessionManager) {
-        var tracer = function(configuration, sessionManager) {
-            return {
-                clearTracingIfNeeded: clearTracingIfNeeded,
-                traceFetch: function(context) {
-                    return injectHeadersIfTracingAllowed(configuration, context, sessionManager, (function(tracingHeaders) {
-                        if (!(context.input instanceof Request) || context.init && context.init.headers) {
-                            context.init = shallowClone(context.init);
-                            var headers = [];
-                            context.init.headers instanceof Headers ? context.init.headers.forEach((function(value, key) {
-                                headers.push([ key, value ]);
-                            })) : isArray(context.init.headers) ? each(context.init.headers, (function(header) {
-                                headers.push(header);
-                            })) : context.init.headers && each(context.init.headers, (function(value, key) {
-                                headers.push([ key, value ]);
-                            }));
-                            var headersMap = {};
-                            each(headers.concat(objectEntries(tracingHeaders)), (function(header) {
-                                headersMap[header[0]] = header[1];
-                            })), context.init.headers = headersMap;
-                        } else context.input = new Request(context.input), each(tracingHeaders, (function(value, key) {
-                            context.input.headers.append(key, value);
-                        }));
-                    }));
-                },
-                traceXhr: function(context, xhr) {
-                    return injectHeadersIfTracingAllowed(configuration, context, sessionManager, (function(tracingHeaders) {
-                        each(tracingHeaders, (function(value, name) {
-                            xhr.setRequestHeader(name, value);
-                        }));
-                    }));
-                }
-            };
-        }(configuration, sessionManager);
+        var tracer = {
+            clearTracingIfNeeded: clearTracingIfNeeded,
+            traceFetch: function(context) {},
+            traceXhr: function(context, xhr) {}
+        };
         !function(lifeCycle, configuration, tracer) {
             var subscription = initXhrObservable().subscribe((function(rawContext) {
                 var context = rawContext;
@@ -5635,7 +5291,7 @@
             }));
         }(lifeCycle, configuration);
         var addError = startErrorCollection(lifeCycle, 0, session, pageStateHistory).addError;
-        startRequestCollection(lifeCycle, configuration, session);
+        startRequestCollection(lifeCycle, configuration);
         var internalContext = function(applicationId, sessionManager, viewContexts, actionContexts, urlContexts) {
             return {
                 get: function(startTime) {
