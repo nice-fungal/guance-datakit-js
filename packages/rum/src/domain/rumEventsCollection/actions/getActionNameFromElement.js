@@ -1,7 +1,5 @@
 import { safeTruncate, isIE, find, map, filter } from '@cloudcare/browser-core'
-
-export var DEFAULT_PROGRAMMATIC_ACTION_NAME_ATTRIBUTE =
-  'data-guance-action-name'
+import { DEFAULT_PROGRAMMATIC_ACTION_NAME_ATTRIBUTE } from './__constants';
 
 export function getActionNameFromElement(element, userProgrammaticAttribute) {
   // Proceed to get the action name in two steps:
