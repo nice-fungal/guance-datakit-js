@@ -1367,17 +1367,17 @@ function getRelativeTime(timestamp) {
   return timestamp - getNavigationStart();
 }
 function preferredNow() {
-  return relativeNow();
+  return tools_relativeNow();
 }
 function getTimestamp(relativeTime) {
   return Math.round(getNavigationStart() + relativeTime);
 }
-function relativeNow() {
+function tools_relativeNow() {
   return performance.now();
 }
 function clocksNow() {
   return {
-    relative: relativeNow(),
+    relative: tools_relativeNow(),
     timeStamp: timeStampNow()
   };
 }
@@ -1395,7 +1395,7 @@ function dateNow() {
   // [1]: https://github.com/datejs/Datejs/blob/97f5c7c58c5bc5accdab8aa7602b6ac56462d778/src/core-debug.js#L14-L16
   return new Date().getTime();
 }
-function elapsed(start, end) {
+function tools_elapsed(start, end) {
   return end - start;
 }
 function clocksOrigin() {
@@ -1717,7 +1717,7 @@ function createValueHistory(params) {
     }, CLEAR_OLD_VALUES_INTERVAL);
   }
   function clearExpiredValues() {
-    var oldTimeThreshold = relativeNow() - expireDelay;
+    var oldTimeThreshold = tools_relativeNow() - expireDelay;
     while (entries.length > 0 && entries[entries.length - 1].endTime < oldTimeThreshold) {
       entries.pop();
     }
@@ -3127,6 +3127,11 @@ function _slicedToArray(r, e) {
 ;// CONCATENATED MODULE: ../core/esm/helper/limitModification.js
 
 
+function limitModification_arrayLikeToArray(r, a) {
+  (null == a || a > r.length) && (a = r.length);
+  for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e];
+  return n;
+}
 
 
 function limitModification(object, modifiableFieldPaths, modifier) {
@@ -3146,7 +3151,7 @@ function limitModification(object, modifiableFieldPaths, modifier) {
 function setValueAtPath(object, clone, pathSegments, fieldType) {
   var _pathSegments = _toArray(pathSegments),
     field = _pathSegments[0],
-    restPathSegments = _pathSegments.slice(1);
+    restPathSegments = limitModification_arrayLikeToArray(_pathSegments).slice(1);
   if (field === '[]') {
     if (Array.isArray(object) && Array.isArray(clone)) {
       object.forEach(function (item, i) {
@@ -4250,7 +4255,7 @@ function sendXhr(params, observable) {
     hasBeenReported = true;
     var completeContext = context;
     completeContext.state = 'complete';
-    completeContext.duration = elapsed(startContext.startClocks.timeStamp, timeStampNow());
+    completeContext.duration = tools_elapsed(startContext.startClocks.timeStamp, timeStampNow());
     completeContext.status = xhr.status;
     observable.notify(shallowClone(completeContext));
   };
@@ -4661,12 +4666,12 @@ function startSessionManager(configuration, productKey, computeSessionState) {
     return sessionContextHistory.stop();
   });
   sessionStore.renewObservable.subscribe(function () {
-    sessionContextHistory.add(buildSessionContext(), relativeNow());
+    sessionContextHistory.add(buildSessionContext(), tools_relativeNow());
     renewObservable.notify();
   });
   sessionStore.expireObservable.subscribe(function () {
     expireObservable.notify();
-    sessionContextHistory.closeActive(relativeNow());
+    sessionContextHistory.closeActive(tools_relativeNow());
   });
 
   // manager is started.
@@ -6588,8 +6593,8 @@ function retrieveFirstInputTiming(configuration, callback) {
     // (e.g. performance.now()).
     var timing = {
       entryType: 'first-input',
-      processingStart: relativeNow(),
-      processingEnd: relativeNow(),
+      processingStart: tools_relativeNow(),
+      processingEnd: tools_relativeNow(),
       startTime: evt.timeStamp,
       duration: 0,
       // arbitrary value to avoid nullable duration and simplify INP logic
@@ -6854,1094 +6859,6 @@ function startLongAnimationFrameCollection(lifeCycle, configuration) {
     }
   };
 }
-;// CONCATENATED MODULE: ./src/domain/trackEventCounts.js
-
-function trackEventCounts(data) {
-  var lifeCycle = data.lifeCycle;
-  var isChildEvent = data.isChildEvent;
-  var callback = data.onChange;
-  if (callback === undefined) {
-    callback = tools_noop;
-  }
-  var eventCounts = {
-    errorCount: 0,
-    longTaskCount: 0,
-    resourceCount: 0,
-    actionCount: 0,
-    frustrationCount: 0
-  };
-  var subscription = lifeCycle.subscribe(LifeCycleEventType.RUM_EVENT_COLLECTED, function (event) {
-    if (event.type === RumEventType.VIEW || !isChildEvent(event)) {
-      return;
-    }
-    switch (event.type) {
-      case RumEventType.ERROR:
-        eventCounts.errorCount += 1;
-        callback();
-        break;
-      case RumEventType.ACTION:
-        if (event.action.frustration) {
-          eventCounts.frustrationCount += event.action.frustration.type.length;
-        }
-        eventCounts.actionCount += 1;
-        callback();
-        break;
-      case RumEventType.LONG_TASK:
-        eventCounts.longTaskCount += 1;
-        callback();
-        break;
-      case RumEventType.RESOURCE:
-        eventCounts.resourceCount += 1;
-        callback();
-        break;
-    }
-  });
-  return {
-    stop: function stop() {
-      subscription.unsubscribe();
-    },
-    eventCounts: eventCounts
-  };
-}
-;// CONCATENATED MODULE: ./src/domain/waitPageActivityEnd.js
-
-
-// Delay to wait for a page activity to validate the tracking process
-var PAGE_ACTIVITY_VALIDATION_DELAY = 100;
-// Delay to wait after a page activity to end the tracking process
-var PAGE_ACTIVITY_END_DELAY = 100;
-
-/**
- * Wait for the page activity end
- *
- * Detection lifecycle:
- * ```
- *                        Wait page activity end
- *              .-------------------'--------------------.
- *              v                                        v
- *     [Wait for a page activity ]          [Wait for a maximum duration]
- *     [timeout: VALIDATION_DELAY]          [  timeout: maxDuration     ]
- *          /                  \                           |
- *         v                    v                          |
- *  [No page activity]   [Page activity]                   |
- *         |                   |,----------------------.   |
- *         v                   v                       |   |
- *     (Discard)     [Wait for a page activity]        |   |
- *                   [   timeout: END_DELAY   ]        |   |
- *                       /                \            |   |
- *                      v                  v           |   |
- *             [No page activity]    [Page activity]   |   |
- *                      |                 |            |   |
- *                      |                 '------------'   |
- *                      '-----------. ,--------------------'
- *                                   v
- *                                 (End)
- * ```
- *
- * Note: by assuming that maxDuration is greater than VALIDATION_DELAY, we are sure that if the
- * process is still alive after maxDuration, it has been validated.
- */
-function waitPageActivityEnd(lifeCycle, domMutationObservable, configuration, pageActivityEndCallback, maxDuration) {
-  var pageActivityObservable = createPageActivityObservable(lifeCycle, domMutationObservable, configuration);
-  return doWaitPageActivityEnd(pageActivityObservable, pageActivityEndCallback, maxDuration);
-}
-function doWaitPageActivityEnd(pageActivityObservable, pageActivityEndCallback, maxDuration) {
-  var pageActivityEndTimeoutId;
-  var hasCompleted = false;
-  var validationTimeoutId = timer_setTimeout(function () {
-    complete({
-      hadActivity: false
-    });
-  }, PAGE_ACTIVITY_VALIDATION_DELAY);
-  var maxDurationTimeoutId = maxDuration !== undefined ? timer_setTimeout(function () {
-    return complete({
-      hadActivity: true,
-      end: timeStampNow()
-    });
-  }, maxDuration) : undefined;
-  var pageActivitySubscription = pageActivityObservable.subscribe(function (data) {
-    var isBusy = data.isBusy;
-    timer_clearTimeout(validationTimeoutId);
-    timer_clearTimeout(pageActivityEndTimeoutId);
-    var lastChangeTime = timeStampNow();
-    if (!isBusy) {
-      pageActivityEndTimeoutId = timer_setTimeout(function () {
-        complete({
-          hadActivity: true,
-          end: lastChangeTime
-        });
-      }, PAGE_ACTIVITY_END_DELAY);
-    }
-  });
-  var stop = function stop() {
-    hasCompleted = true;
-    timer_clearTimeout(validationTimeoutId);
-    timer_clearTimeout(pageActivityEndTimeoutId);
-    timer_clearTimeout(maxDurationTimeoutId);
-    pageActivitySubscription.unsubscribe();
-  };
-  function complete(event) {
-    if (hasCompleted) {
-      return;
-    }
-    stop();
-    pageActivityEndCallback(event);
-  }
-  return {
-    stop: stop
-  };
-}
-function createPageActivityObservable(lifeCycle, domMutationObservable, configuration) {
-  return new Observable(function (observable) {
-    var subscriptions = [];
-    var firstRequestIndex;
-    var pendingRequestsCount = 0;
-    subscriptions.push(domMutationObservable.subscribe(function () {
-      notifyPageActivity();
-    }), createPerformanceObservable(configuration, {
-      type: RumPerformanceEntryType.RESOURCE
-    }).subscribe(function (entries) {
-      if (some(entries, function (entry) {
-        return !isExcludedUrl(configuration, entry.name);
-      })) {
-        notifyPageActivity();
-      }
-    }), lifeCycle.subscribe(LifeCycleEventType.REQUEST_STARTED, function (startEvent) {
-      if (isExcludedUrl(configuration, startEvent.url)) {
-        return;
-      }
-      if (firstRequestIndex === undefined) {
-        firstRequestIndex = startEvent.requestIndex;
-      }
-      pendingRequestsCount += 1;
-      notifyPageActivity();
-    }), lifeCycle.subscribe(LifeCycleEventType.REQUEST_COMPLETED, function (request) {
-      if (isExcludedUrl(configuration, request.url) || firstRequestIndex === undefined ||
-      // If the request started before the tracking start, ignore it
-      request.requestIndex < firstRequestIndex) {
-        return;
-      }
-      pendingRequestsCount -= 1;
-      notifyPageActivity();
-    }));
-    var _trackWindowOpen = trackWindowOpen(notifyPageActivity);
-    var stopTrackingWindowOpen = _trackWindowOpen.stop;
-    return function () {
-      stopTrackingWindowOpen();
-      each(subscriptions, function (s) {
-        s.unsubscribe();
-      });
-    };
-    function notifyPageActivity() {
-      observable.notify({
-        isBusy: pendingRequestsCount > 0
-      });
-    }
-  });
-}
-function isExcludedUrl(configuration, requestUrl) {
-  return matchList(configuration.excludedActivityUrls, requestUrl);
-}
-function trackWindowOpen(callback) {
-  return instrumentMethod(window, 'open', callback);
-}
-;// CONCATENATED MODULE: ./src/domain/rumEventsCollection/actions/clickChain.js
-
-var MAX_DURATION_BETWEEN_CLICKS = ONE_SECOND;
-var MAX_DISTANCE_BETWEEN_CLICKS = 100;
-var ClickChainStatus = {
-  WaitingForMoreClicks: 0,
-  WaitingForClicksToStop: 1,
-  Finalized: 2
-};
-function createClickChain(firstClick, onFinalize) {
-  var bufferedClicks = [];
-  var status = ClickChainStatus.WaitingForMoreClicks;
-  var maxDurationBetweenClicksTimeout;
-  appendClick(firstClick);
-  function appendClick(click) {
-    click.stopObservable.subscribe(tryFinalize);
-    bufferedClicks.push(click);
-    timer_clearTimeout(maxDurationBetweenClicksTimeout);
-    maxDurationBetweenClicksTimeout = timer_setTimeout(dontAcceptMoreClick, MAX_DURATION_BETWEEN_CLICKS);
-  }
-  function tryFinalize() {
-    if (status === ClickChainStatus.WaitingForClicksToStop && every(bufferedClicks, function (click) {
-      return click.isStopped();
-    })) {
-      status = ClickChainStatus.Finalized;
-      onFinalize(bufferedClicks);
-    }
-  }
-  function dontAcceptMoreClick() {
-    timer_clearTimeout(maxDurationBetweenClicksTimeout);
-    if (status === ClickChainStatus.WaitingForMoreClicks) {
-      status = ClickChainStatus.WaitingForClicksToStop;
-      tryFinalize();
-    }
-  }
-  return {
-    tryAppend: function tryAppend(click) {
-      if (status !== ClickChainStatus.WaitingForMoreClicks) {
-        return false;
-      }
-      if (bufferedClicks.length > 0 && !areEventsSimilar(bufferedClicks[bufferedClicks.length - 1].event, click.event)) {
-        dontAcceptMoreClick();
-        return false;
-      }
-      appendClick(click);
-      return true;
-    },
-    stop: function stop() {
-      dontAcceptMoreClick();
-    }
-  };
-}
-
-/**
- * Checks whether two events are similar by comparing their target, position and timestamp
- */
-function areEventsSimilar(first, second) {
-  return first.target === second.target && mouseEventDistance(first, second) <= MAX_DISTANCE_BETWEEN_CLICKS && first.timeStamp - second.timeStamp <= MAX_DURATION_BETWEEN_CLICKS;
-}
-function mouseEventDistance(origin, other) {
-  return Math.sqrt(Math.pow(origin.clientX - other.clientX, 2) + Math.pow(origin.clientY - other.clientY, 2));
-}
-;// CONCATENATED MODULE: ./src/domain/rumEventsCollection/actions/__constants.js
-var DEFAULT_PROGRAMMATIC_ACTION_NAME_ATTRIBUTE = 'data-guance-action-name';
-
-/**
- * Stable attributes are attributes that are commonly used to identify parts of a UI (ex:
- * component). Those attribute values should not be generated randomly (hardcoded most of the time)
- * and stay the same across deploys. They are not necessarily unique across the document.
- */
-var STABLE_ATTRIBUTES = [DEFAULT_PROGRAMMATIC_ACTION_NAME_ATTRIBUTE,
-// Common test attributes (list provided by google recorder)
-'data-testid', 'data-test', 'data-qa', 'data-cy', 'data-test-id', 'data-qa-id', 'data-testing',
-// FullStory decorator attributes:
-'data-component', 'data-element', 'data-source-file'];
-;// CONCATENATED MODULE: ./src/domain/rumEventsCollection/actions/getActionNameFromElement.js
-
-
-function getActionNameFromElement(element, userProgrammaticAttribute) {
-  // Proceed to get the action name in two steps:
-  // * first, get the name programmatically, explicitly defined by the user.
-  // * then, use strategies that are known to return good results. Those strategies will be used on
-  //   the element and a few parents, but it's likely that they won't succeed at all.
-  // * if no name is found this way, use strategies returning less accurate names as a fallback.
-  //   Those are much likely to succeed.
-  return getActionNameFromElementProgrammatically(element, DEFAULT_PROGRAMMATIC_ACTION_NAME_ATTRIBUTE) || userProgrammaticAttribute && getActionNameFromElementProgrammatically(element, userProgrammaticAttribute) || getActionNameFromElementForStrategies(element, userProgrammaticAttribute, priorityStrategies) || getActionNameFromElementForStrategies(element, userProgrammaticAttribute, fallbackStrategies) || '';
-}
-function getActionNameFromElementProgrammatically(targetElement, programmaticAttribute) {
-  var elementWithAttribute;
-  // We don't use getActionNameFromElementForStrategies here, because we want to consider all parents,
-  // without limit. It is up to the user to declare a relevant naming strategy.
-  // If available, use element.closest() to match get the attribute from the element or any of its
-  // parent.  Else fallback to a more traditional implementation.
-  if (supportsElementClosest()) {
-    elementWithAttribute = targetElement.closest('[' + programmaticAttribute + ']');
-  } else {
-    var element = targetElement;
-    while (element) {
-      if (element.hasAttribute(programmaticAttribute)) {
-        elementWithAttribute = element;
-        break;
-      }
-      element = element.parentElement;
-    }
-  }
-  if (!elementWithAttribute) {
-    return;
-  }
-  var name = elementWithAttribute.getAttribute(programmaticAttribute);
-  return truncate(normalizeWhitespace(name.trim()));
-}
-var priorityStrategies = [
-// associated LABEL text
-function (element, userProgrammaticAttribute) {
-  // IE does not support element.labels, so we fallback to a CSS selector based on the element id
-  // instead
-  if (supportsLabelProperty()) {
-    if ('labels' in element && element.labels && element.labels.length > 0) {
-      return getTextualContent(element.labels[0], userProgrammaticAttribute);
-    }
-  } else if (element.id) {
-    var label = element.ownerDocument && find(element.ownerDocument.querySelectorAll('label'), function (label) {
-      return label.htmlFor === element.id;
-    });
-    return label && getTextualContent(label, userProgrammaticAttribute);
-  }
-},
-// INPUT button (and associated) value
-function (element) {
-  if (element.nodeName === 'INPUT') {
-    var input = element;
-    var type = input.getAttribute('type');
-    if (type === 'button' || type === 'submit' || type === 'reset') {
-      return input.value;
-    }
-  }
-},
-// BUTTON, LABEL or button-like element text
-function (element, userProgrammaticAttribute) {
-  if (element.nodeName === 'BUTTON' || element.nodeName === 'LABEL' || element.getAttribute('role') === 'button') {
-    return getTextualContent(element, userProgrammaticAttribute);
-  }
-}, function (element) {
-  return element.getAttribute('aria-label');
-},
-// associated element text designated by the aria-labelledby attribute
-function (element, userProgrammaticAttribute) {
-  var labelledByAttribute = element.getAttribute('aria-labelledby');
-  if (labelledByAttribute) {
-    labelledByAttribute = labelledByAttribute.split(/\s+/);
-    labelledByAttribute = tools_map(labelledByAttribute, function (id) {
-      return getElementById(element, id);
-    });
-    labelledByAttribute = filter(labelledByAttribute, function (label) {
-      return Boolean(label);
-    });
-    labelledByAttribute = tools_map(labelledByAttribute, function (ele) {
-      return getTextualContent(ele, userProgrammaticAttribute);
-    });
-    return labelledByAttribute.join(' ');
-  }
-}, function (element) {
-  return element.getAttribute('alt');
-}, function (element) {
-  return element.getAttribute('name');
-}, function (element) {
-  return element.getAttribute('title');
-}, function (element) {
-  return element.getAttribute('placeholder');
-},
-// SELECT first OPTION text
-function (element, userProgrammaticAttribute) {
-  if ('options' in element && element.options.length > 0) {
-    return getTextualContent(element.options[0], userProgrammaticAttribute);
-  }
-}];
-var fallbackStrategies = [function (element, userProgrammaticAttribute) {
-  return getTextualContent(element, userProgrammaticAttribute);
-}];
-
-/**
- * Iterates over the target element and its parent, using the strategies list to get an action name.
- * Each strategies are applied on each element, stopping as soon as a non-empty value is returned.
- */
-var MAX_PARENTS_TO_CONSIDER = 10;
-function getActionNameFromElementForStrategies(targetElement, userProgrammaticAttribute, strategies) {
-  var element = targetElement;
-  var recursionCounter = 0;
-  while (recursionCounter <= MAX_PARENTS_TO_CONSIDER && element && element.nodeName !== 'BODY' && element.nodeName !== 'HTML' && element.nodeName !== 'HEAD') {
-    for (var i = 0; i < strategies.length; i++) {
-      var strategy = strategies[i];
-      var name = strategy(element, userProgrammaticAttribute);
-      if (typeof name === 'string') {
-        var trimmedName = name.trim();
-        if (trimmedName) {
-          return truncate(normalizeWhitespace(trimmedName));
-        }
-      }
-    }
-    // Consider a FORM as a contextual limit to get the action name.  This is experimental and may
-    // be reconsidered in the future.
-    if (element.nodeName === 'FORM') {
-      break;
-    }
-    element = element.parentElement;
-    recursionCounter += 1;
-  }
-}
-function normalizeWhitespace(s) {
-  return s.replace(/\s+/g, ' ');
-}
-function truncate(s) {
-  return s.length > 100 ? safeTruncate(s, 100) + ' [...]' : s;
-}
-function getElementById(refElement, id) {
-  // Use the element ownerDocument here, because tests are executed in an iframe, so
-  // document.getElementById won't work.
-  return refElement.ownerDocument ? refElement.ownerDocument.getElementById(id) : null;
-}
-function getTextualContent(element, userProgrammaticAttribute) {
-  if (element.isContentEditable) {
-    return;
-  }
-  if ('innerText' in element) {
-    var text = element.innerText;
-    var removeTextFromElements = function removeTextFromElements(query) {
-      var list = element.querySelectorAll(query);
-      for (var index = 0; index < list.length; index += 1) {
-        var _element = list[index];
-        if ('innerText' in _element) {
-          var textToReplace = _element.innerText;
-          if (textToReplace && textToReplace.trim().length > 0) {
-            text = text.replace(textToReplace, '');
-          }
-        }
-      }
-    };
-    if (!supportsInnerTextScriptAndStyleRemoval()) {
-      // remove the inner text of SCRIPT and STYLES from the result. This is a bit dirty, but should
-      // be relatively fast and work in most cases.
-      removeTextFromElements('script, style');
-    }
-
-    // remove the text of elements with programmatic attribute value
-    removeTextFromElements('[' + DEFAULT_PROGRAMMATIC_ACTION_NAME_ATTRIBUTE + ']');
-    if (userProgrammaticAttribute) {
-      removeTextFromElements('[' + userProgrammaticAttribute + ']');
-    }
-    return text;
-  }
-  return element.textContent;
-}
-
-/**
- * Returns true if element.innerText excludes the text from inline SCRIPT and STYLE element. This
- * should be the case everywhere except on Internet Explorer 10 and 11 (see [1])
- *
- * The innerText property relies on what is actually rendered to compute its output, so to check if
- * it actually excludes SCRIPT and STYLE content, a solution would be to create a style element, set
- * its content to '*', inject it in the document body, and check if the style element innerText
- * property returns '*'. Using a new `document` instance won't work as it is not rendered.
- *
- * This solution requires specific CSP rules (see [2]) to be set by the customer. We want to avoid
- * this, so instead we rely on browser detection. In case of false negative, the impact should be
- * low, since we rely on this result to remove the SCRIPT and STYLE innerText (which will be empty)
- * from a parent element innerText.
- *
- * [1]: https://web.archive.org/web/20210602165716/http://perfectionkills.com/the-poor-misunderstood-innerText/#diff-with-textContent
- */
-function supportsInnerTextScriptAndStyleRemoval() {
-  return !isIE();
-}
-
-/**
- * Returns true if the browser supports the element.labels property.  This should be the case
- * everywhere except on Internet Explorer.
- * Note: The result is computed lazily, because we don't want any DOM access when the SDK is
- * evaluated.
- */
-var supportsLabelPropertyResult;
-function supportsLabelProperty() {
-  if (supportsLabelPropertyResult === undefined) {
-    supportsLabelPropertyResult = 'labels' in HTMLInputElement.prototype;
-  }
-  return supportsLabelPropertyResult;
-}
-
-/**
- * Returns true if the browser supports the element.closest method.  This should be the case
- * everywhere except on Internet Explorer.
- * Note: The result is computed lazily, because we don't want any DOM access when the SDK is
- * evaluated.
- */
-var supportsElementClosestResult;
-function supportsElementClosest() {
-  if (supportsElementClosestResult === undefined) {
-    supportsElementClosestResult = 'closest' in HTMLElement.prototype;
-  }
-  return supportsElementClosestResult;
-}
-;// CONCATENATED MODULE: ./src/domain/rumEventsCollection/actions/getSelectorsFromElement.js
-
-
-
-// Selectors to use if they target a single element on the whole document. Those selectors are
-// considered as "stable" and uniquely identify an element regardless of the page state. If we find
-// one, we should consider the selector "complete" and stop iterating over ancestors.
-var GLOBALLY_UNIQUE_SELECTOR_GETTERS = [getStableAttributeSelector, getIDSelector];
-
-// Selectors to use if they target a single element among an element descendants. Those selectors
-// are more brittle than "globally unique" selectors and should be combined with ancestor selectors
-// to improve specificity.
-var UNIQUE_AMONG_CHILDREN_SELECTOR_GETTERS = [getStableAttributeSelector, getClassSelector, getTagNameSelector];
-function getSelectorFromElement(targetElement, actionNameAttribute) {
-  if (!isConnected(targetElement)) {
-    // We cannot compute a selector for a detached element, as we don't have access to all of its
-    // parents, and we cannot determine if it's unique in the document.
-    return;
-  }
-  var targetElementSelector;
-  var currentElement = targetElement;
-  while (currentElement && currentElement.nodeName !== 'HTML') {
-    var globallyUniqueSelector = findSelector(currentElement, GLOBALLY_UNIQUE_SELECTOR_GETTERS, isSelectorUniqueGlobally, actionNameAttribute, targetElementSelector);
-    if (globallyUniqueSelector) {
-      return globallyUniqueSelector;
-    }
-    var uniqueSelectorAmongChildren = findSelector(currentElement, UNIQUE_AMONG_CHILDREN_SELECTOR_GETTERS, isSelectorUniqueAmongSiblings, actionNameAttribute, targetElementSelector);
-    targetElementSelector = uniqueSelectorAmongChildren || combineSelector(getPositionSelector(currentElement), targetElementSelector);
-    currentElement = currentElement.parentElement;
-  }
-  //   while (element && element.nodeName !== 'HTML') {
-  //     var globallyUniqueSelector = findSelector(
-  //       element,
-  //       GLOBALLY_UNIQUE_SELECTOR_GETTERS,
-  //       isSelectorUniqueGlobally,
-  //       actionNameAttribute,
-  //       targetElementSelector
-  //     )
-  //     if (globallyUniqueSelector) {
-  //       return globallyUniqueSelector
-  //     }
-
-  //     var uniqueSelectorAmongChildren = findSelector(
-  //       element,
-  //       UNIQUE_AMONG_CHILDREN_SELECTOR_GETTERS,
-  //       isSelectorUniqueAmongSiblings,
-  //       actionNameAttribute,
-  //       targetElementSelector
-  //     )
-  //     targetElementSelector =
-  //       uniqueSelectorAmongChildren ||
-  //       combineSelector(getPositionSelector(element), targetElementSelector)
-
-  //     element = element.parentElement
-  //   }
-
-  return targetElementSelector;
-}
-function isGeneratedValue(value) {
-  // To compute the "URL path group", the backend replaces every URL path parts as a question mark
-  // if it thinks the part is an identifier. The condition it uses is to checks whether a digit is
-  // present.
-  //
-  // Here, we use the same strategy: if a the value contains a digit, we consider it generated. This
-  // strategy might be a bit naive and fail in some cases, but there are many fallbacks to generate
-  // CSS selectors so it should be fine most of the time. We might want to allow customers to
-  // provide their own `isGeneratedValue` at some point.
-  return /[0-9]/.test(value);
-}
-function getIDSelector(element) {
-  if (element.id && !isGeneratedValue(element.id)) {
-    return '#' + cssEscape(element.id);
-  }
-}
-function getClassSelector(element) {
-  if (element.tagName === 'BODY') {
-    return;
-  }
-  if (element.classList.length > 0) {
-    for (var i = 0; i < element.classList.length; i += 1) {
-      var className = element.classList[i];
-      if (isGeneratedValue(className)) {
-        continue;
-      }
-      return cssEscape(element.tagName) + '.' + cssEscape(className);
-    }
-  }
-}
-function getTagNameSelector(element) {
-  return cssEscape(element.tagName);
-}
-function getStableAttributeSelector(element, actionNameAttribute) {
-  if (actionNameAttribute) {
-    var selector = getAttributeSelector(actionNameAttribute);
-    if (selector) {
-      return selector;
-    }
-  }
-  for (var i = 0; i < STABLE_ATTRIBUTES.length; i++) {
-    var attributeName = STABLE_ATTRIBUTES[i];
-    var selector = getAttributeSelector(attributeName);
-    if (selector) {
-      return selector;
-    }
-  }
-  function getAttributeSelector(attributeName) {
-    if (element.hasAttribute(attributeName)) {
-      return cssEscape(element.tagName) + '[' + attributeName + '="' + cssEscape(element.getAttribute(attributeName)) + '"]';
-    }
-  }
-}
-function getPositionSelector(element) {
-  var sibling = element.parentElement && element.parentElement.firstElementChild;
-  var elementIndex = 1;
-  while (sibling && sibling !== element) {
-    if (sibling.tagName === element.tagName) {
-      elementIndex += 1;
-    }
-    sibling = sibling.nextElementSibling;
-  }
-  var tagName = cssEscape(element.tagName);
-  // 伪元素需要做特殊处理，没有nth-of-type选择器
-  if (/^::/.test(tagName)) {
-    return tagName;
-  }
-  return tagName + ':nth-of-type(' + elementIndex + ')';
-}
-function findSelector(element, selectorGetters, predicate, actionNameAttribute, childSelector) {
-  for (var i = 0; i < selectorGetters.length; i++) {
-    var selectorGetter = selectorGetters[i];
-    var elementSelector = selectorGetter(element, actionNameAttribute);
-    if (!elementSelector) {
-      continue;
-    }
-    if (predicate(element, elementSelector, childSelector)) {
-      return combineSelector(elementSelector, childSelector);
-    }
-  }
-}
-function isSelectorUniqueGlobally(element, elementSelector, childSelector) {
-  return element.ownerDocument.querySelectorAll(combineSelector(elementSelector, childSelector)).length === 1;
-}
-/**
- * Check whether the selector is unique among the element siblings. In other words, it returns true
- * if "ELEMENT_PARENT > SELECTOR" returns a single element.
- *
- * The result will be less accurate on browsers that don't support :scope (i. e. IE): it will check
- * for any element matching the selector contained in the parent (in other words,
- * "ELEMENT_PARENT SELECTOR" returns a single element), regardless of whether the selector is a
- * direct descendent of the element parent. This should not impact results too much: if it
- * inaccurately returns false, we'll just fall back to another strategy.
- */
-function isSelectorUniqueAmongSiblings(currentElement, currentElementSelector, childSelector) {
-  var isSiblingMatching;
-  if (childSelector === undefined) {
-    // If the child selector is undefined (meaning `currentElement` is the target element, not one
-    // of its ancestor), we need to use `matches` to check if the sibling is matching the selector,
-    // as `querySelector` only returns a descendant of the element.
-    isSiblingMatching = function isSiblingMatching(sibling) {
-      return sibling.matches(currentElementSelector);
-    };
-  } else {
-    var scopedSelector = supportScopeSelector() ? combineSelector("".concat(currentElementSelector, ":scope"), childSelector) : combineSelector(currentElementSelector, childSelector);
-    isSiblingMatching = function isSiblingMatching(sibling) {
-      return sibling.querySelector(scopedSelector) !== null;
-    };
-  }
-  var parent = currentElement.parentElement;
-  var sibling = parent.firstElementChild;
-  while (sibling) {
-    if (sibling !== currentElement && isSiblingMatching(sibling)) {
-      return false;
-    }
-    sibling = sibling.nextElementSibling;
-  }
-  return true;
-}
-function combineSelector(parent, child) {
-  return child ? parent + '>' + child : parent;
-}
-var supportScopeSelectorCache;
-function supportScopeSelector() {
-  if (supportScopeSelectorCache === undefined) {
-    try {
-      document.querySelector(':scope');
-      supportScopeSelectorCache = true;
-    } catch (_unused) {
-      supportScopeSelectorCache = false;
-    }
-  }
-  return supportScopeSelectorCache;
-}
-
-/**
- * Polyfill-utility for the `isConnected` property not supported in IE11
- */
-function isConnected(element) {
-  if ('isConnected' in element
-  // cast is to make sure `element` is not inferred as `never` after the check
-  ) {
-    return element.isConnected;
-  }
-  return element.ownerDocument.documentElement.contains(element);
-}
-;// CONCATENATED MODULE: ./src/domain/rumEventsCollection/actions/listenActionEvents.js
-
-function listenActionEvents(events) {
-  var selectionEmptyAtPointerDown;
-  var userActivity = {
-    selection: false,
-    input: false,
-    scroll: false
-  };
-  var clickContext;
-  var listeners = [addEventListener(window, DOM_EVENT.POINTER_DOWN, function (event) {
-    if (isValidPointerEvent(event)) {
-      selectionEmptyAtPointerDown = isSelectionEmpty();
-      userActivity = {
-        selection: false,
-        input: false,
-        scroll: false
-      };
-      clickContext = events.onPointerDown(event);
-    }
-  }, {
-    capture: true
-  }), addEventListener(window, DOM_EVENT.SELECTION_CHANGE, function () {
-    if (!selectionEmptyAtPointerDown || !isSelectionEmpty()) {
-      userActivity.selection = true;
-    }
-  }, {
-    capture: true
-  }), addEventListener(window, DOM_EVENT.POINTER_UP, function (event) {
-    if (isValidPointerEvent(event) && clickContext) {
-      // Use a scoped variable to make sure the value is not changed by other clicks
-      var localUserActivity = userActivity;
-      events.onPointerUp(clickContext, event, function () {
-        return localUserActivity;
-      });
-      clickContext = undefined;
-    }
-  }, {
-    capture: true
-  }), addEventListener(window, DOM_EVENT.SCROLL, function () {
-    userActivity.scroll = true;
-  }, {
-    capture: true,
-    passive: true
-  }), addEventListener(window, DOM_EVENT.INPUT, function () {
-    userActivity.input = true;
-  }, {
-    capture: true
-  })];
-  return {
-    stop: function stop() {
-      each(listeners, function (listener) {
-        return listener.stop();
-      });
-    }
-  };
-}
-function isSelectionEmpty() {
-  var selection = window.getSelection();
-  return !selection || selection.isCollapsed;
-}
-function isValidPointerEvent(event) {
-  return event.target instanceof Element &&
-  // Only consider 'primary' pointer events for now. Multi-touch support could be implemented in
-  // the future.
-  event.isPrimary !== false;
-}
-;// CONCATENATED MODULE: ./src/domain/rumEventsCollection/actions/computeFrustration.js
-
-var MIN_CLICKS_PER_SECOND_TO_CONSIDER_RAGE = 3;
-function computeFrustration(clicks, rageClick) {
-  if (isRage(clicks)) {
-    rageClick.addFrustration(FrustrationType.RAGE_CLICK);
-    if (some(clicks, isDead)) {
-      rageClick.addFrustration(FrustrationType.DEAD_CLICK);
-    }
-    if (rageClick.hasError()) {
-      rageClick.addFrustration(FrustrationType.ERROR_CLICK);
-    }
-    return {
-      isRage: true
-    };
-  }
-  var hasSelectionChanged = some(clicks, function (click) {
-    return click.getUserActivity().selection;
-  });
-  each(clicks, function (click) {
-    if (click.hasError()) {
-      click.addFrustration(FrustrationType.ERROR_CLICK);
-    }
-    if (isDead(click) &&
-    // Avoid considering clicks part of a double-click or triple-click selections as dead clicks
-    !hasSelectionChanged) {
-      click.addFrustration(FrustrationType.DEAD_CLICK);
-    }
-  });
-  return {
-    isRage: false
-  };
-}
-function isRage(clicks) {
-  if (some(clicks, function (click) {
-    return click.getUserActivity().selection || click.getUserActivity().scroll;
-  })) {
-    return false;
-  }
-  for (var i = 0; i < clicks.length - (MIN_CLICKS_PER_SECOND_TO_CONSIDER_RAGE - 1); i += 1) {
-    if (clicks[i + MIN_CLICKS_PER_SECOND_TO_CONSIDER_RAGE - 1].event.timeStamp - clicks[i].event.timeStamp <= ONE_SECOND) {
-      return true;
-    }
-  }
-  return false;
-}
-var DEAD_CLICK_EXCLUDE_SELECTOR =
-// inputs that don't trigger a meaningful event like "input" when clicked, including textual
-// inputs (using a negative selector is shorter here)
-'input:not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="range"]),' + 'textarea,' + 'select,' +
-// contenteditable and their descendants don't always trigger meaningful changes when manipulated
-'[contenteditable],' + '[contenteditable] *,' +
-// canvas, as there is no good way to detect activity occurring on them
-'canvas,' +
-// links that are interactive (have an href attribute) or any of their descendants, as they can
-// open a new tab or navigate to a hash without triggering a meaningful event
-'a[href],' + 'a[href] *';
-function isDead(click) {
-  if (click.hasPageActivity() || click.getUserActivity().input || click.getUserActivity().scroll) {
-    return false;
-  }
-  return !elementMatches(click.event.target, DEAD_CLICK_EXCLUDE_SELECTOR);
-}
-;// CONCATENATED MODULE: ./src/domain/rumEventsCollection/actions/interactionSelectorCache.js
-
-
-// Maximum duration for click actions
-var CLICK_ACTION_MAX_DURATION = 10 * ONE_SECOND;
-var interactionSelectorCache = new Map();
-function getInteractionSelector(relativeTimestamp) {
-  var selector = interactionSelectorCache.get(relativeTimestamp);
-  interactionSelectorCache["delete"](relativeTimestamp);
-  return selector;
-}
-function updateInteractionSelector(relativeTimestamp, selector) {
-  interactionSelectorCache.set(relativeTimestamp, selector);
-  interactionSelectorCache.forEach(function (_, relativeTimestamp) {
-    if (elapsed(relativeTimestamp, relativeNow()) > CLICK_ACTION_MAX_DURATION) {
-      interactionSelectorCache["delete"](relativeTimestamp);
-    }
-  });
-}
-;// CONCATENATED MODULE: ./src/domain/rumEventsCollection/actions/trackClickActions.js
-
-
-
-
-
-
-// import { getSelectorsFromElement } from './getSelectorsFromElement'
-
-
-
-// Maximum duration for click actions
-var ACTION_CONTEXT_TIME_OUT_DELAY = 5 * ONE_MINUTE; // arbitrary
-
-function trackClickActions(lifeCycle, domMutationObservable, configuration) {
-  var history = new createValueHistory({
-    expireDelay: ACTION_CONTEXT_TIME_OUT_DELAY
-  });
-  var stopObservable = new Observable();
-  var currentClickChain;
-  lifeCycle.subscribe(LifeCycleEventType.SESSION_RENEWED, function () {
-    history.reset();
-  });
-  lifeCycle.subscribe(LifeCycleEventType.VIEW_ENDED, stopClickChain);
-  var _listenActionEvents = listenActionEvents({
-    onPointerDown: function onPointerDown(pointerDownEvent) {
-      return processPointerDown(configuration, lifeCycle, domMutationObservable, pointerDownEvent);
-    },
-    onPointerUp: function onPointerUp(data, startEvent, getUserActivity) {
-      startClickAction(configuration, lifeCycle, domMutationObservable, history, stopObservable, appendClickToClickChain, data.clickActionBase, startEvent, getUserActivity, data.hadActivityOnPointerDown);
-    }
-  });
-  var stopActionEventsListener = _listenActionEvents.stop;
-  var actionContexts = {
-    findActionId: function findActionId(startTime) {
-      var allIds = history.findAll(startTime);
-      if (allIds && allIds.length) {
-        return allIds[allIds.length - 1];
-      }
-      return undefined;
-    },
-    findAllActionId: function findAllActionId(startTime) {
-      return history.findAll(startTime);
-    }
-  };
-  return {
-    stop: function stop() {
-      stopClickChain();
-      stopObservable.notify();
-      stopActionEventsListener();
-    },
-    actionContexts: actionContexts
-  };
-  function stopClickChain() {
-    if (currentClickChain) {
-      currentClickChain.stop();
-    }
-  }
-  function appendClickToClickChain(click) {
-    if (!currentClickChain || !currentClickChain.tryAppend(click)) {
-      var rageClick = click.clone();
-      currentClickChain = createClickChain(click, function (clicks) {
-        finalizeClicks(clicks, rageClick);
-      });
-    }
-  }
-}
-function processPointerDown(configuration, lifeCycle, domMutationObservable, pointerDownEvent) {
-  var clickActionBase = computeClickActionBase(pointerDownEvent, configuration.actionNameAttribute);
-  var _hadActivityOnPointerDown = false;
-  waitPageActivityEnd(lifeCycle, domMutationObservable, configuration, function (pageActivityEndEvent) {
-    _hadActivityOnPointerDown = pageActivityEndEvent.hadActivity;
-  }, PAGE_ACTIVITY_VALIDATION_DELAY);
-  return {
-    clickActionBase: clickActionBase,
-    hadActivityOnPointerDown: function hadActivityOnPointerDown() {
-      return _hadActivityOnPointerDown;
-    }
-  };
-}
-function startClickAction(configuration, lifeCycle, domMutationObservable, history, stopObservable, appendClickToClickChain, clickActionBase, startEvent, getUserActivity, hadActivityOnPointerDown) {
-  var click = newClick(lifeCycle, history, getUserActivity, clickActionBase, startEvent);
-  appendClickToClickChain(click);
-  var selector = clickActionBase && clickActionBase.target && clickActionBase.target.selector;
-  if (selector) {
-    updateInteractionSelector(startEvent.timeStamp, selector);
-  }
-  var _waitPageActivityEnd = waitPageActivityEnd(lifeCycle, domMutationObservable, configuration, function (pageActivityEndEvent) {
-    if (pageActivityEndEvent.hadActivity && pageActivityEndEvent.end < click.startClocks.timeStamp) {
-      // If the clock is looking weird, just discard the click
-      click.discard();
-    } else {
-      if (pageActivityEndEvent.hadActivity) {
-        click.stop(pageActivityEndEvent.end);
-      } else if (hadActivityOnPointerDown()) {
-        click.stop(
-        // using the click start as activity end, so the click will have some activity but its
-        // duration will be 0 (as the activity started before the click start)
-        click.startClocks.timeStamp);
-      } else {
-        click.stop();
-      }
-    }
-  }, CLICK_ACTION_MAX_DURATION);
-  var stopWaitPageActivityEnd = _waitPageActivityEnd.stop;
-  var viewEndedSubscription = lifeCycle.subscribe(LifeCycleEventType.VIEW_ENDED, function (data) {
-    click.stop(data.endClocks.timeStamp);
-  });
-  var stopSubscription = stopObservable.subscribe(function () {
-    click.stop();
-  });
-  click.stopObservable.subscribe(function () {
-    viewEndedSubscription.unsubscribe();
-    stopWaitPageActivityEnd();
-    stopSubscription.unsubscribe();
-  });
-}
-function computeClickActionBase(event, actionNameAttribute) {
-  var rect = event.target.getBoundingClientRect();
-  var selector = getSelectorFromElement(event.target, actionNameAttribute);
-  if (selector) {
-    updateInteractionSelector(event.timeStamp, selector);
-  }
-  return {
-    type: ActionType.CLICK,
-    target: {
-      width: Math.round(rect.width),
-      height: Math.round(rect.height),
-      selector: selector
-    },
-    position: {
-      x: Math.round(event.clientX - rect.left),
-      y: Math.round(event.clientY - rect.top)
-    },
-    name: getActionNameFromElement(event.target, actionNameAttribute)
-  };
-}
-var ClickStatus = {
-  // Initial state, the click is still ongoing.
-  ONGOING: 0,
-  // The click is no more ongoing but still needs to be validated or discarded.
-  STOPPED: 1,
-  // Final state, the click has been stopped and validated or discarded.
-  FINALIZED: 2
-};
-function newClick(lifeCycle, history, getUserActivity, clickActionBase, startEvent) {
-  var id = UUID();
-  var startClocks = clocksNow();
-  var historyEntry = history.add(id, startClocks.relative);
-  var eventCountsSubscription = trackEventCounts({
-    lifeCycle: lifeCycle,
-    isChildEvent: function isChildEvent(event) {
-      return event.action !== undefined && (isArray(event.action.ids) ? includes(event.action.ids, id) : event.action.ids === id);
-    }
-  });
-  var status = ClickStatus.ONGOING;
-  var activityEndTime;
-  var frustrationTypes = [];
-  var stopObservable = new Observable();
-  function stop(newActivityEndTime) {
-    if (status !== ClickStatus.ONGOING) {
-      return;
-    }
-    activityEndTime = newActivityEndTime;
-    status = ClickStatus.STOPPED;
-    if (activityEndTime) {
-      historyEntry.close(getRelativeTime(activityEndTime));
-    } else {
-      historyEntry.remove();
-    }
-    eventCountsSubscription.stop();
-    stopObservable.notify();
-  }
-  return {
-    event: startEvent,
-    stop: stop,
-    stopObservable: stopObservable,
-    hasError: function hasError() {
-      return eventCountsSubscription.eventCounts.errorCount > 0;
-    },
-    hasPageActivity: function hasPageActivity() {
-      return activityEndTime !== undefined;
-    },
-    getUserActivity: getUserActivity,
-    addFrustration: function addFrustration(frustrationType) {
-      frustrationTypes.push(frustrationType);
-    },
-    startClocks: startClocks,
-    isStopped: function isStopped() {
-      return status === ClickStatus.STOPPED || status === ClickStatus.FINALIZED;
-    },
-    clone: function clone() {
-      return newClick(lifeCycle, history, getUserActivity, clickActionBase, startEvent);
-    },
-    validate: function validate(domEvents) {
-      stop();
-      if (status !== ClickStatus.STOPPED) {
-        return;
-      }
-      var _eventCountsSubscription = eventCountsSubscription.eventCounts;
-      var resourceCount = _eventCountsSubscription.resourceCount;
-      var errorCount = _eventCountsSubscription.errorCount;
-      var longTaskCount = _eventCountsSubscription.longTaskCount;
-      var clickAction = tools_assign({
-        type: ActionType.CLICK,
-        duration: activityEndTime && elapsed(startClocks.timeStamp, activityEndTime),
-        startClocks: startClocks,
-        id: id,
-        frustrationTypes: frustrationTypes,
-        counts: {
-          resourceCount: resourceCount,
-          errorCount: errorCount,
-          longTaskCount: longTaskCount
-        },
-        events: isNullUndefinedDefaultValue(domEvents, [startEvent]),
-        event: startEvent
-      }, clickActionBase);
-      lifeCycle.notify(LifeCycleEventType.AUTO_ACTION_COMPLETED, clickAction);
-      status = ClickStatus.FINALIZED;
-    },
-    discard: function discard() {
-      stop();
-      status = ClickStatus.FINALIZED;
-    }
-  };
-}
-function finalizeClicks(clicks, rageClick) {
-  var _computeFrustration = computeFrustration(clicks, rageClick);
-  var isRage = _computeFrustration.isRage;
-  if (isRage) {
-    each(clicks, function (click) {
-      click.discard();
-    });
-    rageClick.stop(timeStampNow());
-    rageClick.validate(tools_map(clicks, function (click) {
-      return click.event;
-    }));
-  } else {
-    rageClick.discard();
-    each(clicks, function (click) {
-      click.validate();
-    });
-  }
-}
 ;// CONCATENATED MODULE: ./src/domain/contexts/pageStateHistory.js
 
 
@@ -7966,7 +6883,7 @@ function startPageStateHistory(maxPageStateEntriesSelectable) {
     maxEntries: MAX_PAGE_STATE_ENTRIES
   });
   var currentPageState;
-  addPageState(getPageState(), relativeNow());
+  addPageState(getPageState(), tools_relativeNow());
   var _addEventListeners = addEventListeners(window, [DOM_EVENT.PAGE_SHOW, DOM_EVENT.FOCUS, DOM_EVENT.BLUR, DOM_EVENT.VISIBILITY_CHANGE, DOM_EVENT.RESUME, DOM_EVENT.FREEZE, DOM_EVENT.PAGE_HIDE], function (event) {
     // Only get events fired by the browser to avoid false currentPageState changes done with custom events
     addPageState(computePageState(event), event.timeStamp);
@@ -7976,7 +6893,7 @@ function startPageStateHistory(maxPageStateEntriesSelectable) {
   var stopEventListeners = _addEventListeners.stop;
   function addPageState(nextPageState, startTime) {
     if (startTime === undefined) {
-      startTime = relativeNow();
+      startTime = tools_relativeNow();
     }
     if (nextPageState === currentPageState) {
       return;
@@ -8002,7 +6919,7 @@ function startPageStateHistory(maxPageStateEntriesSelectable) {
       for (var index = pageStateEntries.length - 1; index >= limit; index--) {
         var pageState = pageStateEntries[index];
         // compute the start time relative to the event start time (ex: to be relative to the view start time)
-        var relativeStartTime = elapsed(eventStartTime, pageState.startTime);
+        var relativeStartTime = tools_elapsed(eventStartTime, pageState.startTime);
         pageStateServerEntries.push({
           state: pageState.state,
           start: toServerDuration(relativeStartTime)
@@ -8045,7 +6962,7 @@ function getPageState() {
 }
 ;// CONCATENATED MODULE: ./src/domain/rumEventsCollection/actions/actionCollection.js
 
-
+// import { trackClickActions } from './trackClickActions'
 
 function startActionCollection(lifeCycle, domMutationObservable, configuration, pageStateHistory) {
   lifeCycle.subscribe(LifeCycleEventType.AUTO_ACTION_COMPLETED, function (action) {
@@ -8055,9 +6972,13 @@ function startActionCollection(lifeCycle, domMutationObservable, configuration, 
     findActionId: tools_noop,
     findAllActionId: tools_noop
   };
-  if (configuration.trackUserInteractions) {
-    actionContexts = trackClickActions(lifeCycle, domMutationObservable, configuration).actionContexts;
-  }
+  // if (configuration.trackUserInteractions) {
+  //   actionContexts = trackClickActions(
+  //     lifeCycle,
+  //     domMutationObservable,
+  //     configuration
+  //   ).actionContexts
+  // }
   return {
     actionContexts: actionContexts,
     addAction: function addAction(action, savedCommonContext) {
@@ -8430,7 +7351,7 @@ function startUrlContexts(lifeCycle, locationChangeObservable, location) {
   var locationChangeSubscription = locationChangeObservable.subscribe(function (data) {
     var current = urlContextHistory.find();
     if (current) {
-      var changeTime = relativeNow();
+      var changeTime = tools_relativeNow();
       urlContextHistory.closeActive(changeTime);
       urlContextHistory.add(buildUrlContext({
         url: data.newLocation.href,
@@ -8642,6 +7563,223 @@ function trackFirstContentfulPaint(configuration, firstHidden, callback) {
     stop: performanceSubscription.unsubscribe
   };
 }
+;// CONCATENATED MODULE: ./src/domain/rumEventsCollection/actions/__constants.js
+var DEFAULT_PROGRAMMATIC_ACTION_NAME_ATTRIBUTE = 'data-guance-action-name';
+
+/**
+ * Stable attributes are attributes that are commonly used to identify parts of a UI (ex:
+ * component). Those attribute values should not be generated randomly (hardcoded most of the time)
+ * and stay the same across deploys. They are not necessarily unique across the document.
+ */
+var STABLE_ATTRIBUTES = [DEFAULT_PROGRAMMATIC_ACTION_NAME_ATTRIBUTE,
+// Common test attributes (list provided by google recorder)
+'data-testid', 'data-test', 'data-qa', 'data-cy', 'data-test-id', 'data-qa-id', 'data-testing',
+// FullStory decorator attributes:
+'data-component', 'data-element', 'data-source-file'];
+;// CONCATENATED MODULE: ./src/domain/rumEventsCollection/actions/getSelectorsFromElement.js
+
+
+
+// Selectors to use if they target a single element on the whole document. Those selectors are
+// considered as "stable" and uniquely identify an element regardless of the page state. If we find
+// one, we should consider the selector "complete" and stop iterating over ancestors.
+var GLOBALLY_UNIQUE_SELECTOR_GETTERS = [getStableAttributeSelector, getIDSelector];
+
+// Selectors to use if they target a single element among an element descendants. Those selectors
+// are more brittle than "globally unique" selectors and should be combined with ancestor selectors
+// to improve specificity.
+var UNIQUE_AMONG_CHILDREN_SELECTOR_GETTERS = [getStableAttributeSelector, getClassSelector, getTagNameSelector];
+function getSelectorFromElement(targetElement, actionNameAttribute) {
+  if (!isConnected(targetElement)) {
+    // We cannot compute a selector for a detached element, as we don't have access to all of its
+    // parents, and we cannot determine if it's unique in the document.
+    return;
+  }
+  var targetElementSelector;
+  var currentElement = targetElement;
+  while (currentElement && currentElement.nodeName !== 'HTML') {
+    var globallyUniqueSelector = findSelector(currentElement, GLOBALLY_UNIQUE_SELECTOR_GETTERS, isSelectorUniqueGlobally, actionNameAttribute, targetElementSelector);
+    if (globallyUniqueSelector) {
+      return globallyUniqueSelector;
+    }
+    var uniqueSelectorAmongChildren = findSelector(currentElement, UNIQUE_AMONG_CHILDREN_SELECTOR_GETTERS, isSelectorUniqueAmongSiblings, actionNameAttribute, targetElementSelector);
+    targetElementSelector = uniqueSelectorAmongChildren || combineSelector(getPositionSelector(currentElement), targetElementSelector);
+    currentElement = currentElement.parentElement;
+  }
+  //   while (element && element.nodeName !== 'HTML') {
+  //     var globallyUniqueSelector = findSelector(
+  //       element,
+  //       GLOBALLY_UNIQUE_SELECTOR_GETTERS,
+  //       isSelectorUniqueGlobally,
+  //       actionNameAttribute,
+  //       targetElementSelector
+  //     )
+  //     if (globallyUniqueSelector) {
+  //       return globallyUniqueSelector
+  //     }
+
+  //     var uniqueSelectorAmongChildren = findSelector(
+  //       element,
+  //       UNIQUE_AMONG_CHILDREN_SELECTOR_GETTERS,
+  //       isSelectorUniqueAmongSiblings,
+  //       actionNameAttribute,
+  //       targetElementSelector
+  //     )
+  //     targetElementSelector =
+  //       uniqueSelectorAmongChildren ||
+  //       combineSelector(getPositionSelector(element), targetElementSelector)
+
+  //     element = element.parentElement
+  //   }
+
+  return targetElementSelector;
+}
+function isGeneratedValue(value) {
+  // To compute the "URL path group", the backend replaces every URL path parts as a question mark
+  // if it thinks the part is an identifier. The condition it uses is to checks whether a digit is
+  // present.
+  //
+  // Here, we use the same strategy: if a the value contains a digit, we consider it generated. This
+  // strategy might be a bit naive and fail in some cases, but there are many fallbacks to generate
+  // CSS selectors so it should be fine most of the time. We might want to allow customers to
+  // provide their own `isGeneratedValue` at some point.
+  return /[0-9]/.test(value);
+}
+function getIDSelector(element) {
+  if (element.id && !isGeneratedValue(element.id)) {
+    return '#' + cssEscape(element.id);
+  }
+}
+function getClassSelector(element) {
+  if (element.tagName === 'BODY') {
+    return;
+  }
+  if (element.classList.length > 0) {
+    for (var i = 0; i < element.classList.length; i += 1) {
+      var className = element.classList[i];
+      if (isGeneratedValue(className)) {
+        continue;
+      }
+      return cssEscape(element.tagName) + '.' + cssEscape(className);
+    }
+  }
+}
+function getTagNameSelector(element) {
+  return cssEscape(element.tagName);
+}
+function getStableAttributeSelector(element, actionNameAttribute) {
+  if (actionNameAttribute) {
+    var selector = getAttributeSelector(actionNameAttribute);
+    if (selector) {
+      return selector;
+    }
+  }
+  for (var i = 0; i < STABLE_ATTRIBUTES.length; i++) {
+    var attributeName = STABLE_ATTRIBUTES[i];
+    var selector = getAttributeSelector(attributeName);
+    if (selector) {
+      return selector;
+    }
+  }
+  function getAttributeSelector(attributeName) {
+    if (element.hasAttribute(attributeName)) {
+      return cssEscape(element.tagName) + '[' + attributeName + '="' + cssEscape(element.getAttribute(attributeName)) + '"]';
+    }
+  }
+}
+function getPositionSelector(element) {
+  var sibling = element.parentElement && element.parentElement.firstElementChild;
+  var elementIndex = 1;
+  while (sibling && sibling !== element) {
+    if (sibling.tagName === element.tagName) {
+      elementIndex += 1;
+    }
+    sibling = sibling.nextElementSibling;
+  }
+  var tagName = cssEscape(element.tagName);
+  // 伪元素需要做特殊处理，没有nth-of-type选择器
+  if (/^::/.test(tagName)) {
+    return tagName;
+  }
+  return tagName + ':nth-of-type(' + elementIndex + ')';
+}
+function findSelector(element, selectorGetters, predicate, actionNameAttribute, childSelector) {
+  for (var i = 0; i < selectorGetters.length; i++) {
+    var selectorGetter = selectorGetters[i];
+    var elementSelector = selectorGetter(element, actionNameAttribute);
+    if (!elementSelector) {
+      continue;
+    }
+    if (predicate(element, elementSelector, childSelector)) {
+      return combineSelector(elementSelector, childSelector);
+    }
+  }
+}
+function isSelectorUniqueGlobally(element, elementSelector, childSelector) {
+  return element.ownerDocument.querySelectorAll(combineSelector(elementSelector, childSelector)).length === 1;
+}
+/**
+ * Check whether the selector is unique among the element siblings. In other words, it returns true
+ * if "ELEMENT_PARENT > SELECTOR" returns a single element.
+ *
+ * The result will be less accurate on browsers that don't support :scope (i. e. IE): it will check
+ * for any element matching the selector contained in the parent (in other words,
+ * "ELEMENT_PARENT SELECTOR" returns a single element), regardless of whether the selector is a
+ * direct descendent of the element parent. This should not impact results too much: if it
+ * inaccurately returns false, we'll just fall back to another strategy.
+ */
+function isSelectorUniqueAmongSiblings(currentElement, currentElementSelector, childSelector) {
+  var isSiblingMatching;
+  if (childSelector === undefined) {
+    // If the child selector is undefined (meaning `currentElement` is the target element, not one
+    // of its ancestor), we need to use `matches` to check if the sibling is matching the selector,
+    // as `querySelector` only returns a descendant of the element.
+    isSiblingMatching = function isSiblingMatching(sibling) {
+      return sibling.matches(currentElementSelector);
+    };
+  } else {
+    var scopedSelector = supportScopeSelector() ? combineSelector("".concat(currentElementSelector, ":scope"), childSelector) : combineSelector(currentElementSelector, childSelector);
+    isSiblingMatching = function isSiblingMatching(sibling) {
+      return sibling.querySelector(scopedSelector) !== null;
+    };
+  }
+  var parent = currentElement.parentElement;
+  var sibling = parent.firstElementChild;
+  while (sibling) {
+    if (sibling !== currentElement && isSiblingMatching(sibling)) {
+      return false;
+    }
+    sibling = sibling.nextElementSibling;
+  }
+  return true;
+}
+function combineSelector(parent, child) {
+  return child ? parent + '>' + child : parent;
+}
+var supportScopeSelectorCache;
+function supportScopeSelector() {
+  if (supportScopeSelectorCache === undefined) {
+    try {
+      document.querySelector(':scope');
+      supportScopeSelectorCache = true;
+    } catch (_unused) {
+      supportScopeSelectorCache = false;
+    }
+  }
+  return supportScopeSelectorCache;
+}
+
+/**
+ * Polyfill-utility for the `isConnected` property not supported in IE11
+ */
+function isConnected(element) {
+  if ('isConnected' in element
+  // cast is to make sure `element` is not inferred as `never` after the check
+  ) {
+    return element.isConnected;
+  }
+  return element.ownerDocument.documentElement.contains(element);
+}
 ;// CONCATENATED MODULE: ./src/domain/rumEventsCollection/view/trackFirstInput.js
 
 
@@ -8663,7 +7801,7 @@ function trackFirstInput(configuration, firstHidden, callback) {
       return entry.entryType === RumPerformanceEntryType.FIRST_INPUT && entry.startTime < firstHidden.getTimeStamp();
     });
     if (firstInputEntry) {
-      var firstInputDelay = elapsed(firstInputEntry.startTime, firstInputEntry.processingStart);
+      var firstInputDelay = tools_elapsed(firstInputEntry.startTime, firstInputEntry.processingStart);
       var firstInputTargetSelector;
       if (firstInputEntry.target && isElementNode(firstInputEntry.target)) {
         firstInputTargetSelector = getSelectorFromElement(firstInputEntry.target, configuration.actionNameAttribute);
@@ -8753,7 +7891,7 @@ function processNavigationEntry(entry) {
     // than the current page time. Ignore these cases:
     // https://github.com/GoogleChrome/web-vitals/issues/137
     // https://github.com/GoogleChrome/web-vitals/issues/162
-    firstByte: entry.responseStart >= 0 && entry.responseStart <= relativeNow() ? entry.responseStart : undefined
+    firstByte: entry.responseStart >= 0 && entry.responseStart <= tools_relativeNow() ? entry.responseStart : undefined
   };
 }
 function isIncompleteNavigation(entry) {
@@ -8943,8 +8081,8 @@ function trackScrollMetrics(configuration, viewStart, callback, scrollValues) {
     }
     if (scrollHeight > maxScrollHeight) {
       maxScrollHeight = scrollHeight;
-      var now = relativeNow();
-      maxScrollHeightTime = elapsed(viewStart.relative, now);
+      var now = tools_relativeNow();
+      maxScrollHeightTime = tools_elapsed(viewStart.relative, now);
       shouldUpdate = true;
     }
     if (shouldUpdate) {
@@ -9003,6 +8141,148 @@ function createScrollValuesObservable(configuration, throttleDuration) {
     }
   });
 }
+;// CONCATENATED MODULE: ./src/domain/waitPageActivityEnd.js
+
+
+// Delay to wait for a page activity to validate the tracking process
+var PAGE_ACTIVITY_VALIDATION_DELAY = 100;
+// Delay to wait after a page activity to end the tracking process
+var PAGE_ACTIVITY_END_DELAY = 100;
+
+/**
+ * Wait for the page activity end
+ *
+ * Detection lifecycle:
+ * ```
+ *                        Wait page activity end
+ *              .-------------------'--------------------.
+ *              v                                        v
+ *     [Wait for a page activity ]          [Wait for a maximum duration]
+ *     [timeout: VALIDATION_DELAY]          [  timeout: maxDuration     ]
+ *          /                  \                           |
+ *         v                    v                          |
+ *  [No page activity]   [Page activity]                   |
+ *         |                   |,----------------------.   |
+ *         v                   v                       |   |
+ *     (Discard)     [Wait for a page activity]        |   |
+ *                   [   timeout: END_DELAY   ]        |   |
+ *                       /                \            |   |
+ *                      v                  v           |   |
+ *             [No page activity]    [Page activity]   |   |
+ *                      |                 |            |   |
+ *                      |                 '------------'   |
+ *                      '-----------. ,--------------------'
+ *                                   v
+ *                                 (End)
+ * ```
+ *
+ * Note: by assuming that maxDuration is greater than VALIDATION_DELAY, we are sure that if the
+ * process is still alive after maxDuration, it has been validated.
+ */
+function waitPageActivityEnd(lifeCycle, domMutationObservable, configuration, pageActivityEndCallback, maxDuration) {
+  var pageActivityObservable = createPageActivityObservable(lifeCycle, domMutationObservable, configuration);
+  return doWaitPageActivityEnd(pageActivityObservable, pageActivityEndCallback, maxDuration);
+}
+function doWaitPageActivityEnd(pageActivityObservable, pageActivityEndCallback, maxDuration) {
+  var pageActivityEndTimeoutId;
+  var hasCompleted = false;
+  var validationTimeoutId = timer_setTimeout(function () {
+    complete({
+      hadActivity: false
+    });
+  }, PAGE_ACTIVITY_VALIDATION_DELAY);
+  var maxDurationTimeoutId = maxDuration !== undefined ? timer_setTimeout(function () {
+    return complete({
+      hadActivity: true,
+      end: timeStampNow()
+    });
+  }, maxDuration) : undefined;
+  var pageActivitySubscription = pageActivityObservable.subscribe(function (data) {
+    var isBusy = data.isBusy;
+    timer_clearTimeout(validationTimeoutId);
+    timer_clearTimeout(pageActivityEndTimeoutId);
+    var lastChangeTime = timeStampNow();
+    if (!isBusy) {
+      pageActivityEndTimeoutId = timer_setTimeout(function () {
+        complete({
+          hadActivity: true,
+          end: lastChangeTime
+        });
+      }, PAGE_ACTIVITY_END_DELAY);
+    }
+  });
+  var stop = function stop() {
+    hasCompleted = true;
+    timer_clearTimeout(validationTimeoutId);
+    timer_clearTimeout(pageActivityEndTimeoutId);
+    timer_clearTimeout(maxDurationTimeoutId);
+    pageActivitySubscription.unsubscribe();
+  };
+  function complete(event) {
+    if (hasCompleted) {
+      return;
+    }
+    stop();
+    pageActivityEndCallback(event);
+  }
+  return {
+    stop: stop
+  };
+}
+function createPageActivityObservable(lifeCycle, domMutationObservable, configuration) {
+  return new Observable(function (observable) {
+    var subscriptions = [];
+    var firstRequestIndex;
+    var pendingRequestsCount = 0;
+    subscriptions.push(domMutationObservable.subscribe(function () {
+      notifyPageActivity();
+    }), createPerformanceObservable(configuration, {
+      type: RumPerformanceEntryType.RESOURCE
+    }).subscribe(function (entries) {
+      if (some(entries, function (entry) {
+        return !isExcludedUrl(configuration, entry.name);
+      })) {
+        notifyPageActivity();
+      }
+    }), lifeCycle.subscribe(LifeCycleEventType.REQUEST_STARTED, function (startEvent) {
+      if (isExcludedUrl(configuration, startEvent.url)) {
+        return;
+      }
+      if (firstRequestIndex === undefined) {
+        firstRequestIndex = startEvent.requestIndex;
+      }
+      pendingRequestsCount += 1;
+      notifyPageActivity();
+    }), lifeCycle.subscribe(LifeCycleEventType.REQUEST_COMPLETED, function (request) {
+      if (isExcludedUrl(configuration, request.url) || firstRequestIndex === undefined ||
+      // If the request started before the tracking start, ignore it
+      request.requestIndex < firstRequestIndex) {
+        return;
+      }
+      pendingRequestsCount -= 1;
+      notifyPageActivity();
+    }));
+    var _trackWindowOpen = trackWindowOpen(notifyPageActivity);
+    var stopTrackingWindowOpen = _trackWindowOpen.stop;
+    return function () {
+      stopTrackingWindowOpen();
+      each(subscriptions, function (s) {
+        s.unsubscribe();
+      });
+    };
+    function notifyPageActivity() {
+      observable.notify({
+        isBusy: pendingRequestsCount > 0
+      });
+    }
+  });
+}
+function isExcludedUrl(configuration, requestUrl) {
+  return matchList(configuration.excludedActivityUrls, requestUrl);
+}
+function trackWindowOpen(callback) {
+  return instrumentMethod(window, 'open', callback);
+}
 ;// CONCATENATED MODULE: ./src/domain/rumEventsCollection/view/trackLoadingTime.js
 
 
@@ -9024,7 +8304,7 @@ function trackLoadingTime(lifeCycle, domMutationObservable, configuration, loadT
     if (isWaitingForActivityLoadingTime) {
       isWaitingForActivityLoadingTime = false;
       if (event.hadActivity) {
-        loadingTimeCandidates.push(elapsed(viewStart.timeStamp, event.end));
+        loadingTimeCandidates.push(tools_elapsed(viewStart.timeStamp, event.end));
       }
       invokeCallbackIfAllCandidatesAreReceived();
     }
@@ -9100,7 +8380,7 @@ function trackCumulativeLayoutShift(configuration, viewStart, callback) {
       if (isMaxValue) {
         var target = getTargetFromSource(entry.sources);
         maxClsTarget = target ? new WeakRef(target) : undefined;
-        maxClsStartTime = elapsed(viewStart, entry.startTime);
+        maxClsStartTime = tools_elapsed(viewStart, entry.startTime);
       }
       if (cumulatedValue > maxClsValue) {
         maxClsValue = cumulatedValue;
@@ -9212,6 +8492,25 @@ function initInteractionCountPolyfill() {
 var getInteractionCount = function getInteractionCount() {
   return observer ? interactionCountEstimate : window.performance.interactionCount || 0;
 };
+;// CONCATENATED MODULE: ./src/domain/rumEventsCollection/actions/interactionSelectorCache.js
+
+
+// Maximum duration for click actions
+var CLICK_ACTION_MAX_DURATION = 10 * ONE_SECOND;
+var interactionSelectorCache = new Map();
+function getInteractionSelector(relativeTimestamp) {
+  var selector = interactionSelectorCache.get(relativeTimestamp);
+  interactionSelectorCache["delete"](relativeTimestamp);
+  return selector;
+}
+function updateInteractionSelector(relativeTimestamp, selector) {
+  interactionSelectorCache.set(relativeTimestamp, selector);
+  interactionSelectorCache.forEach(function (_, relativeTimestamp) {
+    if (elapsed(relativeTimestamp, relativeNow()) > CLICK_ACTION_MAX_DURATION) {
+      interactionSelectorCache["delete"](relativeTimestamp);
+    }
+  });
+}
 ;// CONCATENATED MODULE: ./src/domain/rumEventsCollection/view/trackInteractionToNextPaint.js
 
 
@@ -9256,7 +8555,7 @@ function trackInteractionToNextPaint(configuration, viewStart, viewLoadingType) 
     var newInteraction = longestInteractions.estimateP98Interaction();
     if (newInteraction && newInteraction.duration !== interactionToNextPaint) {
       interactionToNextPaint = newInteraction.duration;
-      interactionToNextPaintStartTime = elapsed(viewStart, newInteraction.startTime);
+      interactionToNextPaintStartTime = tools_elapsed(viewStart, newInteraction.startTime);
       interactionToNextPaintTargetSelector = getInteractionSelector(newInteraction.startTime);
       if (!interactionToNextPaintTargetSelector && newInteraction.target && isElementNode(newInteraction.target)) {
         interactionToNextPaintTargetSelector = getSelectorFromElement(newInteraction.target, configuration.actionNameAttribute);
@@ -9405,6 +8704,55 @@ function trackCommonViewMetrics(lifeCycle, domMutationObservable, configuration,
       commonViewMetrics.interactionToNextPaint = getInteractionToNextPaint();
       return commonViewMetrics;
     }
+  };
+}
+;// CONCATENATED MODULE: ./src/domain/trackEventCounts.js
+
+function trackEventCounts(data) {
+  var lifeCycle = data.lifeCycle;
+  var isChildEvent = data.isChildEvent;
+  var callback = data.onChange;
+  if (callback === undefined) {
+    callback = tools_noop;
+  }
+  var eventCounts = {
+    errorCount: 0,
+    longTaskCount: 0,
+    resourceCount: 0,
+    actionCount: 0,
+    frustrationCount: 0
+  };
+  var subscription = lifeCycle.subscribe(LifeCycleEventType.RUM_EVENT_COLLECTED, function (event) {
+    if (event.type === RumEventType.VIEW || !isChildEvent(event)) {
+      return;
+    }
+    switch (event.type) {
+      case RumEventType.ERROR:
+        eventCounts.errorCount += 1;
+        callback();
+        break;
+      case RumEventType.ACTION:
+        if (event.action.frustration) {
+          eventCounts.frustrationCount += event.action.frustration.type.length;
+        }
+        eventCounts.actionCount += 1;
+        callback();
+        break;
+      case RumEventType.LONG_TASK:
+        eventCounts.longTaskCount += 1;
+        callback();
+        break;
+      case RumEventType.RESOURCE:
+        eventCounts.resourceCount += 1;
+        callback();
+        break;
+    }
+  });
+  return {
+    stop: function stop() {
+      subscription.unsubscribe();
+    },
+    eventCounts: eventCounts
   };
 }
 ;// CONCATENATED MODULE: ./src/domain/rumEventsCollection/view/trackViewEventCounts.js
@@ -9615,7 +8963,7 @@ function newView(lifeCycle, domMutationObservable, configuration, initialLocatio
       startClocks: startClocks,
       commonViewMetrics: getCommonViewMetrics(),
       initialViewMetrics: initialViewMetrics,
-      duration: elapsed(startClocks.timeStamp, currentEnd),
+      duration: tools_elapsed(startClocks.timeStamp, currentEnd),
       isActive: endClocks === undefined,
       sessionIsActive: sessionIsActive,
       eventCounts: eventCounts
@@ -9659,7 +9007,7 @@ function newView(lifeCycle, domMutationObservable, configuration, initialLocatio
       if (endClocks) {
         return;
       }
-      var relativeTime = looksLikeRelativeTime(time) ? time : elapsed(startClocks.timeStamp, time);
+      var relativeTime = looksLikeRelativeTime(time) ? time : tools_elapsed(startClocks.timeStamp, time);
       customTimings[sanitizeTiming(name)] = relativeTime;
       scheduleViewUpdate();
     },
@@ -10047,10 +9395,10 @@ function waitForResponseToComplete(context, callback) {
   var clonedResponse = context.response && tryToClone(context.response);
   if (!clonedResponse || !clonedResponse.body) {
     // do not try to wait for the response if the clone failed, fetch error or null body
-    callback(elapsed(context.startClocks.timeStamp, timeStampNow()));
+    callback(tools_elapsed(context.startClocks.timeStamp, timeStampNow()));
   } else {
     readBytesFromStream(clonedResponse.body, function () {
-      callback(elapsed(context.startClocks.timeStamp, timeStampNow()));
+      callback(tools_elapsed(context.startClocks.timeStamp, timeStampNow()));
     }, {
       bytesLimit: Number.POSITIVE_INFINITY,
       collectStreamBody: false
