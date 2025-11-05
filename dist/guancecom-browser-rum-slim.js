@@ -312,12 +312,12 @@
     function getTimestamp(relativeTime) {
         return Math.round(getNavigationStart() + relativeTime);
     }
-    function relativeNow() {
+    function tools_relativeNow() {
         return performance.now();
     }
     function clocksNow() {
         return {
-            relative: relativeNow(),
+            relative: tools_relativeNow(),
             timeStamp: timeStampNow()
         };
     }
@@ -327,7 +327,7 @@
     function dateNow() {
         return (new Date).getTime();
     }
-    function elapsed(start, end) {
+    function tools_elapsed(start, end) {
         return end - start;
     }
     function clocksOrigin() {
@@ -454,7 +454,7 @@
     function createValueHistory(params) {
         var expireDelay = params.expireDelay, maxEntries = params.maxEntries, entries = [];
         function clearExpiredValues() {
-            for (var oldTimeThreshold = relativeNow() - expireDelay; entries.length > 0 && entries[entries.length - 1].endTime < oldTimeThreshold; ) entries.pop();
+            for (var oldTimeThreshold = tools_relativeNow() - expireDelay; entries.length > 0 && entries[entries.length - 1].endTime < oldTimeThreshold; ) entries.pop();
         }
         return cleanupHistoriesInterval && (cleanupHistoriesInterval = timer_setInterval((function() {
             return clearExpiredValues();
@@ -559,7 +559,7 @@
         networkType: MethodLibrary.getNetwork(),
         timeZone: MethodLibrary.getTimeZone()
     });
-    var deviceInfo = _deviceInfo, DOM_EVENT_BEFORE_UNLOAD = "beforeunload", DOM_EVENT_CLICK = "click", DOM_EVENT_KEY_DOWN = "keydown", DOM_EVENT_LOAD = "load", DOM_EVENT_POP_STATE = "popstate", DOM_EVENT_SCROLL = "scroll", DOM_EVENT_TOUCH_START = "touchstart", DOM_EVENT_VISIBILITY_CHANGE = "visibilitychange", DOM_EVENT_PAGE_SHOW = "pageshow", DOM_EVENT_FREEZE = "freeze", DOM_EVENT_RESUME = "resume", DOM_EVENT_DOM_CONTENT_LOADED = "DOMContentLoaded", DOM_EVENT_POINTER_DOWN = "pointerdown", DOM_EVENT_POINTER_UP = "pointerup", DOM_EVENT_POINTER_CANCEL = "pointercancel", DOM_EVENT_HASH_CHANGE = "hashchange", DOM_EVENT_PAGE_HIDE = "pagehide", DOM_EVENT_MOUSE_DOWN = "mousedown", DOM_EVENT_FOCUS = "focus", DOM_EVENT_BLUR = "blur", DOM_EVENT_RESIZE = "resize", DOM_EVENT_INPUT = "input", DOM_EVENT_SECURITY_POLICY_VIOLATION = "securitypolicyviolation", DOM_EVENT_SELECTION_CHANGE = "selectionchange", DOM_EVENT_STORAGE = "storage", ResourceType_DOCUMENT = "document", ResourceType_XHR = "xhr", ResourceType_BEACON = "beacon", ResourceType_FETCH = "fetch", ResourceType_CSS = "css", ResourceType_JS = "js", ResourceType_IMAGE = "image", ResourceType_FONT = "font", ResourceType_MEDIA = "media", ResourceType_OTHER = "other", ActionType_CLICK = "click", ActionType_CUSTOM = "custom", FrustrationType_RAGE_CLICK = "rage_click", FrustrationType_ERROR_CLICK = "error_click", FrustrationType_DEAD_CLICK = "dead_click", RumEventType = {
+    var deviceInfo = _deviceInfo, DOM_EVENT_BEFORE_UNLOAD = "beforeunload", DOM_EVENT_CLICK = "click", DOM_EVENT_KEY_DOWN = "keydown", DOM_EVENT_LOAD = "load", DOM_EVENT_POP_STATE = "popstate", DOM_EVENT_SCROLL = "scroll", DOM_EVENT_TOUCH_START = "touchstart", DOM_EVENT_VISIBILITY_CHANGE = "visibilitychange", DOM_EVENT_PAGE_SHOW = "pageshow", DOM_EVENT_FREEZE = "freeze", DOM_EVENT_RESUME = "resume", DOM_EVENT_DOM_CONTENT_LOADED = "DOMContentLoaded", DOM_EVENT_POINTER_DOWN = "pointerdown", DOM_EVENT_POINTER_UP = "pointerup", DOM_EVENT_POINTER_CANCEL = "pointercancel", DOM_EVENT_HASH_CHANGE = "hashchange", DOM_EVENT_PAGE_HIDE = "pagehide", DOM_EVENT_MOUSE_DOWN = "mousedown", DOM_EVENT_FOCUS = "focus", DOM_EVENT_BLUR = "blur", DOM_EVENT_RESIZE = "resize", DOM_EVENT_SECURITY_POLICY_VIOLATION = "securitypolicyviolation", DOM_EVENT_STORAGE = "storage", ResourceType_DOCUMENT = "document", ResourceType_XHR = "xhr", ResourceType_BEACON = "beacon", ResourceType_FETCH = "fetch", ResourceType_CSS = "css", ResourceType_JS = "js", ResourceType_IMAGE = "image", ResourceType_FONT = "font", ResourceType_MEDIA = "media", ResourceType_OTHER = "other", ActionType_CUSTOM = "custom", RumEventType = {
         ACTION: "action",
         ERROR: "error",
         LONG_TASK: "long_task",
@@ -1094,7 +1094,11 @@
         })), result;
     }
     function setValueAtPath(object, clone, pathSegments, fieldType) {
-        var _pathSegments = _toArray(pathSegments), field = _pathSegments[0], restPathSegments = _pathSegments.slice(1);
+        var _pathSegments = _toArray(pathSegments), field = _pathSegments[0], restPathSegments = function(r, a) {
+            (null == a || a > r.length) && (a = r.length);
+            for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e];
+            return n;
+        }(_pathSegments).slice(1);
         if ("[]" !== field) {
             if (isValidObject(object) && isValidObject(clone)) return restPathSegments.length > 0 ? setValueAtPath(object[field], clone[field], restPathSegments, fieldType) : void function(object, field, value, fieldType) {
                 var newType = getType(value);
@@ -1603,7 +1607,7 @@
                             if (unsubscribeLoadEndListener(), stopInstrumentingOnReadyStateChange(), !hasBeenReported) {
                                 hasBeenReported = !0;
                                 var completeContext = context;
-                                completeContext.state = "complete", completeContext.duration = elapsed(startContext.startClocks.timeStamp, timeStampNow()), 
+                                completeContext.state = "complete", completeContext.duration = tools_elapsed(startContext.startClocks.timeStamp, timeStampNow()), 
                                 completeContext.status = xhr.status, observable.notify(shallowClone(completeContext));
                             }
                         }, unsubscribeLoadEndListener = addEventListener(xhr, "loadend", onEnd).stop;
@@ -1883,9 +1887,9 @@
         return stopCallbacks.push((function() {
             return sessionContextHistory.stop();
         })), sessionStore.renewObservable.subscribe((function() {
-            sessionContextHistory.add(buildSessionContext(), relativeNow()), renewObservable.notify();
+            sessionContextHistory.add(buildSessionContext(), tools_relativeNow()), renewObservable.notify();
         })), sessionStore.expireObservable.subscribe((function() {
-            expireObservable.notify(), sessionContextHistory.closeActive(relativeNow());
+            expireObservable.notify(), sessionContextHistory.closeActive(tools_relativeNow());
         })), sessionStore.expandOrRenewSession(), sessionContextHistory.add(buildSessionContext(), clocksOrigin().relative), 
         stop = addEventListeners(window, [ DOM_EVENT_CLICK, DOM_EVENT_TOUCH_START, DOM_EVENT_KEY_DOWN, DOM_EVENT_SCROLL ], (function() {
             sessionStore.expandOrRenewSession();
@@ -2608,7 +2612,7 @@
                 downloadTime: formatTiming(startTime, responseStart, responseEnd),
                 firstByteTime: formatTiming(startTime, requestStart, responseStart)
             };
-            return responseStart > 0 && responseStart <= relativeNow() && (details.ttfb = msToNs(responseStart - requestStart)), 
+            return responseStart > 0 && responseStart <= tools_relativeNow() && (details.ttfb = msToNs(responseStart - requestStart)), 
             connectEnd !== fetchStart && (details.tcp = msToNs(connectEnd - connectStart), details.connectTime = formatTiming(startTime, connectStart, connectEnd), 
             areInOrder(connectStart, secureConnectionStart, connectEnd) && (details.ssl = msToNs(connectEnd - secureConnectionStart), 
             details.sslTime = formatTiming(startTime, secureConnectionStart, connectEnd))), 
@@ -2671,8 +2675,8 @@
             if (evt.cancelable) {
                 var timing = {
                     entryType: "first-input",
-                    processingStart: relativeNow(),
-                    processingEnd: relativeNow(),
+                    processingStart: tools_relativeNow(),
+                    processingEnd: tools_relativeNow(),
                     startTime: evt.timeStamp,
                     duration: 0,
                     name: "",
@@ -2758,564 +2762,6 @@
     function supportPerformanceTimingEvent(entryType) {
         return window.PerformanceObserver && void 0 !== PerformanceObserver.supportedEntryTypes && PerformanceObserver.supportedEntryTypes.includes(entryType);
     }
-    function trackEventCounts(data) {
-        var lifeCycle = data.lifeCycle, isChildEvent = data.isChildEvent, callback = data.onChange;
-        void 0 === callback && (callback = tools_noop);
-        var eventCounts = {
-            errorCount: 0,
-            longTaskCount: 0,
-            resourceCount: 0,
-            actionCount: 0,
-            frustrationCount: 0
-        }, subscription = lifeCycle.subscribe(LifeCycleEventType_RUM_EVENT_COLLECTED, (function(event) {
-            if (event.type !== RumEventType.VIEW && isChildEvent(event)) switch (event.type) {
-              case RumEventType.ERROR:
-                eventCounts.errorCount += 1, callback();
-                break;
-
-              case RumEventType.ACTION:
-                event.action.frustration && (eventCounts.frustrationCount += event.action.frustration.type.length), 
-                eventCounts.actionCount += 1, callback();
-                break;
-
-              case RumEventType.LONG_TASK:
-                eventCounts.longTaskCount += 1, callback();
-                break;
-
-              case RumEventType.RESOURCE:
-                eventCounts.resourceCount += 1, callback();
-            }
-        }));
-        return {
-            stop: function() {
-                subscription.unsubscribe();
-            },
-            eventCounts: eventCounts
-        };
-    }
-    function waitPageActivityEnd(lifeCycle, domMutationObservable, configuration, pageActivityEndCallback, maxDuration) {
-        return function(pageActivityObservable, pageActivityEndCallback, maxDuration) {
-            var pageActivityEndTimeoutId, hasCompleted = !1, validationTimeoutId = timer_setTimeout((function() {
-                complete({
-                    hadActivity: !1
-                });
-            }), 100), maxDurationTimeoutId = void 0 !== maxDuration ? timer_setTimeout((function() {
-                return complete({
-                    hadActivity: !0,
-                    end: timeStampNow()
-                });
-            }), maxDuration) : void 0, pageActivitySubscription = pageActivityObservable.subscribe((function(data) {
-                var isBusy = data.isBusy;
-                timer_clearTimeout(validationTimeoutId), timer_clearTimeout(pageActivityEndTimeoutId);
-                var lastChangeTime = timeStampNow();
-                isBusy || (pageActivityEndTimeoutId = timer_setTimeout((function() {
-                    complete({
-                        hadActivity: !0,
-                        end: lastChangeTime
-                    });
-                }), 100));
-            })), stop = function() {
-                hasCompleted = !0, timer_clearTimeout(validationTimeoutId), timer_clearTimeout(pageActivityEndTimeoutId), 
-                timer_clearTimeout(maxDurationTimeoutId), pageActivitySubscription.unsubscribe();
-            };
-            function complete(event) {
-                hasCompleted || (stop(), pageActivityEndCallback(event));
-            }
-            return {
-                stop: stop
-            };
-        }(function(lifeCycle, domMutationObservable, configuration) {
-            return new Observable((function(observable) {
-                var firstRequestIndex, subscriptions = [], pendingRequestsCount = 0;
-                subscriptions.push(domMutationObservable.subscribe((function() {
-                    notifyPageActivity();
-                })), createPerformanceObservable(configuration, {
-                    type: RumPerformanceEntryType_RESOURCE
-                }).subscribe((function(entries) {
-                    some(entries, (function(entry) {
-                        return !isExcludedUrl(configuration, entry.name);
-                    })) && notifyPageActivity();
-                })), lifeCycle.subscribe(LifeCycleEventType_REQUEST_STARTED, (function(startEvent) {
-                    isExcludedUrl(configuration, startEvent.url) || (void 0 === firstRequestIndex && (firstRequestIndex = startEvent.requestIndex), 
-                    pendingRequestsCount += 1, notifyPageActivity());
-                })), lifeCycle.subscribe(LifeCycleEventType_REQUEST_COMPLETED, (function(request) {
-                    isExcludedUrl(configuration, request.url) || void 0 === firstRequestIndex || request.requestIndex < firstRequestIndex || (pendingRequestsCount -= 1, 
-                    notifyPageActivity());
-                })));
-                var stopTrackingWindowOpen = instrumentMethod(window, "open", notifyPageActivity).stop;
-                return function() {
-                    stopTrackingWindowOpen(), each(subscriptions, (function(s) {
-                        s.unsubscribe();
-                    }));
-                };
-                function notifyPageActivity() {
-                    observable.notify({
-                        isBusy: pendingRequestsCount > 0
-                    });
-                }
-            }));
-        }(lifeCycle, domMutationObservable, configuration), pageActivityEndCallback, maxDuration);
-    }
-    function isExcludedUrl(configuration, requestUrl) {
-        return list = configuration.excludedActivityUrls, value = requestUrl, void 0 === useStartsWith && (useStartsWith = !1), 
-        some(list, (function(item) {
-            try {
-                if ("function" == typeof item) return item(value);
-                if (item instanceof RegExp) return item.test(value);
-                if ("string" == typeof item) return useStartsWith ? startsWith(value, item) : item === value;
-            } catch (e) {
-                display.error(e);
-            }
-            return !1;
-        }));
-        var list, value, useStartsWith;
-    }
-    var ClickChainStatus_WaitingForMoreClicks = 0, ClickChainStatus_WaitingForClicksToStop = 1, ClickChainStatus_Finalized = 2;
-    function createClickChain(firstClick, onFinalize) {
-        var maxDurationBetweenClicksTimeout, bufferedClicks = [], status = ClickChainStatus_WaitingForMoreClicks;
-        function appendClick(click) {
-            click.stopObservable.subscribe(tryFinalize), bufferedClicks.push(click), timer_clearTimeout(maxDurationBetweenClicksTimeout), 
-            maxDurationBetweenClicksTimeout = timer_setTimeout(dontAcceptMoreClick, 1e3);
-        }
-        function tryFinalize() {
-            status === ClickChainStatus_WaitingForClicksToStop && function(arr, fn, self) {
-                if (arr.every) return arr.every(fn);
-                for (var flag = !0, i = 0; i < arr.length; i++) if (tools_hasOwnProperty.call(arr, i)) {
-                    var val = arr[i];
-                    if (!fn.call(self, val, i, arr)) {
-                        flag = !1;
-                        break;
-                    }
-                }
-                return flag;
-            }(bufferedClicks, (function(click) {
-                return click.isStopped();
-            })) && (status = ClickChainStatus_Finalized, onFinalize(bufferedClicks));
-        }
-        function dontAcceptMoreClick() {
-            timer_clearTimeout(maxDurationBetweenClicksTimeout), status === ClickChainStatus_WaitingForMoreClicks && (status = ClickChainStatus_WaitingForClicksToStop, 
-            tryFinalize());
-        }
-        return appendClick(firstClick), {
-            tryAppend: function(click) {
-                return status === ClickChainStatus_WaitingForMoreClicks && (bufferedClicks.length > 0 && (first = bufferedClicks[bufferedClicks.length - 1].event, 
-                second = click.event, !(first.target === second.target && (origin = first, other = second, 
-                Math.sqrt(Math.pow(origin.clientX - other.clientX, 2) + Math.pow(origin.clientY - other.clientY, 2)) <= 100) && first.timeStamp - second.timeStamp <= 1e3)) ? (dontAcceptMoreClick(), 
-                !1) : (appendClick(click), !0));
-                var first, second, origin, other;
-            },
-            stop: function() {
-                dontAcceptMoreClick();
-            }
-        };
-    }
-    var STABLE_ATTRIBUTES = [ "data-guance-action-name", "data-testid", "data-test", "data-qa", "data-cy", "data-test-id", "data-qa-id", "data-testing", "data-component", "data-element", "data-source-file" ];
-    function getActionNameFromElement(element, userProgrammaticAttribute) {
-        return getActionNameFromElementProgrammatically(element, "data-guance-action-name") || userProgrammaticAttribute && getActionNameFromElementProgrammatically(element, userProgrammaticAttribute) || getActionNameFromElementForStrategies(element, userProgrammaticAttribute, priorityStrategies) || getActionNameFromElementForStrategies(element, userProgrammaticAttribute, fallbackStrategies) || "";
-    }
-    function getActionNameFromElementProgrammatically(targetElement, programmaticAttribute) {
-        var elementWithAttribute;
-        if (function() {
-            void 0 === supportsElementClosestResult && (supportsElementClosestResult = "closest" in HTMLElement.prototype);
-            return supportsElementClosestResult;
-        }()) elementWithAttribute = targetElement.closest("[" + programmaticAttribute + "]"); else for (var element = targetElement; element; ) {
-            if (element.hasAttribute(programmaticAttribute)) {
-                elementWithAttribute = element;
-                break;
-            }
-            element = element.parentElement;
-        }
-        if (elementWithAttribute) return truncate(normalizeWhitespace(elementWithAttribute.getAttribute(programmaticAttribute).trim()));
-    }
-    var supportsLabelPropertyResult, supportsElementClosestResult, priorityStrategies = [ function(element, userProgrammaticAttribute) {
-        if (function() {
-            void 0 === supportsLabelPropertyResult && (supportsLabelPropertyResult = "labels" in HTMLInputElement.prototype);
-            return supportsLabelPropertyResult;
-        }()) {
-            if ("labels" in element && element.labels && element.labels.length > 0) return getTextualContent(element.labels[0], userProgrammaticAttribute);
-        } else if (element.id) {
-            var label = element.ownerDocument && find(element.ownerDocument.querySelectorAll("label"), (function(label) {
-                return label.htmlFor === element.id;
-            }));
-            return label && getTextualContent(label, userProgrammaticAttribute);
-        }
-    }, function(element) {
-        if ("INPUT" === element.nodeName) {
-            var input = element, type = input.getAttribute("type");
-            if ("button" === type || "submit" === type || "reset" === type) return input.value;
-        }
-    }, function(element, userProgrammaticAttribute) {
-        if ("BUTTON" === element.nodeName || "LABEL" === element.nodeName || "button" === element.getAttribute("role")) return getTextualContent(element, userProgrammaticAttribute);
-    }, function(element) {
-        return element.getAttribute("aria-label");
-    }, function(element, userProgrammaticAttribute) {
-        var labelledByAttribute = element.getAttribute("aria-labelledby");
-        if (labelledByAttribute) return labelledByAttribute = labelledByAttribute.split(/\s+/), 
-        labelledByAttribute = tools_map(labelledByAttribute, (function(id) {
-            return function(refElement, id) {
-                return refElement.ownerDocument ? refElement.ownerDocument.getElementById(id) : null;
-            }(element, id);
-        })), labelledByAttribute = filter(labelledByAttribute, (function(label) {
-            return Boolean(label);
-        })), (labelledByAttribute = tools_map(labelledByAttribute, (function(ele) {
-            return getTextualContent(ele, userProgrammaticAttribute);
-        }))).join(" ");
-    }, function(element) {
-        return element.getAttribute("alt");
-    }, function(element) {
-        return element.getAttribute("name");
-    }, function(element) {
-        return element.getAttribute("title");
-    }, function(element) {
-        return element.getAttribute("placeholder");
-    }, function(element, userProgrammaticAttribute) {
-        if ("options" in element && element.options.length > 0) return getTextualContent(element.options[0], userProgrammaticAttribute);
-    } ], fallbackStrategies = [ function(element, userProgrammaticAttribute) {
-        return getTextualContent(element, userProgrammaticAttribute);
-    } ];
-    function getActionNameFromElementForStrategies(targetElement, userProgrammaticAttribute, strategies) {
-        for (var element = targetElement, recursionCounter = 0; recursionCounter <= 10 && element && "BODY" !== element.nodeName && "HTML" !== element.nodeName && "HEAD" !== element.nodeName; ) {
-            for (var i = 0; i < strategies.length; i++) {
-                var name = (0, strategies[i])(element, userProgrammaticAttribute);
-                if ("string" == typeof name) {
-                    var trimmedName = name.trim();
-                    if (trimmedName) return truncate(normalizeWhitespace(trimmedName));
-                }
-            }
-            if ("FORM" === element.nodeName) break;
-            element = element.parentElement, recursionCounter += 1;
-        }
-    }
-    function normalizeWhitespace(s) {
-        return s.replace(/\s+/g, " ");
-    }
-    function truncate(s) {
-        return s.length > 100 ? safeTruncate(s, 100) + " [...]" : s;
-    }
-    function getTextualContent(element, userProgrammaticAttribute) {
-        if (!element.isContentEditable) {
-            if ("innerText" in element) {
-                var text = element.innerText, removeTextFromElements = function(query) {
-                    for (var list = element.querySelectorAll(query), index = 0; index < list.length; index += 1) {
-                        var _element = list[index];
-                        if ("innerText" in _element) {
-                            var textToReplace = _element.innerText;
-                            textToReplace && textToReplace.trim().length > 0 && (text = text.replace(textToReplace, ""));
-                        }
-                    }
-                };
-                return detectBrowserCached() === Browser_IE && removeTextFromElements("script, style"), 
-                removeTextFromElements("[data-guance-action-name]"), userProgrammaticAttribute && removeTextFromElements("[" + userProgrammaticAttribute + "]"), 
-                text;
-            }
-            return element.textContent;
-        }
-    }
-    var supportScopeSelectorCache, GLOBALLY_UNIQUE_SELECTOR_GETTERS = [ getStableAttributeSelector, function(element) {
-        if (element.id && !isGeneratedValue(element.id)) return "#" + cssEscape(element.id);
-    } ], UNIQUE_AMONG_CHILDREN_SELECTOR_GETTERS = [ getStableAttributeSelector, function(element) {
-        if ("BODY" === element.tagName) return;
-        if (element.classList.length > 0) for (var i = 0; i < element.classList.length; i += 1) {
-            var className = element.classList[i];
-            if (!isGeneratedValue(className)) return cssEscape(element.tagName) + "." + cssEscape(className);
-        }
-    }, function(element) {
-        return cssEscape(element.tagName);
-    } ];
-    function getSelectorFromElement(targetElement, actionNameAttribute) {
-        if (function(element) {
-            if ("isConnected" in element) return element.isConnected;
-            return element.ownerDocument.documentElement.contains(element);
-        }(targetElement)) {
-            for (var targetElementSelector, currentElement = targetElement; currentElement && "HTML" !== currentElement.nodeName; ) {
-                var globallyUniqueSelector = findSelector(currentElement, GLOBALLY_UNIQUE_SELECTOR_GETTERS, isSelectorUniqueGlobally, actionNameAttribute, targetElementSelector);
-                if (globallyUniqueSelector) return globallyUniqueSelector;
-                targetElementSelector = findSelector(currentElement, UNIQUE_AMONG_CHILDREN_SELECTOR_GETTERS, isSelectorUniqueAmongSiblings, actionNameAttribute, targetElementSelector) || combineSelector(getPositionSelector(currentElement), targetElementSelector), 
-                currentElement = currentElement.parentElement;
-            }
-            return targetElementSelector;
-        }
-    }
-    function isGeneratedValue(value) {
-        return /[0-9]/.test(value);
-    }
-    function getStableAttributeSelector(element, actionNameAttribute) {
-        if (actionNameAttribute && (selector = getAttributeSelector(actionNameAttribute))) return selector;
-        for (var i = 0; i < STABLE_ATTRIBUTES.length; i++) {
-            var selector;
-            if (selector = getAttributeSelector(STABLE_ATTRIBUTES[i])) return selector;
-        }
-        function getAttributeSelector(attributeName) {
-            if (element.hasAttribute(attributeName)) return cssEscape(element.tagName) + "[" + attributeName + '="' + cssEscape(element.getAttribute(attributeName)) + '"]';
-        }
-    }
-    function getPositionSelector(element) {
-        for (var sibling = element.parentElement && element.parentElement.firstElementChild, elementIndex = 1; sibling && sibling !== element; ) sibling.tagName === element.tagName && (elementIndex += 1), 
-        sibling = sibling.nextElementSibling;
-        var tagName = cssEscape(element.tagName);
-        return /^::/.test(tagName) ? tagName : tagName + ":nth-of-type(" + elementIndex + ")";
-    }
-    function findSelector(element, selectorGetters, predicate, actionNameAttribute, childSelector) {
-        for (var i = 0; i < selectorGetters.length; i++) {
-            var elementSelector = (0, selectorGetters[i])(element, actionNameAttribute);
-            if (elementSelector && predicate(element, elementSelector, childSelector)) return combineSelector(elementSelector, childSelector);
-        }
-    }
-    function isSelectorUniqueGlobally(element, elementSelector, childSelector) {
-        return 1 === element.ownerDocument.querySelectorAll(combineSelector(elementSelector, childSelector)).length;
-    }
-    function isSelectorUniqueAmongSiblings(currentElement, currentElementSelector, childSelector) {
-        var isSiblingMatching;
-        if (void 0 === childSelector) isSiblingMatching = function(sibling) {
-            return sibling.matches(currentElementSelector);
-        }; else {
-            var scopedSelector = function() {
-                if (void 0 === supportScopeSelectorCache) try {
-                    document.querySelector(":scope"), supportScopeSelectorCache = !0;
-                } catch (_unused) {
-                    supportScopeSelectorCache = !1;
-                }
-                return supportScopeSelectorCache;
-            }() ? combineSelector("".concat(currentElementSelector, ":scope"), childSelector) : combineSelector(currentElementSelector, childSelector);
-            isSiblingMatching = function(sibling) {
-                return null !== sibling.querySelector(scopedSelector);
-            };
-        }
-        for (var sibling = currentElement.parentElement.firstElementChild; sibling; ) {
-            if (sibling !== currentElement && isSiblingMatching(sibling)) return !1;
-            sibling = sibling.nextElementSibling;
-        }
-        return !0;
-    }
-    function combineSelector(parent, child) {
-        return child ? parent + ">" + child : parent;
-    }
-    function isSelectionEmpty() {
-        var selection = window.getSelection();
-        return !selection || selection.isCollapsed;
-    }
-    function isValidPointerEvent(event) {
-        return event.target instanceof Element && !1 !== event.isPrimary;
-    }
-    function computeFrustration(clicks, rageClick) {
-        if (function(clicks) {
-            if (some(clicks, (function(click) {
-                return click.getUserActivity().selection || click.getUserActivity().scroll;
-            }))) return !1;
-            for (var i = 0; i < clicks.length - 2; i += 1) if (clicks[i + 3 - 1].event.timeStamp - clicks[i].event.timeStamp <= 1e3) return !0;
-            return !1;
-        }(clicks)) return rageClick.addFrustration(FrustrationType_RAGE_CLICK), some(clicks, isDead) && rageClick.addFrustration(FrustrationType_DEAD_CLICK), 
-        rageClick.hasError() && rageClick.addFrustration(FrustrationType_ERROR_CLICK), {
-            isRage: !0
-        };
-        var hasSelectionChanged = some(clicks, (function(click) {
-            return click.getUserActivity().selection;
-        }));
-        return each(clicks, (function(click) {
-            click.hasError() && click.addFrustration(FrustrationType_ERROR_CLICK), isDead(click) && !hasSelectionChanged && click.addFrustration(FrustrationType_DEAD_CLICK);
-        })), {
-            isRage: !1
-        };
-    }
-    function isDead(click) {
-        return !(click.hasPageActivity() || click.getUserActivity().input || click.getUserActivity().scroll) && (element = click.event.target, 
-        selector = 'input:not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="range"]),textarea,select,[contenteditable],[contenteditable] *,canvas,a[href],a[href] *', 
-        !(element.matches ? element.matches(selector) : element.msMatchesSelector && element.msMatchesSelector(selector)));
-        var element, selector;
-    }
-    var interactionSelectorCache = new Map;
-    function updateInteractionSelector(relativeTimestamp, selector) {
-        interactionSelectorCache.set(relativeTimestamp, selector), interactionSelectorCache.forEach((function(_, relativeTimestamp) {
-            elapsed(relativeTimestamp, relativeNow()) > 1e4 && interactionSelectorCache.delete(relativeTimestamp);
-        }));
-    }
-    function trackClickActions(lifeCycle, domMutationObservable, configuration) {
-        var currentClickChain, history = new createValueHistory({
-            expireDelay: 3e5
-        }), stopObservable = new Observable;
-        lifeCycle.subscribe(LifeCycleEventType_SESSION_RENEWED, (function() {
-            history.reset();
-        })), lifeCycle.subscribe(LifeCycleEventType_VIEW_ENDED, stopClickChain);
-        var events, selectionEmptyAtPointerDown, clickContext, userActivity, listeners, stopActionEventsListener = (events = {
-            onPointerDown: function(pointerDownEvent) {
-                return function(configuration, lifeCycle, domMutationObservable, pointerDownEvent) {
-                    var event, actionNameAttribute, rect, selector, clickActionBase = (event = pointerDownEvent, 
-                    actionNameAttribute = configuration.actionNameAttribute, rect = event.target.getBoundingClientRect(), 
-                    (selector = getSelectorFromElement(event.target, actionNameAttribute)) && updateInteractionSelector(event.timeStamp, selector), 
-                    {
-                        type: ActionType_CLICK,
-                        target: {
-                            width: Math.round(rect.width),
-                            height: Math.round(rect.height),
-                            selector: selector
-                        },
-                        position: {
-                            x: Math.round(event.clientX - rect.left),
-                            y: Math.round(event.clientY - rect.top)
-                        },
-                        name: getActionNameFromElement(event.target, actionNameAttribute)
-                    }), _hadActivityOnPointerDown = !1;
-                    return waitPageActivityEnd(lifeCycle, domMutationObservable, configuration, (function(pageActivityEndEvent) {
-                        _hadActivityOnPointerDown = pageActivityEndEvent.hadActivity;
-                    }), 100), {
-                        clickActionBase: clickActionBase,
-                        hadActivityOnPointerDown: function() {
-                            return _hadActivityOnPointerDown;
-                        }
-                    };
-                }(configuration, lifeCycle, domMutationObservable, pointerDownEvent);
-            },
-            onPointerUp: function(data, startEvent, getUserActivity) {
-                !function(configuration, lifeCycle, domMutationObservable, history, stopObservable, appendClickToClickChain, clickActionBase, startEvent, getUserActivity, hadActivityOnPointerDown) {
-                    var click = newClick(lifeCycle, history, getUserActivity, clickActionBase, startEvent);
-                    appendClickToClickChain(click);
-                    var selector = clickActionBase && clickActionBase.target && clickActionBase.target.selector;
-                    selector && updateInteractionSelector(startEvent.timeStamp, selector);
-                    var stopWaitPageActivityEnd = waitPageActivityEnd(lifeCycle, domMutationObservable, configuration, (function(pageActivityEndEvent) {
-                        pageActivityEndEvent.hadActivity && pageActivityEndEvent.end < click.startClocks.timeStamp ? click.discard() : pageActivityEndEvent.hadActivity ? click.stop(pageActivityEndEvent.end) : hadActivityOnPointerDown() ? click.stop(click.startClocks.timeStamp) : click.stop();
-                    }), 1e4).stop, viewEndedSubscription = lifeCycle.subscribe(LifeCycleEventType_VIEW_ENDED, (function(data) {
-                        click.stop(data.endClocks.timeStamp);
-                    })), stopSubscription = stopObservable.subscribe((function() {
-                        click.stop();
-                    }));
-                    click.stopObservable.subscribe((function() {
-                        viewEndedSubscription.unsubscribe(), stopWaitPageActivityEnd(), stopSubscription.unsubscribe();
-                    }));
-                }(configuration, lifeCycle, domMutationObservable, history, stopObservable, appendClickToClickChain, data.clickActionBase, startEvent, getUserActivity, data.hadActivityOnPointerDown);
-            }
-        }, userActivity = {
-            selection: !1,
-            input: !1,
-            scroll: !1
-        }, listeners = [ addEventListener(window, DOM_EVENT_POINTER_DOWN, (function(event) {
-            isValidPointerEvent(event) && (selectionEmptyAtPointerDown = isSelectionEmpty(), 
-            userActivity = {
-                selection: !1,
-                input: !1,
-                scroll: !1
-            }, clickContext = events.onPointerDown(event));
-        }), {
-            capture: !0
-        }), addEventListener(window, DOM_EVENT_SELECTION_CHANGE, (function() {
-            selectionEmptyAtPointerDown && isSelectionEmpty() || (userActivity.selection = !0);
-        }), {
-            capture: !0
-        }), addEventListener(window, DOM_EVENT_POINTER_UP, (function(event) {
-            if (isValidPointerEvent(event) && clickContext) {
-                var localUserActivity = userActivity;
-                events.onPointerUp(clickContext, event, (function() {
-                    return localUserActivity;
-                })), clickContext = void 0;
-            }
-        }), {
-            capture: !0
-        }), addEventListener(window, DOM_EVENT_SCROLL, (function() {
-            userActivity.scroll = !0;
-        }), {
-            capture: !0,
-            passive: !0
-        }), addEventListener(window, DOM_EVENT_INPUT, (function() {
-            userActivity.input = !0;
-        }), {
-            capture: !0
-        }) ], {
-            stop: function() {
-                each(listeners, (function(listener) {
-                    return listener.stop();
-                }));
-            }
-        }).stop;
-        return {
-            stop: function() {
-                stopClickChain(), stopObservable.notify(), stopActionEventsListener();
-            },
-            actionContexts: {
-                findActionId: function(startTime) {
-                    var allIds = history.findAll(startTime);
-                    if (allIds && allIds.length) return allIds[allIds.length - 1];
-                },
-                findAllActionId: function(startTime) {
-                    return history.findAll(startTime);
-                }
-            }
-        };
-        function stopClickChain() {
-            currentClickChain && currentClickChain.stop();
-        }
-        function appendClickToClickChain(click) {
-            if (!currentClickChain || !currentClickChain.tryAppend(click)) {
-                var rageClick = click.clone();
-                currentClickChain = createClickChain(click, (function(clicks) {
-                    !function(clicks, rageClick) {
-                        computeFrustration(clicks, rageClick).isRage ? (each(clicks, (function(click) {
-                            click.discard();
-                        })), rageClick.stop(timeStampNow()), rageClick.validate(tools_map(clicks, (function(click) {
-                            return click.event;
-                        })))) : (rageClick.discard(), each(clicks, (function(click) {
-                            click.validate();
-                        })));
-                    }(clicks, rageClick);
-                }));
-            }
-        }
-    }
-    var ClickStatus_ONGOING = 0, ClickStatus_STOPPED = 1, ClickStatus_FINALIZED = 2;
-    function newClick(lifeCycle, history, getUserActivity, clickActionBase, startEvent) {
-        var activityEndTime, id = UUID(), startClocks = clocksNow(), historyEntry = history.add(id, startClocks.relative), eventCountsSubscription = trackEventCounts({
-            lifeCycle: lifeCycle,
-            isChildEvent: function(event) {
-                return void 0 !== event.action && (isArray(event.action.ids) ? includes(event.action.ids, id) : event.action.ids === id);
-            }
-        }), status = ClickStatus_ONGOING, frustrationTypes = [], stopObservable = new Observable;
-        function stop(newActivityEndTime) {
-            status === ClickStatus_ONGOING && (status = ClickStatus_STOPPED, (activityEndTime = newActivityEndTime) ? historyEntry.close(getRelativeTime(activityEndTime)) : historyEntry.remove(), 
-            eventCountsSubscription.stop(), stopObservable.notify());
-        }
-        return {
-            event: startEvent,
-            stop: stop,
-            stopObservable: stopObservable,
-            hasError: function() {
-                return eventCountsSubscription.eventCounts.errorCount > 0;
-            },
-            hasPageActivity: function() {
-                return void 0 !== activityEndTime;
-            },
-            getUserActivity: getUserActivity,
-            addFrustration: function(frustrationType) {
-                frustrationTypes.push(frustrationType);
-            },
-            startClocks: startClocks,
-            isStopped: function() {
-                return status === ClickStatus_STOPPED || status === ClickStatus_FINALIZED;
-            },
-            clone: function() {
-                return newClick(lifeCycle, history, getUserActivity, clickActionBase, startEvent);
-            },
-            validate: function(domEvents) {
-                if (stop(), status === ClickStatus_STOPPED) {
-                    var _eventCountsSubscription = eventCountsSubscription.eventCounts, resourceCount = _eventCountsSubscription.resourceCount, errorCount = _eventCountsSubscription.errorCount, longTaskCount = _eventCountsSubscription.longTaskCount, clickAction = tools_assign({
-                        type: ActionType_CLICK,
-                        duration: activityEndTime && elapsed(startClocks.timeStamp, activityEndTime),
-                        startClocks: startClocks,
-                        id: id,
-                        frustrationTypes: frustrationTypes,
-                        counts: {
-                            resourceCount: resourceCount,
-                            errorCount: errorCount,
-                            longTaskCount: longTaskCount
-                        },
-                        events: isNullUndefinedDefaultValue(domEvents, [ startEvent ]),
-                        event: startEvent
-                    }, clickActionBase);
-                    lifeCycle.notify(LifeCycleEventType_AUTO_ACTION_COMPLETED, clickAction), status = ClickStatus_FINALIZED;
-                }
-            },
-            discard: function() {
-                stop(), status = ClickStatus_FINALIZED;
-            }
-        };
-    }
     var PageState_ACTIVE = "active", PageState_PASSIVE = "passive", PageState_HIDDEN = "hidden", PageState_FROZEN = "frozen", PageState_TERMINATED = "terminated";
     function startPageStateHistory(maxPageStateEntriesSelectable) {
         void 0 === maxPageStateEntriesSelectable && (maxPageStateEntriesSelectable = 500);
@@ -3323,7 +2769,7 @@
             expireDelay: 144e5,
             maxEntries: 4e3
         });
-        addPageState(getPageState(), relativeNow());
+        addPageState(getPageState(), tools_relativeNow());
         var stopEventListeners = addEventListeners(window, [ DOM_EVENT_PAGE_SHOW, DOM_EVENT_FOCUS, DOM_EVENT_BLUR, DOM_EVENT_VISIBILITY_CHANGE, DOM_EVENT_RESUME, DOM_EVENT_FREEZE, DOM_EVENT_PAGE_HIDE ], (function(event) {
             addPageState(function(event) {
                 if (event.type === DOM_EVENT_FREEZE) return PageState_FROZEN;
@@ -3334,7 +2780,7 @@
             capture: !0
         }).stop;
         function addPageState(nextPageState, startTime) {
-            void 0 === startTime && (startTime = relativeNow()), nextPageState !== currentPageState && (currentPageState = nextPageState, 
+            void 0 === startTime && (startTime = tools_relativeNow()), nextPageState !== currentPageState && (currentPageState = nextPageState, 
             pageStateEntryHistory.closeActive(startTime), pageStateEntryHistory.add({
                 state: currentPageState,
                 startTime: startTime
@@ -3345,7 +2791,7 @@
                 var pageStateEntries = pageStateEntryHistory.findAll(eventStartTime, duration);
                 if (0 !== pageStateEntries.length) {
                     for (var pageStateServerEntries = [], limit = Math.max(0, pageStateEntries.length - maxPageStateEntriesSelectable), index = pageStateEntries.length - 1; index >= limit; index--) {
-                        var pageState = pageStateEntries[index], relativeStartTime = elapsed(eventStartTime, pageState.startTime);
+                        var pageState = pageStateEntries[index], relativeStartTime = tools_elapsed(eventStartTime, pageState.startTime);
                         pageStateServerEntries.push({
                             state: pageState.state,
                             start: toServerDuration(relativeStartTime)
@@ -3697,6 +3143,85 @@
             };
         }(lifeCycle, pageStateHistory);
     }
+    var supportScopeSelectorCache, STABLE_ATTRIBUTES = [ "data-guance-action-name", "data-testid", "data-test", "data-qa", "data-cy", "data-test-id", "data-qa-id", "data-testing", "data-component", "data-element", "data-source-file" ], GLOBALLY_UNIQUE_SELECTOR_GETTERS = [ getStableAttributeSelector, function(element) {
+        if (element.id && !isGeneratedValue(element.id)) return "#" + cssEscape(element.id);
+    } ], UNIQUE_AMONG_CHILDREN_SELECTOR_GETTERS = [ getStableAttributeSelector, function(element) {
+        if ("BODY" === element.tagName) return;
+        if (element.classList.length > 0) for (var i = 0; i < element.classList.length; i += 1) {
+            var className = element.classList[i];
+            if (!isGeneratedValue(className)) return cssEscape(element.tagName) + "." + cssEscape(className);
+        }
+    }, function(element) {
+        return cssEscape(element.tagName);
+    } ];
+    function getSelectorFromElement(targetElement, actionNameAttribute) {
+        if (function(element) {
+            if ("isConnected" in element) return element.isConnected;
+            return element.ownerDocument.documentElement.contains(element);
+        }(targetElement)) {
+            for (var targetElementSelector, currentElement = targetElement; currentElement && "HTML" !== currentElement.nodeName; ) {
+                var globallyUniqueSelector = findSelector(currentElement, GLOBALLY_UNIQUE_SELECTOR_GETTERS, isSelectorUniqueGlobally, actionNameAttribute, targetElementSelector);
+                if (globallyUniqueSelector) return globallyUniqueSelector;
+                targetElementSelector = findSelector(currentElement, UNIQUE_AMONG_CHILDREN_SELECTOR_GETTERS, isSelectorUniqueAmongSiblings, actionNameAttribute, targetElementSelector) || combineSelector(getPositionSelector(currentElement), targetElementSelector), 
+                currentElement = currentElement.parentElement;
+            }
+            return targetElementSelector;
+        }
+    }
+    function isGeneratedValue(value) {
+        return /[0-9]/.test(value);
+    }
+    function getStableAttributeSelector(element, actionNameAttribute) {
+        if (actionNameAttribute && (selector = getAttributeSelector(actionNameAttribute))) return selector;
+        for (var i = 0; i < STABLE_ATTRIBUTES.length; i++) {
+            var selector;
+            if (selector = getAttributeSelector(STABLE_ATTRIBUTES[i])) return selector;
+        }
+        function getAttributeSelector(attributeName) {
+            if (element.hasAttribute(attributeName)) return cssEscape(element.tagName) + "[" + attributeName + '="' + cssEscape(element.getAttribute(attributeName)) + '"]';
+        }
+    }
+    function getPositionSelector(element) {
+        for (var sibling = element.parentElement && element.parentElement.firstElementChild, elementIndex = 1; sibling && sibling !== element; ) sibling.tagName === element.tagName && (elementIndex += 1), 
+        sibling = sibling.nextElementSibling;
+        var tagName = cssEscape(element.tagName);
+        return /^::/.test(tagName) ? tagName : tagName + ":nth-of-type(" + elementIndex + ")";
+    }
+    function findSelector(element, selectorGetters, predicate, actionNameAttribute, childSelector) {
+        for (var i = 0; i < selectorGetters.length; i++) {
+            var elementSelector = (0, selectorGetters[i])(element, actionNameAttribute);
+            if (elementSelector && predicate(element, elementSelector, childSelector)) return combineSelector(elementSelector, childSelector);
+        }
+    }
+    function isSelectorUniqueGlobally(element, elementSelector, childSelector) {
+        return 1 === element.ownerDocument.querySelectorAll(combineSelector(elementSelector, childSelector)).length;
+    }
+    function isSelectorUniqueAmongSiblings(currentElement, currentElementSelector, childSelector) {
+        var isSiblingMatching;
+        if (void 0 === childSelector) isSiblingMatching = function(sibling) {
+            return sibling.matches(currentElementSelector);
+        }; else {
+            var scopedSelector = function() {
+                if (void 0 === supportScopeSelectorCache) try {
+                    document.querySelector(":scope"), supportScopeSelectorCache = !0;
+                } catch (_unused) {
+                    supportScopeSelectorCache = !1;
+                }
+                return supportScopeSelectorCache;
+            }() ? combineSelector("".concat(currentElementSelector, ":scope"), childSelector) : combineSelector(currentElementSelector, childSelector);
+            isSiblingMatching = function(sibling) {
+                return null !== sibling.querySelector(scopedSelector);
+            };
+        }
+        for (var sibling = currentElement.parentElement.firstElementChild; sibling; ) {
+            if (sibling !== currentElement && isSiblingMatching(sibling)) return !1;
+            sibling = sibling.nextElementSibling;
+        }
+        return !0;
+    }
+    function combineSelector(parent, child) {
+        return child ? parent + ">" + child : parent;
+    }
     function getNavigationEntry() {
         if (supportPerformanceTimingEvent(RumPerformanceEntryType_NAVIGATION)) {
             var navigationEntry = performance.getEntriesByType(RumPerformanceEntryType_NAVIGATION)[0];
@@ -3755,7 +3280,7 @@
                     loadEventStart: entry.loadEventStart,
                     domContentLoadedEventEnd: entry.domContentLoadedEventEnd,
                     domContentLoadedEventStart: entry.domContentLoadedEventStart,
-                    firstByte: entry.responseStart >= 0 && entry.responseStart <= relativeNow() ? entry.responseStart : void 0
+                    firstByte: entry.responseStart >= 0 && entry.responseStart <= tools_relativeNow() ? entry.responseStart : void 0
                 };
             }(entry));
         }));
@@ -3851,7 +3376,7 @@
                     return entry.entryType === RumPerformanceEntryType_FIRST_INPUT && entry.startTime < firstHidden.getTimeStamp();
                 }));
                 if (firstInputEntry) {
-                    var firstInputTargetSelector, firstInputDelay = elapsed(firstInputEntry.startTime, firstInputEntry.processingStart);
+                    var firstInputTargetSelector, firstInputDelay = tools_elapsed(firstInputEntry.startTime, firstInputEntry.processingStart);
                     firstInputEntry.target && isElementNode(firstInputEntry.target) && (firstInputTargetSelector = getSelectorFromElement(firstInputEntry.target, configuration.actionNameAttribute)), 
                     callback({
                         delay: firstInputDelay >= 0 ? firstInputDelay : 0,
@@ -3910,8 +3435,8 @@
             if (scrollDepth > maxScrollDepth && (maxScrollDepth = scrollDepth, shouldUpdate = !0), 
             scrollHeight > maxScrollHeight) {
                 maxScrollHeight = scrollHeight;
-                var now = relativeNow();
-                maxScrollHeightTime = elapsed(viewStart.relative, now), shouldUpdate = !0;
+                var now = tools_relativeNow();
+                maxScrollHeightTime = tools_elapsed(viewStart.relative, now), shouldUpdate = !0;
             }
             shouldUpdate && callback({
                 maxDepth: Math.min(maxScrollDepth, maxScrollHeight),
@@ -3925,6 +3450,83 @@
                 return subscription.unsubscribe();
             }
         };
+    }
+    function waitPageActivityEnd(lifeCycle, domMutationObservable, configuration, pageActivityEndCallback, maxDuration) {
+        return function(pageActivityObservable, pageActivityEndCallback, maxDuration) {
+            var pageActivityEndTimeoutId, hasCompleted = !1, validationTimeoutId = timer_setTimeout((function() {
+                complete({
+                    hadActivity: !1
+                });
+            }), 100), maxDurationTimeoutId = void 0 !== maxDuration ? timer_setTimeout((function() {
+                return complete({
+                    hadActivity: !0,
+                    end: timeStampNow()
+                });
+            }), maxDuration) : void 0, pageActivitySubscription = pageActivityObservable.subscribe((function(data) {
+                var isBusy = data.isBusy;
+                timer_clearTimeout(validationTimeoutId), timer_clearTimeout(pageActivityEndTimeoutId);
+                var lastChangeTime = timeStampNow();
+                isBusy || (pageActivityEndTimeoutId = timer_setTimeout((function() {
+                    complete({
+                        hadActivity: !0,
+                        end: lastChangeTime
+                    });
+                }), 100));
+            })), stop = function() {
+                hasCompleted = !0, timer_clearTimeout(validationTimeoutId), timer_clearTimeout(pageActivityEndTimeoutId), 
+                timer_clearTimeout(maxDurationTimeoutId), pageActivitySubscription.unsubscribe();
+            };
+            function complete(event) {
+                hasCompleted || (stop(), pageActivityEndCallback(event));
+            }
+            return {
+                stop: stop
+            };
+        }(function(lifeCycle, domMutationObservable, configuration) {
+            return new Observable((function(observable) {
+                var firstRequestIndex, subscriptions = [], pendingRequestsCount = 0;
+                subscriptions.push(domMutationObservable.subscribe((function() {
+                    notifyPageActivity();
+                })), createPerformanceObservable(configuration, {
+                    type: RumPerformanceEntryType_RESOURCE
+                }).subscribe((function(entries) {
+                    some(entries, (function(entry) {
+                        return !isExcludedUrl(configuration, entry.name);
+                    })) && notifyPageActivity();
+                })), lifeCycle.subscribe(LifeCycleEventType_REQUEST_STARTED, (function(startEvent) {
+                    isExcludedUrl(configuration, startEvent.url) || (void 0 === firstRequestIndex && (firstRequestIndex = startEvent.requestIndex), 
+                    pendingRequestsCount += 1, notifyPageActivity());
+                })), lifeCycle.subscribe(LifeCycleEventType_REQUEST_COMPLETED, (function(request) {
+                    isExcludedUrl(configuration, request.url) || void 0 === firstRequestIndex || request.requestIndex < firstRequestIndex || (pendingRequestsCount -= 1, 
+                    notifyPageActivity());
+                })));
+                var stopTrackingWindowOpen = instrumentMethod(window, "open", notifyPageActivity).stop;
+                return function() {
+                    stopTrackingWindowOpen(), each(subscriptions, (function(s) {
+                        s.unsubscribe();
+                    }));
+                };
+                function notifyPageActivity() {
+                    observable.notify({
+                        isBusy: pendingRequestsCount > 0
+                    });
+                }
+            }));
+        }(lifeCycle, domMutationObservable, configuration), pageActivityEndCallback, maxDuration);
+    }
+    function isExcludedUrl(configuration, requestUrl) {
+        return list = configuration.excludedActivityUrls, value = requestUrl, void 0 === useStartsWith && (useStartsWith = !1), 
+        some(list, (function(item) {
+            try {
+                if ("function" == typeof item) return item(value);
+                if (item instanceof RegExp) return item.test(value);
+                if ("string" == typeof item) return useStartsWith ? startsWith(value, item) : item === value;
+            } catch (e) {
+                display.error(e);
+            }
+            return !1;
+        }));
+        var list, value, useStartsWith;
     }
     function trackCumulativeLayoutShift(configuration, viewStart, callback) {
         if (!isLayoutShiftSupported()) return {
@@ -3958,7 +3560,7 @@
                     var _update = window.update(entry), cumulatedValue = _update.cumulatedValue;
                     if (_update.isMaxValue) {
                         var target = getTargetFromSource(entry.sources);
-                        maxClsTarget = target ? new WeakRef(target) : void 0, maxClsStartTime = elapsed(viewStart, entry.startTime);
+                        maxClsTarget = target ? new WeakRef(target) : void 0, maxClsStartTime = tools_elapsed(viewStart, entry.startTime);
                     }
                     if (cumulatedValue > maxClsValue) {
                         maxClsValue = cumulatedValue;
@@ -3993,7 +3595,7 @@
     var interactionCountEstimate = 0, minKnownInteractionId = 1 / 0, maxKnownInteractionId = 0;
     var getInteractionCount = function() {
         return observer ? interactionCountEstimate : window.performance.interactionCount || 0;
-    };
+    }, interactionSelectorCache = new Map;
     function trackInteractionToNextPaint(configuration, viewStart, viewLoadingType) {
         if (!(supportPerformanceTimingEvent("event") && window.PerformanceEventTiming && "interactionId" in PerformanceEventTiming.prototype)) return {
             getInteractionToNextPaint: function() {},
@@ -4058,7 +3660,7 @@
             }
             var relativeTimestamp, selector, newInteraction = longestInteractions.estimateP98Interaction();
             newInteraction && newInteraction.duration !== interactionToNextPaint && (interactionToNextPaint = newInteraction.duration, 
-            interactionToNextPaintStartTime = elapsed(viewStart, newInteraction.startTime), 
+            interactionToNextPaintStartTime = tools_elapsed(viewStart, newInteraction.startTime), 
             relativeTimestamp = newInteraction.startTime, selector = interactionSelectorCache.get(relativeTimestamp), 
             interactionSelectorCache.delete(relativeTimestamp), !(interactionToNextPaintTargetSelector = selector) && newInteraction.target && isElementNode(newInteraction.target) && (interactionToNextPaintTargetSelector = getSelectorFromElement(newInteraction.target, configuration.actionNameAttribute)));
         }
@@ -4098,7 +3700,7 @@
                 }
             }
             var _stop = waitPageActivityEnd(lifeCycle, domMutationObservable, configuration, (function(event) {
-                isWaitingForActivityLoadingTime && (isWaitingForActivityLoadingTime = !1, event.hadActivity && loadingTimeCandidates.push(elapsed(viewStart.timeStamp, event.end)), 
+                isWaitingForActivityLoadingTime && (isWaitingForActivityLoadingTime = !1, event.hadActivity && loadingTimeCandidates.push(tools_elapsed(viewStart.timeStamp, event.end)), 
                 invokeCallbackIfAllCandidatesAreReceived());
             })).stop;
             return {
@@ -4130,6 +3732,53 @@
             }
         };
     }
+    function trackViewEventCounts(lifeCycle, viewId, onChange) {
+        var _trackEventCounts = function(data) {
+            var lifeCycle = data.lifeCycle, isChildEvent = data.isChildEvent, callback = data.onChange;
+            void 0 === callback && (callback = tools_noop);
+            var eventCounts = {
+                errorCount: 0,
+                longTaskCount: 0,
+                resourceCount: 0,
+                actionCount: 0,
+                frustrationCount: 0
+            }, subscription = lifeCycle.subscribe(LifeCycleEventType_RUM_EVENT_COLLECTED, (function(event) {
+                if (event.type !== RumEventType.VIEW && isChildEvent(event)) switch (event.type) {
+                  case RumEventType.ERROR:
+                    eventCounts.errorCount += 1, callback();
+                    break;
+
+                  case RumEventType.ACTION:
+                    event.action.frustration && (eventCounts.frustrationCount += event.action.frustration.type.length), 
+                    eventCounts.actionCount += 1, callback();
+                    break;
+
+                  case RumEventType.LONG_TASK:
+                    eventCounts.longTaskCount += 1, callback();
+                    break;
+
+                  case RumEventType.RESOURCE:
+                    eventCounts.resourceCount += 1, callback();
+                }
+            }));
+            return {
+                stop: function() {
+                    subscription.unsubscribe();
+                },
+                eventCounts: eventCounts
+            };
+        }({
+            lifeCycle: lifeCycle,
+            isChildEvent: function(event) {
+                return event.view.id === viewId;
+            },
+            onChange: onChange
+        });
+        return {
+            stop: _trackEventCounts.stop,
+            eventCounts: _trackEventCounts.eventCounts
+        };
+    }
     function trackViews(location, lifeCycle, domMutationObservable, configuration, locationChangeObservable, areViewsTrackedAutomatically, initialViewOptions) {
         var activeViews = new Set;
         function startNewView(loadingType, startClocks, viewOptions) {
@@ -4154,19 +3803,7 @@
                 loadingType === ViewLoadingType_INITIAL_LOAD ? trackInitialViewMetrics(configuration, setLoadEvent, scheduleViewUpdate) : {
                     stop: tools_noop,
                     initialViewMetrics: {}
-                }), stopInitialViewMetricsTracking = _trackInitialViewTimings.stop, initialViewMetrics = _trackInitialViewTimings.initialViewMetrics, _trackViewEventCounts = function(lifeCycle, viewId, onChange) {
-                    var _trackEventCounts = trackEventCounts({
-                        lifeCycle: lifeCycle,
-                        isChildEvent: function(event) {
-                            return event.view.id === viewId;
-                        },
-                        onChange: onChange
-                    });
-                    return {
-                        stop: _trackEventCounts.stop,
-                        eventCounts: _trackEventCounts.eventCounts
-                    };
-                }(lifeCycle, id, scheduleViewUpdate), stopEventCountsTracking = _trackViewEventCounts.stop, eventCounts = _trackViewEventCounts.eventCounts, keepAliveIntervalId = timer_setInterval(triggerViewUpdate, 3e5), pageMayExitSubscription = lifeCycle.subscribe(LifeCycleEventType_PAGE_EXITED, (function(pageMayExitEvent) {
+                }), stopInitialViewMetricsTracking = _trackInitialViewTimings.stop, initialViewMetrics = _trackInitialViewTimings.initialViewMetrics, _trackViewEventCounts = trackViewEventCounts(lifeCycle, id, scheduleViewUpdate), stopEventCountsTracking = _trackViewEventCounts.stop, eventCounts = _trackViewEventCounts.eventCounts, keepAliveIntervalId = timer_setInterval(triggerViewUpdate, 3e5), pageMayExitSubscription = lifeCycle.subscribe(LifeCycleEventType_PAGE_EXITED, (function(pageMayExitEvent) {
                     pageMayExitEvent.reason === PageExitReason.UNLOADING && triggerViewUpdate();
                 }));
                 function triggerBeforeViewUpdate() {
@@ -4196,7 +3833,7 @@
                         startClocks: startClocks,
                         commonViewMetrics: getCommonViewMetrics(),
                         initialViewMetrics: initialViewMetrics,
-                        duration: elapsed(startClocks.timeStamp, currentEnd),
+                        duration: tools_elapsed(startClocks.timeStamp, currentEnd),
                         isActive: void 0 === endClocks,
                         sessionIsActive: sessionIsActive,
                         eventCounts: eventCounts
@@ -4229,7 +3866,7 @@
                         if (!endClocks) {
                             var relativeTime = function(time) {
                                 return time < 31536e6;
-                            }(time) ? time : elapsed(startClocks.timeStamp, time);
+                            }(time) ? time : tools_elapsed(startClocks.timeStamp, time);
                             customTimings[function(name) {
                                 var sanitized = name.replace(/[^a-zA-Z0-9-_.@$]/g, "_");
                                 sanitized !== name && console.warn("Invalid timing name: " + name + ", sanitized to: " + sanitized);
@@ -4477,11 +4114,11 @@
                                 })));
                             }();
                         }(clonedResponse.body, (function() {
-                            callback(elapsed(context.startClocks.timeStamp, timeStampNow()));
+                            callback(tools_elapsed(context.startClocks.timeStamp, timeStampNow()));
                         }), {
                             bytesLimit: Number.POSITIVE_INFINITY,
                             collectStreamBody: !1
-                        }) : callback(elapsed(context.startClocks.timeStamp, timeStampNow()));
+                        }) : callback(tools_elapsed(context.startClocks.timeStamp, timeStampNow()));
                     }(context, (function(duration) {
                         tracer.clearTracingIfNeeded(context), lifeCycle.notify(LifeCycleEventType_REQUEST_COMPLETED, {
                             duration: duration,
@@ -5139,7 +4776,7 @@
                 var locationChangeSubscription = locationChangeObservable.subscribe((function(data) {
                     var current = urlContextHistory.find();
                     if (current) {
-                        var changeTime = relativeNow();
+                        var changeTime = tools_relativeNow();
                         urlContextHistory.closeActive(changeTime), urlContextHistory.add(buildUrlContext({
                             url: data.newLocation.href,
                             location: data.newLocation,
@@ -5167,23 +4804,20 @@
                     }
                 };
             }(lifeCycle, locationChangeObservable, location), _startActionCollection = function(lifeCycle, domMutationObservable, configuration, pageStateHistory) {
-                lifeCycle.subscribe(LifeCycleEventType_AUTO_ACTION_COMPLETED, (function(action) {
+                return lifeCycle.subscribe(LifeCycleEventType_AUTO_ACTION_COMPLETED, (function(action) {
                     lifeCycle.notify(LifeCycleEventType_RAW_RUM_EVENT_COLLECTED, processAction(action, pageStateHistory));
-                }));
-                var actionContexts = {
-                    findActionId: tools_noop,
-                    findAllActionId: tools_noop
-                };
-                return configuration.trackUserInteractions && (actionContexts = trackClickActions(lifeCycle, domMutationObservable, configuration).actionContexts), 
-                {
-                    actionContexts: actionContexts,
+                })), {
+                    actionContexts: {
+                        findActionId: tools_noop,
+                        findAllActionId: tools_noop
+                    },
                     addAction: function(action, savedCommonContext) {
                         lifeCycle.notify(LifeCycleEventType_RAW_RUM_EVENT_COLLECTED, extend({
                             savedCommonContext: savedCommonContext
                         }, processAction(action, pageStateHistory)));
                     }
                 };
-            }(lifeCycle, domMutationObservable, configuration, pageStateHistory), actionContexts = _startActionCollection.actionContexts, addAction = _startActionCollection.addAction, displayContext = (viewport = getViewportDimension(), 
+            }(lifeCycle, 0, 0, pageStateHistory), actionContexts = _startActionCollection.actionContexts, addAction = _startActionCollection.addAction, displayContext = (viewport = getViewportDimension(), 
             {
                 get: function() {
                     return {
@@ -5206,7 +4840,7 @@
                     displayContext.stop(), pageStateHistory.stop(), urlContexts.stop(), viewContexts.stop();
                 }
             };
-        }(lifeCycle, configuration, location, session, userSession, pageStateHistory, locationChangeObservable, domMutationObservable, getCommonContext, reportError), viewContexts = _startRumEventCollection.viewContexts, urlContexts = _startRumEventCollection.urlContexts, actionContexts = _startRumEventCollection.actionContexts, stopRumEventCollection = _startRumEventCollection.stop, addAction = _startRumEventCollection.addAction;
+        }(lifeCycle, configuration, location, session, userSession, pageStateHistory, locationChangeObservable, 0, getCommonContext, reportError), viewContexts = _startRumEventCollection.viewContexts, urlContexts = _startRumEventCollection.urlContexts, actionContexts = _startRumEventCollection.actionContexts, stopRumEventCollection = _startRumEventCollection.stop, addAction = _startRumEventCollection.addAction;
         cleanupTasks.push(stopRumEventCollection);
         var _startViewCollection = startViewCollection(lifeCycle, configuration, location, domMutationObservable, locationChangeObservable, pageStateHistory, 0, initialViewOptions), addTiming = _startViewCollection.addTiming, startView = _startViewCollection.startView, setViewName = _startViewCollection.setViewName, setViewContext = _startViewCollection.setViewContext, setViewContextProperty = _startViewCollection.setViewContextProperty, getViewContext = _startViewCollection.getViewContext, stopViewCollection = _startViewCollection.stop;
         cleanupTasks.push(stopViewCollection);
