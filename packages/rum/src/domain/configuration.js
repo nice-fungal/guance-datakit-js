@@ -11,7 +11,7 @@ import {
   objectHasValue,
   isMatchOption,
   catchUserErrors,
-  getOrigin,
+  // getOrigin,
   each
 } from '@cloudcare/browser-core'
 import { buildEnv } from '../boot/buildEnv'
@@ -203,55 +203,55 @@ function validateAndBuildTracingOptions(initConfiguration) {
     return tracingOptions
   }
 
-  // Handle conversion of allowedTracingOrigins to allowedTracingUrls
-  if (initConfiguration.allowedTracingOrigins !== undefined) {
-    if (!isArray(initConfiguration.allowedTracingOrigins)) {
-      display.error('Allowed Tracing Origins should be an array')
-      return
-    }
+  // // Handle conversion of allowedTracingOrigins to allowedTracingUrls
+  // if (initConfiguration.allowedTracingOrigins !== undefined) {
+  //   if (!isArray(initConfiguration.allowedTracingOrigins)) {
+  //     display.error('Allowed Tracing Origins should be an array')
+  //     return
+  //   }
 
-    var tracingOptions = []
-    each(initConfiguration.allowedTracingOrigins, function (legacyMatchOption) {
-      var tracingOption = convertLegacyMatchOptionToTracingOption(
-        legacyMatchOption,
-        isNullUndefinedDefaultValue(
-          initConfiguration.traceType,
-          TraceType.DDTRACE
-        )
-      )
-      if (tracingOption) {
-        tracingOptions.push(tracingOption)
-      }
-    })
+  //   var tracingOptions = []
+  //   each(initConfiguration.allowedTracingOrigins, function (legacyMatchOption) {
+  //     var tracingOption = convertLegacyMatchOptionToTracingOption(
+  //       legacyMatchOption,
+  //       isNullUndefinedDefaultValue(
+  //         initConfiguration.traceType,
+  //         TraceType.DDTRACE
+  //       )
+  //     )
+  //     if (tracingOption) {
+  //       tracingOptions.push(tracingOption)
+  //     }
+  //   })
 
-    return tracingOptions
-  }
-  // Handle conversion of allowedDDTracingOrigins to allowedTracingUrls
-  if (initConfiguration.allowedDDTracingOrigins !== undefined) {
-    if (!isArray(initConfiguration.allowedDDTracingOrigins)) {
-      display.error('Allowed Tracing Origins should be an array')
-      return
-    }
+  //   return tracingOptions
+  // }
+  // // Handle conversion of allowedDDTracingOrigins to allowedTracingUrls
+  // if (initConfiguration.allowedDDTracingOrigins !== undefined) {
+  //   if (!isArray(initConfiguration.allowedDDTracingOrigins)) {
+  //     display.error('Allowed Tracing Origins should be an array')
+  //     return
+  //   }
 
-    var tracingOptions = []
-    each(
-      initConfiguration.allowedDDTracingOrigins,
-      function (legacyMatchOption) {
-        var tracingOption = convertLegacyMatchOptionToTracingOption(
-          legacyMatchOption,
-          isNullUndefinedDefaultValue(
-            initConfiguration.traceType,
-            TraceType.DDTRACE
-          )
-        )
-        if (tracingOption) {
-          tracingOptions.push(tracingOption)
-        }
-      }
-    )
+  //   var tracingOptions = []
+  //   each(
+  //     initConfiguration.allowedDDTracingOrigins,
+  //     function (legacyMatchOption) {
+  //       var tracingOption = convertLegacyMatchOptionToTracingOption(
+  //         legacyMatchOption,
+  //         isNullUndefinedDefaultValue(
+  //           initConfiguration.traceType,
+  //           TraceType.DDTRACE
+  //         )
+  //       )
+  //       if (tracingOption) {
+  //         tracingOptions.push(tracingOption)
+  //       }
+  //     }
+  //   )
 
-    return tracingOptions
-  }
+  //   return tracingOptions
+  // }
 
   return []
 }
@@ -260,27 +260,27 @@ function validateAndBuildTracingOptions(initConfiguration) {
  * Converts parameters from the deprecated allowedTracingOrigins
  * to allowedTracingUrls. Handles the change from origin to full URLs.
  */
-function convertLegacyMatchOptionToTracingOption(item, traceType) {
-  var match
-  if (typeof item === 'string') {
-    match = item
-  } else if (item instanceof RegExp) {
-    match = function (url) {
-      return item.test(getOrigin(url))
-    }
-  } else if (typeof item === 'function') {
-    match = function (url) {
-      return item(getOrigin(url))
-    }
-  }
+// function convertLegacyMatchOptionToTracingOption(item, traceType) {
+//   var match
+//   if (typeof item === 'string') {
+//     match = item
+//   } else if (item instanceof RegExp) {
+//     match = function (url) {
+//       return item.test(getOrigin(url))
+//     }
+//   } else if (typeof item === 'function') {
+//     match = function (url) {
+//       return item(getOrigin(url))
+//     }
+//   }
 
-  if (match === undefined) {
-    display.warn(
-      'Allowed Tracing Origins parameters should be a string, RegExp or function. Ignoring parameter',
-      item
-    )
-    return undefined
-  }
+//   if (match === undefined) {
+//     display.warn(
+//       'Allowed Tracing Origins parameters should be a string, RegExp or function. Ignoring parameter',
+//       item
+//     )
+//     return undefined
+//   }
 
-  return { match: match, traceType: traceType }
-}
+//   return { match: match, traceType: traceType }
+// }
