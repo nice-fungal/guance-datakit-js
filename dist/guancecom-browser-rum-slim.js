@@ -402,11 +402,6 @@
             return Browser_OTHER;
         }());
     }
-    function getLinkElementOrigin(element) {
-        if (element.origin && "null" !== element.origin) return element.origin;
-        var sanitizedHost = element.host.replace(/(:80|:443)$/, "");
-        return element.protocol + "//" + sanitizedHost;
-    }
     function withSnakeCaseKeys(candidate) {
         var result = {};
         return each(candidate, (function(value, key) {
@@ -566,7 +561,7 @@
         VIEW: "view",
         RESOURCE: "resource",
         LOGGER: "logger"
-    }, RumLongTaskEntryType_LONG_TASK = "long-task", RumLongTaskEntryType_LONG_ANIMATION_FRAME = "long-animation-frame", ViewLoadingType_INITIAL_LOAD = "initial_load", ViewLoadingType_ROUTE_CHANGE = "route_change", RequestType = {
+    }, ViewLoadingType_INITIAL_LOAD = "initial_load", ViewLoadingType_ROUTE_CHANGE = "route_change", RequestType = {
         FETCH: ResourceType_FETCH,
         XHR: ResourceType_XHR
     }, TraceType_DDTRACE = "ddtrace", enums_ErrorHandling_HANDLED = "handled", enums_ErrorHandling_UNHANDLED = "unhandled", NonErrorPrefix_UNCAUGHT = "Uncaught", NonErrorPrefix_PROVIDED = "Provided";
@@ -1136,10 +1131,11 @@
         };
     }
     function normalizeUrl(url) {
-        return buildUrl(url, getLinkElementOrigin(window.location)).href;
-    }
-    function getOrigin(url) {
-        return getLinkElementOrigin(buildUrl(url));
+        return buildUrl(url, function(element) {
+            if (element.origin && "null" !== element.origin) return element.origin;
+            var sanitizedHost = element.host.replace(/(:80|:443)$/, "");
+            return element.protocol + "//" + sanitizedHost;
+        }(window.location)).href;
     }
     function buildUrl(url, base) {
         if (function() {
@@ -2549,219 +2545,6 @@
             };
         }));
     }
-    var RESOURCE_TYPES = [ [ ResourceType_DOCUMENT, function(initiatorType) {
-        return "initial_document" === initiatorType;
-    } ], [ ResourceType_XHR, function(initiatorType) {
-        return "xmlhttprequest" === initiatorType;
-    } ], [ ResourceType_FETCH, function(initiatorType) {
-        return "fetch" === initiatorType;
-    } ], [ ResourceType_BEACON, function(initiatorType) {
-        return "beacon" === initiatorType;
-    } ], [ ResourceType_CSS, function(_, path) {
-        return null !== path.match(/\.css$/i);
-    } ], [ ResourceType_JS, function(_, path) {
-        return null !== path.match(/\.js$/i);
-    } ], [ ResourceType_IMAGE, function(initiatorType, path) {
-        return includes([ "image", "img", "icon" ], initiatorType) || null !== path.match(/\.(gif|jpg|jpeg|tiff|png|svg|ico)$/i);
-    } ], [ ResourceType_FONT, function(_, path) {
-        return null !== path.match(/\.(woff|eot|woff2|ttf)$/i);
-    } ], [ ResourceType_MEDIA, function(initiatorType, path) {
-        return includes([ "audio", "video" ], initiatorType) || null !== path.match(/\.(mp3|mp4)$/i);
-    } ] ];
-    function computeResourceEntryType(entry) {
-        var url = entry.name;
-        if (!function(url) {
-            try {
-                return !!buildUrl(url);
-            } catch (e) {
-                return !1;
-            }
-        }(url)) return ResourceType_OTHER;
-        var path = function(url) {
-            var pathname = buildUrl(url).pathname;
-            return "/" === pathname[0] ? pathname : "/" + pathname;
-        }(url), type = ResourceType_OTHER;
-        return each(RESOURCE_TYPES, (function(res) {
-            var _type = res[0];
-            if ((0, res[1])(entry.initiatorType, path)) return type = _type, !1;
-        })), type;
-    }
-    function areInOrder() {
-        for (var numbers = toArray(arguments), i = 1; i < numbers.length; i += 1) if (numbers[i - 1] > numbers[i]) return !1;
-        return !0;
-    }
-    function computeResourceEntryDeliveryType(entry) {
-        return "" === entry.deliveryType ? "other" : entry.deliveryType;
-    }
-    function computeResourceEntryProtocol(entry) {
-        return "" === entry.nextHopProtocol ? void 0 : entry.nextHopProtocol;
-    }
-    var resourceUtils_HAS_MULTI_BYTES_CHARACTERS = /[^\u0000-\u007F]/;
-    function isResourceUrlLimit(name, limitSize) {
-        return candidate = name, (resourceUtils_HAS_MULTI_BYTES_CHARACTERS.test(candidate) ? void 0 !== window.TextEncoder ? (new TextEncoder).encode(candidate).length : new Blob([ candidate ]).size : candidate.length) > limitSize;
-        var candidate;
-    }
-    function computeResourceEntryDuration(entry) {
-        return 0 === entry.duration && entry.startTime < entry.responseEnd ? msToNs(entry.responseEnd - entry.startTime) : msToNs(entry.duration);
-    }
-    function computePerformanceResourceDetails(entry) {
-        if (hasValidResourceEntryTimings(entry)) {
-            var startTime = entry.startTime, fetchStart = entry.fetchStart, redirectStart = entry.redirectStart, redirectEnd = entry.redirectEnd, domainLookupStart = entry.domainLookupStart, domainLookupEnd = entry.domainLookupEnd, connectStart = entry.connectStart, secureConnectionStart = entry.secureConnectionStart, connectEnd = entry.connectEnd, requestStart = entry.requestStart, responseStart = entry.responseStart, responseEnd = entry.responseEnd, details = {
-                firstbyte: msToNs(responseStart - requestStart),
-                trans: msToNs(responseEnd - responseStart),
-                downloadTime: formatTiming(startTime, responseStart, responseEnd),
-                firstByteTime: formatTiming(startTime, requestStart, responseStart)
-            };
-            return responseStart > 0 && responseStart <= tools_relativeNow() && (details.ttfb = msToNs(responseStart - requestStart)), 
-            connectEnd !== fetchStart && (details.tcp = msToNs(connectEnd - connectStart), details.connectTime = formatTiming(startTime, connectStart, connectEnd), 
-            areInOrder(connectStart, secureConnectionStart, connectEnd) && (details.ssl = msToNs(connectEnd - secureConnectionStart), 
-            details.sslTime = formatTiming(startTime, secureConnectionStart, connectEnd))), 
-            domainLookupEnd !== fetchStart && (details.dns = msToNs(domainLookupEnd - domainLookupStart), 
-            details.dnsTime = formatTiming(startTime, domainLookupStart, domainLookupEnd)), 
-            hasRedirection(entry) && (details.redirect = msToNs(redirectEnd - redirectStart), 
-            details.redirectTime = formatTiming(startTime, redirectStart, redirectEnd)), entry.renderBlockingStatus && (details.renderBlockingStatus = entry.renderBlockingStatus), 
-            details;
-        }
-    }
-    function hasValidResourceEntryDuration(entry) {
-        return entry.duration >= 0;
-    }
-    function hasValidResourceEntryTimings(entry) {
-        var areCommonTimingsInOrder = areInOrder(entry.startTime, entry.fetchStart, entry.domainLookupStart, entry.domainLookupEnd, entry.connectStart, entry.connectEnd, entry.requestStart, entry.responseStart, entry.responseEnd), areRedirectionTimingsInOrder = !hasRedirection(entry) || areInOrder(entry.startTime, entry.redirectStart, entry.redirectEnd, entry.fetchStart);
-        return areCommonTimingsInOrder && areRedirectionTimingsInOrder;
-    }
-    function hasRedirection(entry) {
-        return entry.redirectEnd > entry.startTime;
-    }
-    function formatTiming(origin, start, end) {
-        return {
-            duration: msToNs(end - start),
-            start: msToNs(start - origin)
-        };
-    }
-    function computeResourceEntrySize(entry) {
-        return entry.startTime < entry.responseStart ? {
-            size: entry.decodedBodySize,
-            encodedBodySize: entry.encodedBodySize,
-            decodedBodySize: entry.decodedBodySize,
-            transferSize: entry.transferSize
-        } : {
-            size: void 0,
-            encodedBodySize: void 0,
-            decodedBodySize: void 0,
-            transferSize: void 0
-        };
-    }
-    function isAllowedRequestUrl(configuration, url) {
-        return url && !function(url, configuration) {
-            var notTakeRequest = [ configuration.rumEndpoint ];
-            return configuration.logsEndpoint && notTakeRequest.push(configuration.logsEndpoint), 
-            configuration.sessionReplayEndPoint && notTakeRequest.push(configuration.sessionReplayEndPoint), 
-            some(notTakeRequest, (function(takeUrl) {
-                return 0 === url.indexOf(takeUrl);
-            })) || configuration.isIntakeUrl(url);
-        }(url, configuration);
-    }
-    var DATA_URL_REGEX = /data:(.+)?(;base64)?,/g;
-    function isLongDataUrl(url) {
-        return !(url.length <= 24e3) && ("data:" === url.substring(0, 5) && (url = url.substring(0, 24e3), 
-        !0));
-    }
-    function sanitizeDataUrl(url) {
-        return url.match(DATA_URL_REGEX)[0] + "[...]";
-    }
-    function retrieveFirstInputTiming(configuration, callback) {
-        var startTimeStamp = dateNow(), timingSent = !1, removeEventListeners = addEventListeners(window, [ DOM_EVENT_CLICK, DOM_EVENT_MOUSE_DOWN, DOM_EVENT_KEY_DOWN, DOM_EVENT_TOUCH_START, DOM_EVENT_POINTER_DOWN ], (function(evt) {
-            if (evt.cancelable) {
-                var timing = {
-                    entryType: "first-input",
-                    processingStart: tools_relativeNow(),
-                    processingEnd: tools_relativeNow(),
-                    startTime: evt.timeStamp,
-                    duration: 0,
-                    name: "",
-                    cancelable: !1,
-                    target: null,
-                    toJSON: function() {
-                        return {};
-                    }
-                };
-                evt.type === DOM_EVENT_POINTER_DOWN ? function(timing) {
-                    addEventListeners(window, [ DOM_EVENT_POINTER_UP, DOM_EVENT_POINTER_CANCEL ], (function(event) {
-                        event.type === DOM_EVENT_POINTER_UP && sendTiming(timing);
-                    }), {
-                        once: !0
-                    });
-                }(timing) : sendTiming(timing);
-            }
-        }), {
-            passive: !0,
-            capture: !0
-        }).stop;
-        return {
-            stop: removeEventListeners
-        };
-        function sendTiming(timing) {
-            if (!timingSent) {
-                timingSent = !0, removeEventListeners();
-                var delay = timing.processingStart - timing.startTime;
-                delay >= 0 && delay < dateNow() - startTimeStamp && callback(timing);
-            }
-        }
-    }
-    var resourceTimingBufferFullListener, RumPerformanceEntryType_EVENT = "event", RumPerformanceEntryType_FIRST_INPUT = "first-input", RumPerformanceEntryType_LARGEST_CONTENTFUL_PAINT = "largest-contentful-paint", RumPerformanceEntryType_LAYOUT_SHIFT = "layout-shift", RumPerformanceEntryType_LONG_TASK = "longtask", RumPerformanceEntryType_LONG_ANIMATION_FRAME = "long-animation-frame", RumPerformanceEntryType_NAVIGATION = "navigation", RumPerformanceEntryType_PAINT = "paint", RumPerformanceEntryType_RESOURCE = "resource", RumPerformanceEntryType_VISIBILITY_STATE = "visibility-state";
-    function createPerformanceObservable(configuration, options) {
-        return new Observable((function(observable) {
-            if (window.PerformanceObserver) {
-                var timeoutId, stopFirstInputTiming, handlePerformanceEntries = function(entries) {
-                    var rumPerformanceEntries = function(configuration, entries) {
-                        return entries.filter((function(entry) {
-                            return !function(configuration, entry) {
-                                return !(entry.entryType !== RumPerformanceEntryType_RESOURCE || isAllowedRequestUrl(configuration, entry.name) && hasValidResourceEntryDuration(entry));
-                            }(configuration, entry);
-                        }));
-                    }(configuration, entries);
-                    rumPerformanceEntries.length > 0 && observable.notify(rumPerformanceEntries);
-                }, isObserverInitializing = !0, observer = new PerformanceObserver(monitor((function(entries) {
-                    isObserverInitializing ? timeoutId = timer_setTimeout((function() {
-                        handlePerformanceEntries(entries.getEntries());
-                    })) : handlePerformanceEntries(entries.getEntries());
-                })));
-                try {
-                    observer.observe(options);
-                } catch (_unused) {
-                    if (includes([ RumPerformanceEntryType_RESOURCE, RumPerformanceEntryType_NAVIGATION, RumPerformanceEntryType_LONG_TASK, RumPerformanceEntryType_PAINT ], options.type)) {
-                        options.buffered && (timeoutId = timer_setTimeout((function() {
-                            handlePerformanceEntries(performance.getEntriesByType(options.type));
-                        })));
-                        try {
-                            observer.observe({
-                                entryTypes: [ options.type ]
-                            });
-                        } catch (_unused2) {
-                            return;
-                        }
-                    }
-                }
-                if (isObserverInitializing = !1, function(configuration) {
-                    !resourceTimingBufferFullListener && void 0 !== window.performance && "getEntries" in performance && "addEventListener" in performance && (resourceTimingBufferFullListener = addEventListener(performance, "resourcetimingbufferfull", (function() {
-                        performance.clearResourceTimings();
-                    })));
-                }(), !supportPerformanceTimingEvent(RumPerformanceEntryType_FIRST_INPUT) && options.type === RumPerformanceEntryType_FIRST_INPUT) {
-                    var _retrieveFirstInputTiming = retrieveFirstInputTiming(0, (function(timing) {
-                        handlePerformanceEntries([ timing ]);
-                    }));
-                    stopFirstInputTiming = _retrieveFirstInputTiming.stop;
-                }
-                return function() {
-                    observer.disconnect(), stopFirstInputTiming && stopFirstInputTiming(), timer_clearTimeout(timeoutId);
-                };
-            }
-        }));
-    }
-    function supportPerformanceTimingEvent(entryType) {
-        return window.PerformanceObserver && void 0 !== PerformanceObserver.supportedEntryTypes && PerformanceObserver.supportedEntryTypes.includes(entryType);
-    }
     var PageState_ACTIVE = "active", PageState_PASSIVE = "passive", PageState_HIDDEN = "hidden", PageState_FROZEN = "frozen", PageState_TERMINATED = "terminated";
     function startPageStateHistory(maxPageStateEntriesSelectable) {
         void 0 === maxPageStateEntriesSelectable && (maxPageStateEntriesSelectable = 500);
@@ -3142,6 +2925,219 @@
                 }
             };
         }(lifeCycle, pageStateHistory);
+    }
+    var RESOURCE_TYPES = [ [ ResourceType_DOCUMENT, function(initiatorType) {
+        return "initial_document" === initiatorType;
+    } ], [ ResourceType_XHR, function(initiatorType) {
+        return "xmlhttprequest" === initiatorType;
+    } ], [ ResourceType_FETCH, function(initiatorType) {
+        return "fetch" === initiatorType;
+    } ], [ ResourceType_BEACON, function(initiatorType) {
+        return "beacon" === initiatorType;
+    } ], [ ResourceType_CSS, function(_, path) {
+        return null !== path.match(/\.css$/i);
+    } ], [ ResourceType_JS, function(_, path) {
+        return null !== path.match(/\.js$/i);
+    } ], [ ResourceType_IMAGE, function(initiatorType, path) {
+        return includes([ "image", "img", "icon" ], initiatorType) || null !== path.match(/\.(gif|jpg|jpeg|tiff|png|svg|ico)$/i);
+    } ], [ ResourceType_FONT, function(_, path) {
+        return null !== path.match(/\.(woff|eot|woff2|ttf)$/i);
+    } ], [ ResourceType_MEDIA, function(initiatorType, path) {
+        return includes([ "audio", "video" ], initiatorType) || null !== path.match(/\.(mp3|mp4)$/i);
+    } ] ];
+    function computeResourceEntryType(entry) {
+        var url = entry.name;
+        if (!function(url) {
+            try {
+                return !!buildUrl(url);
+            } catch (e) {
+                return !1;
+            }
+        }(url)) return ResourceType_OTHER;
+        var path = function(url) {
+            var pathname = buildUrl(url).pathname;
+            return "/" === pathname[0] ? pathname : "/" + pathname;
+        }(url), type = ResourceType_OTHER;
+        return each(RESOURCE_TYPES, (function(res) {
+            var _type = res[0];
+            if ((0, res[1])(entry.initiatorType, path)) return type = _type, !1;
+        })), type;
+    }
+    function areInOrder() {
+        for (var numbers = toArray(arguments), i = 1; i < numbers.length; i += 1) if (numbers[i - 1] > numbers[i]) return !1;
+        return !0;
+    }
+    function computeResourceEntryDeliveryType(entry) {
+        return "" === entry.deliveryType ? "other" : entry.deliveryType;
+    }
+    function computeResourceEntryProtocol(entry) {
+        return "" === entry.nextHopProtocol ? void 0 : entry.nextHopProtocol;
+    }
+    var resourceUtils_HAS_MULTI_BYTES_CHARACTERS = /[^\u0000-\u007F]/;
+    function isResourceUrlLimit(name, limitSize) {
+        return candidate = name, (resourceUtils_HAS_MULTI_BYTES_CHARACTERS.test(candidate) ? void 0 !== window.TextEncoder ? (new TextEncoder).encode(candidate).length : new Blob([ candidate ]).size : candidate.length) > limitSize;
+        var candidate;
+    }
+    function computeResourceEntryDuration(entry) {
+        return 0 === entry.duration && entry.startTime < entry.responseEnd ? msToNs(entry.responseEnd - entry.startTime) : msToNs(entry.duration);
+    }
+    function computePerformanceResourceDetails(entry) {
+        if (hasValidResourceEntryTimings(entry)) {
+            var startTime = entry.startTime, fetchStart = entry.fetchStart, redirectStart = entry.redirectStart, redirectEnd = entry.redirectEnd, domainLookupStart = entry.domainLookupStart, domainLookupEnd = entry.domainLookupEnd, connectStart = entry.connectStart, secureConnectionStart = entry.secureConnectionStart, connectEnd = entry.connectEnd, requestStart = entry.requestStart, responseStart = entry.responseStart, responseEnd = entry.responseEnd, details = {
+                firstbyte: msToNs(responseStart - requestStart),
+                trans: msToNs(responseEnd - responseStart),
+                downloadTime: formatTiming(startTime, responseStart, responseEnd),
+                firstByteTime: formatTiming(startTime, requestStart, responseStart)
+            };
+            return responseStart > 0 && responseStart <= tools_relativeNow() && (details.ttfb = msToNs(responseStart - requestStart)), 
+            connectEnd !== fetchStart && (details.tcp = msToNs(connectEnd - connectStart), details.connectTime = formatTiming(startTime, connectStart, connectEnd), 
+            areInOrder(connectStart, secureConnectionStart, connectEnd) && (details.ssl = msToNs(connectEnd - secureConnectionStart), 
+            details.sslTime = formatTiming(startTime, secureConnectionStart, connectEnd))), 
+            domainLookupEnd !== fetchStart && (details.dns = msToNs(domainLookupEnd - domainLookupStart), 
+            details.dnsTime = formatTiming(startTime, domainLookupStart, domainLookupEnd)), 
+            hasRedirection(entry) && (details.redirect = msToNs(redirectEnd - redirectStart), 
+            details.redirectTime = formatTiming(startTime, redirectStart, redirectEnd)), entry.renderBlockingStatus && (details.renderBlockingStatus = entry.renderBlockingStatus), 
+            details;
+        }
+    }
+    function hasValidResourceEntryDuration(entry) {
+        return entry.duration >= 0;
+    }
+    function hasValidResourceEntryTimings(entry) {
+        var areCommonTimingsInOrder = areInOrder(entry.startTime, entry.fetchStart, entry.domainLookupStart, entry.domainLookupEnd, entry.connectStart, entry.connectEnd, entry.requestStart, entry.responseStart, entry.responseEnd), areRedirectionTimingsInOrder = !hasRedirection(entry) || areInOrder(entry.startTime, entry.redirectStart, entry.redirectEnd, entry.fetchStart);
+        return areCommonTimingsInOrder && areRedirectionTimingsInOrder;
+    }
+    function hasRedirection(entry) {
+        return entry.redirectEnd > entry.startTime;
+    }
+    function formatTiming(origin, start, end) {
+        return {
+            duration: msToNs(end - start),
+            start: msToNs(start - origin)
+        };
+    }
+    function computeResourceEntrySize(entry) {
+        return entry.startTime < entry.responseStart ? {
+            size: entry.decodedBodySize,
+            encodedBodySize: entry.encodedBodySize,
+            decodedBodySize: entry.decodedBodySize,
+            transferSize: entry.transferSize
+        } : {
+            size: void 0,
+            encodedBodySize: void 0,
+            decodedBodySize: void 0,
+            transferSize: void 0
+        };
+    }
+    function isAllowedRequestUrl(configuration, url) {
+        return url && !function(url, configuration) {
+            var notTakeRequest = [ configuration.rumEndpoint ];
+            return configuration.logsEndpoint && notTakeRequest.push(configuration.logsEndpoint), 
+            configuration.sessionReplayEndPoint && notTakeRequest.push(configuration.sessionReplayEndPoint), 
+            some(notTakeRequest, (function(takeUrl) {
+                return 0 === url.indexOf(takeUrl);
+            })) || configuration.isIntakeUrl(url);
+        }(url, configuration);
+    }
+    var DATA_URL_REGEX = /data:(.+)?(;base64)?,/g;
+    function isLongDataUrl(url) {
+        return !(url.length <= 24e3) && ("data:" === url.substring(0, 5) && (url = url.substring(0, 24e3), 
+        !0));
+    }
+    function sanitizeDataUrl(url) {
+        return url.match(DATA_URL_REGEX)[0] + "[...]";
+    }
+    function retrieveFirstInputTiming(configuration, callback) {
+        var startTimeStamp = dateNow(), timingSent = !1, removeEventListeners = addEventListeners(window, [ DOM_EVENT_CLICK, DOM_EVENT_MOUSE_DOWN, DOM_EVENT_KEY_DOWN, DOM_EVENT_TOUCH_START, DOM_EVENT_POINTER_DOWN ], (function(evt) {
+            if (evt.cancelable) {
+                var timing = {
+                    entryType: "first-input",
+                    processingStart: tools_relativeNow(),
+                    processingEnd: tools_relativeNow(),
+                    startTime: evt.timeStamp,
+                    duration: 0,
+                    name: "",
+                    cancelable: !1,
+                    target: null,
+                    toJSON: function() {
+                        return {};
+                    }
+                };
+                evt.type === DOM_EVENT_POINTER_DOWN ? function(timing) {
+                    addEventListeners(window, [ DOM_EVENT_POINTER_UP, DOM_EVENT_POINTER_CANCEL ], (function(event) {
+                        event.type === DOM_EVENT_POINTER_UP && sendTiming(timing);
+                    }), {
+                        once: !0
+                    });
+                }(timing) : sendTiming(timing);
+            }
+        }), {
+            passive: !0,
+            capture: !0
+        }).stop;
+        return {
+            stop: removeEventListeners
+        };
+        function sendTiming(timing) {
+            if (!timingSent) {
+                timingSent = !0, removeEventListeners();
+                var delay = timing.processingStart - timing.startTime;
+                delay >= 0 && delay < dateNow() - startTimeStamp && callback(timing);
+            }
+        }
+    }
+    var resourceTimingBufferFullListener, RumPerformanceEntryType_EVENT = "event", RumPerformanceEntryType_FIRST_INPUT = "first-input", RumPerformanceEntryType_LARGEST_CONTENTFUL_PAINT = "largest-contentful-paint", RumPerformanceEntryType_LAYOUT_SHIFT = "layout-shift", RumPerformanceEntryType_LONG_TASK = "longtask", RumPerformanceEntryType_NAVIGATION = "navigation", RumPerformanceEntryType_PAINT = "paint", RumPerformanceEntryType_RESOURCE = "resource", RumPerformanceEntryType_VISIBILITY_STATE = "visibility-state";
+    function createPerformanceObservable(configuration, options) {
+        return new Observable((function(observable) {
+            if (window.PerformanceObserver) {
+                var timeoutId, stopFirstInputTiming, handlePerformanceEntries = function(entries) {
+                    var rumPerformanceEntries = function(configuration, entries) {
+                        return entries.filter((function(entry) {
+                            return !function(configuration, entry) {
+                                return !(entry.entryType !== RumPerformanceEntryType_RESOURCE || isAllowedRequestUrl(configuration, entry.name) && hasValidResourceEntryDuration(entry));
+                            }(configuration, entry);
+                        }));
+                    }(configuration, entries);
+                    rumPerformanceEntries.length > 0 && observable.notify(rumPerformanceEntries);
+                }, isObserverInitializing = !0, observer = new PerformanceObserver(monitor((function(entries) {
+                    isObserverInitializing ? timeoutId = timer_setTimeout((function() {
+                        handlePerformanceEntries(entries.getEntries());
+                    })) : handlePerformanceEntries(entries.getEntries());
+                })));
+                try {
+                    observer.observe(options);
+                } catch (_unused) {
+                    if (includes([ RumPerformanceEntryType_RESOURCE, RumPerformanceEntryType_NAVIGATION, RumPerformanceEntryType_LONG_TASK, RumPerformanceEntryType_PAINT ], options.type)) {
+                        options.buffered && (timeoutId = timer_setTimeout((function() {
+                            handlePerformanceEntries(performance.getEntriesByType(options.type));
+                        })));
+                        try {
+                            observer.observe({
+                                entryTypes: [ options.type ]
+                            });
+                        } catch (_unused2) {
+                            return;
+                        }
+                    }
+                }
+                if (isObserverInitializing = !1, function(configuration) {
+                    !resourceTimingBufferFullListener && void 0 !== window.performance && "getEntries" in performance && "addEventListener" in performance && (resourceTimingBufferFullListener = addEventListener(performance, "resourcetimingbufferfull", (function() {
+                        performance.clearResourceTimings();
+                    })));
+                }(), !supportPerformanceTimingEvent(RumPerformanceEntryType_FIRST_INPUT) && options.type === RumPerformanceEntryType_FIRST_INPUT) {
+                    var _retrieveFirstInputTiming = retrieveFirstInputTiming(0, (function(timing) {
+                        handlePerformanceEntries([ timing ]);
+                    }));
+                    stopFirstInputTiming = _retrieveFirstInputTiming.stop;
+                }
+                return function() {
+                    observer.disconnect(), stopFirstInputTiming && stopFirstInputTiming(), timer_clearTimeout(timeoutId);
+                };
+            }
+        }));
+    }
+    function supportPerformanceTimingEvent(entryType) {
+        return window.PerformanceObserver && void 0 !== PerformanceObserver.supportedEntryTypes && PerformanceObserver.supportedEntryTypes.includes(entryType);
     }
     var supportScopeSelectorCache, STABLE_ATTRIBUTES = [ "data-guance-action-name", "data-testid", "data-test", "data-qa", "data-cy", "data-test-id", "data-qa-id", "data-testing", "data-component", "data-element", "data-source-file" ], GLOBALLY_UNIQUE_SELECTOR_GETTERS = [ getStableAttributeSelector, function(element) {
         if (element.id && !isGeneratedValue(element.id)) return "#" + cssEscape(element.id);
@@ -4365,22 +4361,6 @@
                             }) : "object" === getType(expectedItem = option) && isMatchOption(expectedItem.match) && isString(expectedItem.traceType) ? tracingOptions.push(option) : display.warn("Allowed Tracing Urls parameters should be a string, RegExp, function, or an object. Ignoring parameter", option);
                         })), tracingOptions;
                     }
-                    if (void 0 !== initConfiguration.allowedTracingOrigins) {
-                        if (!isArray(initConfiguration.allowedTracingOrigins)) return void display.error("Allowed Tracing Origins should be an array");
-                        tracingOptions = [];
-                        return each(initConfiguration.allowedTracingOrigins, (function(legacyMatchOption) {
-                            var tracingOption = convertLegacyMatchOptionToTracingOption(legacyMatchOption, isNullUndefinedDefaultValue(initConfiguration.traceType, TraceType_DDTRACE));
-                            tracingOption && tracingOptions.push(tracingOption);
-                        })), tracingOptions;
-                    }
-                    if (void 0 !== initConfiguration.allowedDDTracingOrigins) {
-                        if (!isArray(initConfiguration.allowedDDTracingOrigins)) return void display.error("Allowed Tracing Origins should be an array");
-                        tracingOptions = [];
-                        return each(initConfiguration.allowedDDTracingOrigins, (function(legacyMatchOption) {
-                            var tracingOption = convertLegacyMatchOptionToTracingOption(legacyMatchOption, isNullUndefinedDefaultValue(initConfiguration.traceType, TraceType_DDTRACE));
-                            tracingOption && tracingOptions.push(tracingOption);
-                        })), tracingOptions;
-                    }
                     return [];
                 }(initConfiguration);
                 if (allowedTracingUrls) if (void 0 === initConfiguration.tracingSampleRate || isPercentage(initConfiguration.tracingSampleRate)) if (void 0 === initConfiguration.excludedActivityUrls || isArray(initConfiguration.excludedActivityUrls)) {
@@ -4412,18 +4392,6 @@
                 } else display.error("Excluded Activity Urls should be an array"); else display.error("Tracing Sample Rate should be a number between 0 and 100");
             } else display.error("Error Session Replay Sample Rate should be a number between 0 and 100"); else display.error("Session Replay Sample Rate should be a number between 0 and 100"); else display.error("Error Session  Sample Rate should be a number between 0 and 100");
         } else display.error("Application ID is not configured, no RUM data will be collected.");
-    }
-    function convertLegacyMatchOptionToTracingOption(item, traceType) {
-        var match;
-        if ("string" == typeof item ? match = item : item instanceof RegExp ? match = function(url) {
-            return item.test(getOrigin(url));
-        } : "function" == typeof item && (match = function(url) {
-            return item(getOrigin(url));
-        }), void 0 !== match) return {
-            match: match,
-            traceType: traceType
-        };
-        display.warn("Allowed Tracing Origins parameters should be a string, RegExp or function. Ignoring parameter", item);
     }
     function createPreStartStrategy(rumPublicApiOptions, getCommonContext, doStartRum) {
         var buffer, firstStartViewCall, cachedInitConfiguration, cachedConfiguration, ignoreInitIfSyntheticsWillInjectRum = rumPublicApiOptions.ignoreInitIfSyntheticsWillInjectRum, bufferApiCalls = (buffer = [], 
@@ -4845,85 +4813,7 @@
         var _startViewCollection = startViewCollection(lifeCycle, configuration, location, domMutationObservable, locationChangeObservable, pageStateHistory, 0, initialViewOptions), addTiming = _startViewCollection.addTiming, startView = _startViewCollection.startView, setViewName = _startViewCollection.setViewName, setViewContext = _startViewCollection.setViewContext, setViewContextProperty = _startViewCollection.setViewContextProperty, getViewContext = _startViewCollection.getViewContext, stopViewCollection = _startViewCollection.stop;
         cleanupTasks.push(stopViewCollection);
         var _startResourceCollection = startResourceCollection(lifeCycle, configuration, pageStateHistory);
-        if (cleanupTasks.push(_startResourceCollection.stop), PerformanceObserver.supportedEntryTypes && PerformanceObserver.supportedEntryTypes.includes(RumPerformanceEntryType_LONG_ANIMATION_FRAME)) {
-            var longAnimationFrameCollection = function(lifeCycle, configuration) {
-                var performanceResourceSubscription = createPerformanceObservable(configuration, {
-                    type: RumPerformanceEntryType_LONG_ANIMATION_FRAME,
-                    buffered: !0
-                }).subscribe((function(entries) {
-                    for (var _i = 0, entries_1 = entries; _i < entries_1.length; _i++) {
-                        var entry = entries_1[_i], startClocks = relativeToClocks(entry.startTime), rawRumEvent = {
-                            date: startClocks.timeStamp,
-                            longTask: {
-                                id: UUID(),
-                                entryType: RumLongTaskEntryType_LONG_ANIMATION_FRAME,
-                                duration: toServerDuration(entry.duration),
-                                blockingDuration: toServerDuration(entry.blockingDuration),
-                                firstUiEventTimestamp: toServerDuration(entry.firstUIEventTimestamp),
-                                renderStart: toServerDuration(entry.renderStart),
-                                styleAndLayoutStart: toServerDuration(entry.styleAndLayoutStart),
-                                startTime: toServerDuration(entry.startTime),
-                                scripts: entry.scripts.map((function(script) {
-                                    return {
-                                        duration: toServerDuration(script.duration),
-                                        pause_duration: toServerDuration(script.pauseDuration),
-                                        forced_style_and_layout_duration: toServerDuration(script.forcedStyleAndLayoutDuration),
-                                        start_time: toServerDuration(script.startTime),
-                                        execution_start: toServerDuration(script.executionStart),
-                                        source_url: script.sourceURL,
-                                        source_function_name: script.sourceFunctionName,
-                                        source_char_position: script.sourceCharPosition,
-                                        invoker: script.invoker,
-                                        invoker_type: script.invokerType,
-                                        window_attribution: script.windowAttribution
-                                    };
-                                }))
-                            },
-                            type: RumEventType.LONG_TASK
-                        };
-                        lifeCycle.notify(LifeCycleEventType_RAW_RUM_EVENT_COLLECTED, {
-                            rawRumEvent: rawRumEvent,
-                            startTime: startClocks.relative,
-                            domainContext: {
-                                performanceEntry: entry
-                            }
-                        });
-                    }
-                }));
-                return {
-                    stop: function() {
-                        performanceResourceSubscription.unsubscribe();
-                    }
-                };
-            }(lifeCycle, configuration);
-            cleanupTasks.push(longAnimationFrameCollection.stop);
-        } else !function(lifeCycle, configuration) {
-            var performanceLongTaskSubscription = createPerformanceObservable(configuration, {
-                type: RumPerformanceEntryType_LONG_TASK,
-                buffered: !0
-            }).subscribe((function(entries) {
-                for (var i = 0; i < entries.length; i++) {
-                    var entry = entries[i];
-                    if (entry.entryType !== RumPerformanceEntryType_LONG_TASK) break;
-                    var startClocks = relativeToClocks(entry.startTime), rawRumEvent = {
-                        date: startClocks.timeStamp,
-                        longTask: {
-                            id: UUID(),
-                            entryType: RumLongTaskEntryType_LONG_TASK,
-                            duration: toServerDuration(entry.duration)
-                        },
-                        type: RumEventType.LONG_TASK
-                    };
-                    lifeCycle.notify(LifeCycleEventType_RAW_RUM_EVENT_COLLECTED, {
-                        rawRumEvent: rawRumEvent,
-                        startTime: startClocks.relative,
-                        domainContext: {
-                            performanceEntry: entry
-                        }
-                    });
-                }
-            }));
-        }(lifeCycle, configuration);
+        cleanupTasks.push(_startResourceCollection.stop);
         var addError = startErrorCollection(lifeCycle, 0, session, pageStateHistory).addError;
         startRequestCollection(lifeCycle, configuration);
         var internalContext = function(applicationId, sessionManager, viewContexts, actionContexts, urlContexts) {

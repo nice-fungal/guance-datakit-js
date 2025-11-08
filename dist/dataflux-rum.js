@@ -1536,7 +1536,7 @@ function isPercentage(value) {
   return isNumber(value) && value >= 0 && value <= 100;
 }
 function getLocationOrigin() {
-  return getLinkElementOrigin(window.location);
+  return tools_getLinkElementOrigin(window.location);
 }
 var Browser = {
   IE: 0,
@@ -1583,7 +1583,7 @@ function detectBrowser(browserWindow) {
  * IE fallback
  * https://developer.mozilla.org/en-US/docs/Web/API/HTMLHyperlinkElementUtils/origin
  */
-function getLinkElementOrigin(element) {
+function tools_getLinkElementOrigin(element) {
   if (element.origin && element.origin !== 'null') {
     return element.origin;
   }
@@ -6291,574 +6291,6 @@ function trackHistory(onHistoryChange) {
 function trackHash(onHashChange) {
   return addEventListener(window, DOM_EVENT.HASH_CHANGE, onHashChange);
 }
-;// CONCATENATED MODULE: ./src/domain/rumEventsCollection/resource/resourceUtils.js
-
-var FAKE_INITIAL_DOCUMENT = 'initial_document';
-var RESOURCE_TYPES = [[ResourceType.DOCUMENT, function (initiatorType) {
-  return FAKE_INITIAL_DOCUMENT === initiatorType;
-}], [ResourceType.XHR, function (initiatorType) {
-  return 'xmlhttprequest' === initiatorType;
-}], [ResourceType.FETCH, function (initiatorType) {
-  return 'fetch' === initiatorType;
-}], [ResourceType.BEACON, function (initiatorType) {
-  return 'beacon' === initiatorType;
-}], [ResourceType.CSS, function (_, path) {
-  return path.match(/\.css$/i) !== null;
-}], [ResourceType.JS, function (_, path) {
-  return path.match(/\.js$/i) !== null;
-}], [ResourceType.IMAGE, function (initiatorType, path) {
-  return includes(['image', 'img', 'icon'], initiatorType) || path.match(/\.(gif|jpg|jpeg|tiff|png|svg|ico)$/i) !== null;
-}], [ResourceType.FONT, function (_, path) {
-  return path.match(/\.(woff|eot|woff2|ttf)$/i) !== null;
-}], [ResourceType.MEDIA, function (initiatorType, path) {
-  return includes(['audio', 'video'], initiatorType) || path.match(/\.(mp3|mp4)$/i) !== null;
-}]];
-function computeResourceEntryType(entry) {
-  var url = entry.name;
-  if (!isValidUrl(url)) {
-    return ResourceType.OTHER;
-  }
-  var path = getPathName(url);
-  var type = ResourceType.OTHER;
-  each(RESOURCE_TYPES, function (res) {
-    var _type = res[0],
-      isType = res[1];
-    if (isType(entry.initiatorType, path)) {
-      type = _type;
-      return false;
-    }
-  });
-  return type;
-}
-function areInOrder() {
-  var numbers = toArray(arguments);
-  for (var i = 1; i < numbers.length; i += 1) {
-    if (numbers[i - 1] > numbers[i]) {
-      return false;
-    }
-  }
-  return true;
-}
-/**
- * Handles the 'deliveryType' property to distinguish between supported values ('cache', 'navigational-prefetch'),
- * undefined (unsupported in some browsers), and other cases ('other' for unknown or unrecognized values).
- * see: https://developer.mozilla.org/en-US/docs/Web/API/PerformanceResourceTiming/deliveryType
- */
-function computeResourceEntryDeliveryType(entry) {
-  return entry.deliveryType === '' ? 'other' : entry.deliveryType;
-}
-/**
- * The 'nextHopProtocol' is an empty string for cross-origin resources without CORS headers,
- * meaning the protocol is unknown, and we shouldn't report it.
- * https://developer.mozilla.org/en-US/docs/Web/API/PerformanceResourceTiming/nextHopProtocol#cross-origin_resources
- */
-function computeResourceEntryProtocol(entry) {
-  return entry.nextHopProtocol === '' ? undefined : entry.nextHopProtocol;
-}
-function isResourceEntryRequestType(entry) {
-  return entry.initiatorType === 'xmlhttprequest' || entry.initiatorType === 'fetch';
-}
-var resourceUtils_HAS_MULTI_BYTES_CHARACTERS = /[^\u0000-\u007F]/;
-function getStrSize(candidate) {
-  if (!resourceUtils_HAS_MULTI_BYTES_CHARACTERS.test(candidate)) {
-    return candidate.length;
-  }
-  if (window.TextEncoder !== undefined) {
-    return new TextEncoder().encode(candidate).length;
-  }
-  return new Blob([candidate]).size;
-}
-function isResourceUrlLimit(name, limitSize) {
-  return getStrSize(name) > limitSize;
-}
-function computeResourceEntryDuration(entry) {
-  // Safari duration is always 0 on timings blocked by cross origin policies.
-  if (entry.duration === 0 && entry.startTime < entry.responseEnd) {
-    return msToNs(entry.responseEnd - entry.startTime);
-  }
-  return msToNs(entry.duration);
-}
-function is304(entry) {
-  if (entry.encodedBodySize > 0 && entry.transferSize > 0 && entry.transferSize < entry.encodedBodySize) {
-    return true;
-  }
-
-  // unknown
-  return null;
-}
-function isCacheHit(entry) {
-  // if we transferred bytes, it must not be a cache hit
-  // (will return false for 304 Not Modified)
-  if (entry.transferSize > 0) return false;
-
-  // if the body size is non-zero, it must mean this is a
-  // ResourceTiming2 browser, this was same-origin or TAO,
-  // and transferSize was 0, so it was in the cache
-  if (entry.decodedBodySize > 0) return true;
-
-  // fall back to duration checking (non-RT2 or cross-origin)
-  return entry.duration < 30;
-}
-//  interface PerformanceResourceDetails {
-//   redirect?: PerformanceResourceDetailsElement
-//   dns?: PerformanceResourceDetailsElement
-//   connect?: PerformanceResourceDetailsElement
-//   ssl?: PerformanceResourceDetailsElement
-//   firstByte: PerformanceResourceDetailsElement
-//   download: PerformanceResourceDetailsElement
-//   fmp:
-// }
-// page_fmp	float		首屏时间(用于衡量用户什么时候看到页面的主要内容)，跟FCP的时长非常接近，这里我们就用FCP的时间作为首屏时间	firstPaintContentEnd - firstPaintContentStart
-// page_fpt	float		首次渲染时间，即白屏时间(从请求开始到浏览器开始解析第一批HTML文档字节的时间差。)	responseEnd - fetchStart
-// page_tti	float		首次可交互时间(浏览器完成所有HTML解析并且完成DOM构建，此时浏览器开始加载资源。)	domInteractive - fetchStart
-// page_firstbyte	float		首包时间	responseStart - domainLookupStart
-// page_dom_ready	float		DOM Ready时间(如果页面有同步执行的JS，则同步JS执行时间=ready-tti。)	domContentLoadEventEnd - fetchStart
-// page_load	float		页面完全加载时间(load=首次渲染时间+DOM解析耗时+同步JS执行+资源加载耗时。)	loadEventStart - fetchStart
-// page_dns	float		dns解析时间	domainLookupEnd - domainLookupStart
-// page_tcp	float		tcp连接时间	connectEnd - connectStart
-// page_ssl	float		ssl安全连接时间(仅适用于https)	connectEnd - secureConnectionStart
-// page_ttfb	float		请求响应耗时	responseStart - requestStart
-// page_trans	float		内容传输时间	responseEnd - responseStart
-// page_dom	float		DOM解析耗时	domInteractive - responseEnd
-// page_resource_load_time	float		资源加载时间	loadEventStart - domContentLoadedEventEnd
-
-//  navigationStart：当前浏览器窗口的前一个网页关闭，发生unload事件时的Unix毫秒时间戳。如果没有前一个网页，则等于fetchStart属性。
-
-// ·   unloadEventStart：如果前一个网页与当前网页属于同一个域名，则返回前一个网页的unload事件发生时的Unix毫秒时间戳。如果没有前一个网页，或者之前的网页跳转不是在同一个域名内，则返回值为0。
-
-// ·   unloadEventEnd：如果前一个网页与当前网页属于同一个域名，则返回前一个网页unload事件的回调函数结束时的Unix毫秒时间戳。如果没有前一个网页，或者之前的网页跳转不是在同一个域名内，则返回值为0。
-
-// ·   redirectStart：返回第一个HTTP跳转开始时的Unix毫秒时间戳。如果没有跳转，或者不是同一个域名内部的跳转，则返回值为0。
-
-// ·   redirectEnd：返回最后一个HTTP跳转结束时（即跳转回应的最后一个字节接受完成时）的Unix毫秒时间戳。如果没有跳转，或者不是同一个域名内部的跳转，则返回值为0。
-
-// ·   fetchStart：返回浏览器准备使用HTTP请求读取文档时的Unix毫秒时间戳。该事件在网页查询本地缓存之前发生。
-
-// ·   domainLookupStart：返回域名查询开始时的Unix毫秒时间戳。如果使用持久连接，或者信息是从本地缓存获取的，则返回值等同于fetchStart属性的值。
-
-// ·   domainLookupEnd：返回域名查询结束时的Unix毫秒时间戳。如果使用持久连接，或者信息是从本地缓存获取的，则返回值等同于fetchStart属性的值。
-
-// ·   connectStart：返回HTTP请求开始向服务器发送时的Unix毫秒时间戳。如果使用持久连接（persistent connection），则返回值等同于fetchStart属性的值。
-
-// ·   connectEnd：返回浏览器与服务器之间的连接建立时的Unix毫秒时间戳。如果建立的是持久连接，则返回值等同于fetchStart属性的值。连接建立指的是所有握手和认证过程全部结束。
-
-// ·   secureConnectionStart：返回浏览器与服务器开始安全链接的握手时的Unix毫秒时间戳。如果当前网页不要求安全连接，则返回0。
-
-// ·   requestStart：返回浏览器向服务器发出HTTP请求时（或开始读取本地缓存时）的Unix毫秒时间戳。
-
-// ·   responseStart：返回浏览器从服务器收到（或从本地缓存读取）第一个字节时的Unix毫秒时间戳。
-
-// ·   responseEnd：返回浏览器从服务器收到（或从本地缓存读取）最后一个字节时（如果在此之前HTTP连接已经关闭，则返回关闭时）的Unix毫秒时间戳。
-
-// ·   domLoading：返回当前网页DOM结构开始解析时（即Document.readyState属性变为“loading”、相应的readystatechange事件触发时）的Unix毫秒时间戳。
-
-// ·   domInteractive：返回当前网页DOM结构结束解析、开始加载内嵌资源时（即Document.readyState属性变为“interactive”、相应的readystatechange事件触发时）的Unix毫秒时间戳。
-
-// ·   domContentLoadedEventStart：返回当前网页DOMContentLoaded事件发生时（即DOM结构解析完毕、所有脚本开始运行时）的Unix毫秒时间戳。
-
-// ·   domContentLoadedEventEnd：返回当前网页所有需要执行的脚本执行完成时的Unix毫秒时间戳。
-
-// ·   domComplete：返回当前网页DOM结构生成时（即Document.readyState属性变为“complete”，以及相应的readystatechange事件发生时）的Unix毫秒时间戳。
-
-// ·   loadEventStart：返回当前网页load事件的回调函数开始时的Unix毫秒时间戳。如果该事件还没有发生，返回0。
-
-// ·   loadEventEnd：返回当前网页load事件的回调函数运行结束时的Unix毫秒时间戳。如果该事件还没有发生，返回0
-function computePerformanceResourceDetails(entry) {
-  if (!hasValidResourceEntryTimings(entry)) {
-    return undefined;
-  }
-  var startTime = entry.startTime,
-    fetchStart = entry.fetchStart,
-    redirectStart = entry.redirectStart,
-    redirectEnd = entry.redirectEnd,
-    domainLookupStart = entry.domainLookupStart,
-    domainLookupEnd = entry.domainLookupEnd,
-    connectStart = entry.connectStart,
-    secureConnectionStart = entry.secureConnectionStart,
-    connectEnd = entry.connectEnd,
-    requestStart = entry.requestStart,
-    responseStart = entry.responseStart,
-    responseEnd = entry.responseEnd;
-  var details = {
-    firstbyte: msToNs(responseStart - requestStart),
-    trans: msToNs(responseEnd - responseStart),
-    downloadTime: formatTiming(startTime, responseStart, responseEnd),
-    firstByteTime: formatTiming(startTime, requestStart, responseStart)
-  };
-  if (responseStart > 0 && responseStart <= preferredNow()) {
-    details.ttfb = msToNs(responseStart - requestStart);
-  }
-  // Make sure a connection occurred
-  if (connectEnd !== fetchStart) {
-    details.tcp = msToNs(connectEnd - connectStart);
-    details.connectTime = formatTiming(startTime, connectStart, connectEnd);
-    // Make sure a secure connection occurred
-    if (areInOrder(connectStart, secureConnectionStart, connectEnd)) {
-      details.ssl = msToNs(connectEnd - secureConnectionStart);
-      details.sslTime = formatTiming(startTime, secureConnectionStart, connectEnd);
-    }
-  }
-
-  // Make sure a domain lookup occurred
-  if (domainLookupEnd !== fetchStart) {
-    details.dns = msToNs(domainLookupEnd - domainLookupStart);
-    details.dnsTime = formatTiming(startTime, domainLookupStart, domainLookupEnd);
-  }
-  if (hasRedirection(entry)) {
-    details.redirect = msToNs(redirectEnd - redirectStart);
-    details.redirectTime = formatTiming(startTime, redirectStart, redirectEnd);
-  }
-  // renderBlockstatus
-  if (entry.renderBlockingStatus) {
-    details.renderBlockingStatus = entry.renderBlockingStatus;
-  }
-  return details;
-}
-function hasValidResourceEntryDuration(entry) {
-  return entry.duration >= 0;
-}
-function hasValidResourceEntryTimings(entry) {
-  var areCommonTimingsInOrder = areInOrder(entry.startTime, entry.fetchStart, entry.domainLookupStart, entry.domainLookupEnd, entry.connectStart, entry.connectEnd, entry.requestStart, entry.responseStart, entry.responseEnd);
-  var areRedirectionTimingsInOrder = hasRedirection(entry) ? areInOrder(entry.startTime, entry.redirectStart, entry.redirectEnd, entry.fetchStart) : true;
-  return areCommonTimingsInOrder && areRedirectionTimingsInOrder;
-}
-function hasRedirection(entry) {
-  return entry.redirectEnd > entry.startTime;
-}
-function formatTiming(origin, start, end) {
-  return {
-    duration: msToNs(end - start),
-    start: msToNs(start - origin)
-  };
-}
-function computeResourceEntrySize(entry) {
-  // Make sure a request actually occurred
-  if (entry.startTime < entry.responseStart) {
-    return {
-      size: entry.decodedBodySize,
-      encodedBodySize: entry.encodedBodySize,
-      decodedBodySize: entry.decodedBodySize,
-      transferSize: entry.transferSize
-    };
-    // return {
-    //   size: entry.decodedBodySize,
-    //   encodeSize:
-    //     Number.MAX_SAFE_INTEGER < entry.encodedBodySize
-    //       ? 0
-    //       : entry.encodedBodySize // max safe interger
-    // }
-  }
-  return {
-    size: undefined,
-    encodedBodySize: undefined,
-    decodedBodySize: undefined,
-    transferSize: undefined
-  };
-}
-function isAllowedRequestUrl(configuration, url) {
-  return url && !isIntakeRequest(url, configuration);
-}
-var DATA_URL_REGEX = /data:(.+)?(;base64)?,/g;
-var MAX_ATTRIBUTE_VALUE_CHAR_LENGTH = 24000;
-function isLongDataUrl(url) {
-  if (url.length <= MAX_ATTRIBUTE_VALUE_CHAR_LENGTH) {
-    return false;
-  } else if (url.substring(0, 5) === 'data:') {
-    // Avoid String.match RangeError: Maximum call stack size exceeded
-    url = url.substring(0, MAX_ATTRIBUTE_VALUE_CHAR_LENGTH);
-    return true;
-  }
-  return false;
-}
-function sanitizeDataUrl(url) {
-  return url.match(DATA_URL_REGEX)[0] + '[...]';
-}
-;// CONCATENATED MODULE: ./src/domain/firstInputPolyfill.js
-
-/**
- * first-input timing entry polyfill based on
- * https://github.com/GoogleChrome/web-vitals/blob/master/src/lib/polyfills/firstInputPolyfill.ts
- */
-function retrieveFirstInputTiming(configuration, callback) {
-  var startTimeStamp = dateNow();
-  var timingSent = false;
-  var _addEventListeners = addEventListeners(window, [DOM_EVENT.CLICK, DOM_EVENT.MOUSE_DOWN, DOM_EVENT.KEY_DOWN, DOM_EVENT.TOUCH_START, DOM_EVENT.POINTER_DOWN], function (evt) {
-    // Only count cancelable events, which should trigger behavior important to the user.
-    if (!evt.cancelable) {
-      return;
-    }
-
-    // This timing will be used to compute the "first Input delay", which is the delta between
-    // when the system received the event (e.g. evt.timeStamp) and when it could run the callback
-    // (e.g. performance.now()).
-    var timing = {
-      entryType: 'first-input',
-      processingStart: tools_relativeNow(),
-      processingEnd: tools_relativeNow(),
-      startTime: evt.timeStamp,
-      duration: 0,
-      // arbitrary value to avoid nullable duration and simplify INP logic
-      name: '',
-      cancelable: false,
-      target: null,
-      toJSON: function toJSON() {
-        return {};
-      }
-    };
-    if (evt.type === DOM_EVENT.POINTER_DOWN) {
-      sendTimingIfPointerIsNotCancelled(timing);
-    } else {
-      sendTiming(timing);
-    }
-  }, {
-    passive: true,
-    capture: true
-  });
-  var removeEventListeners = _addEventListeners.stop;
-  return {
-    stop: removeEventListeners
-  };
-
-  /**
-   * Pointer events are a special case, because they can trigger main or compositor thread behavior.
-   * We differentiate these cases based on whether or not we see a pointercancel event, which are
-   * fired when we scroll. If we're scrolling we don't need to report input delay since FID excludes
-   * scrolling and pinch/zooming.
-   */
-  function sendTimingIfPointerIsNotCancelled(timing) {
-    addEventListeners(window, [DOM_EVENT.POINTER_UP, DOM_EVENT.POINTER_CANCEL], function (event) {
-      if (event.type === DOM_EVENT.POINTER_UP) {
-        sendTiming(timing);
-      }
-    }, {
-      once: true
-    });
-  }
-  function sendTiming(timing) {
-    if (!timingSent) {
-      timingSent = true;
-      removeEventListeners();
-      // In some cases the recorded delay is clearly wrong, e.g. it's negative or it's larger than
-      // the time between now and when the page was loaded.
-      // - https://github.com/GoogleChromeLabs/first-input-delay/issues/4
-      // - https://github.com/GoogleChromeLabs/first-input-delay/issues/6
-      // - https://github.com/GoogleChromeLabs/first-input-delay/issues/7
-      var delay = timing.processingStart - timing.startTime;
-      if (delay >= 0 && delay < dateNow() - startTimeStamp) {
-        callback(timing);
-      }
-    }
-  }
-}
-;// CONCATENATED MODULE: ./src/domain/performanceObservable.js
-
-
-
-// We want to use a real enum (i.e. not a const enum) here, to be able to check whether an arbitrary
-// string is an expected performance entry
-// eslint-disable-next-line no-restricted-syntax
-var RumPerformanceEntryType = {
-  EVENT: 'event',
-  FIRST_INPUT: 'first-input',
-  LARGEST_CONTENTFUL_PAINT: 'largest-contentful-paint',
-  LAYOUT_SHIFT: 'layout-shift',
-  LONG_TASK: 'longtask',
-  LONG_ANIMATION_FRAME: 'long-animation-frame',
-  NAVIGATION: 'navigation',
-  PAINT: 'paint',
-  RESOURCE: 'resource',
-  VISIBILITY_STATE: 'visibility-state'
-};
-function createPerformanceObservable(configuration, options) {
-  return new Observable(function (observable) {
-    if (!window.PerformanceObserver) {
-      return;
-    }
-    var handlePerformanceEntries = function handlePerformanceEntries(entries) {
-      var rumPerformanceEntries = filterRumPerformanceEntries(configuration, entries);
-      if (rumPerformanceEntries.length > 0) {
-        observable.notify(rumPerformanceEntries);
-      }
-    };
-    var timeoutId;
-    var isObserverInitializing = true;
-    var observer = new PerformanceObserver(monitor(function (entries) {
-      // In Safari the performance observer callback is synchronous.
-      // Because the buffered performance entry list can be quite large we delay the computation to prevent the SDK from blocking the main thread on init
-      if (isObserverInitializing) {
-        timeoutId = timer_setTimeout(function () {
-          handlePerformanceEntries(entries.getEntries());
-        });
-      } else {
-        handlePerformanceEntries(entries.getEntries());
-      }
-    }));
-    try {
-      observer.observe(options);
-    } catch (_unused) {
-      // Some old browser versions (<= chrome 74 ) don't support the PerformanceObserver type and buffered options
-      // In these cases, fallback to getEntriesByType and PerformanceObserver with entryTypes
-      // TODO: remove this fallback in the next major version
-      var fallbackSupportedEntryTypes = [RumPerformanceEntryType.RESOURCE, RumPerformanceEntryType.NAVIGATION, RumPerformanceEntryType.LONG_TASK, RumPerformanceEntryType.PAINT];
-      if (includes(fallbackSupportedEntryTypes, options.type)) {
-        if (options.buffered) {
-          timeoutId = timer_setTimeout(function () {
-            handlePerformanceEntries(performance.getEntriesByType(options.type));
-          });
-        }
-        try {
-          observer.observe({
-            entryTypes: [options.type]
-          });
-        } catch (_unused2) {
-          // Old versions of Safari are throwing "entryTypes contained only unsupported types"
-          // errors when observing only unsupported entry types.
-          //
-          // We could use `supportPerformanceTimingEvent` to make sure we don't invoke
-          // `observer.observe` with an unsupported entry type, but Safari 11 and 12 don't support
-          // `Performance.supportedEntryTypes`, so doing so would lose support for these versions
-          // even if they do support the entry type.
-          return;
-        }
-      }
-    }
-    isObserverInitializing = false;
-    manageResourceTimingBufferFull(configuration);
-    var stopFirstInputTiming;
-    if (!supportPerformanceTimingEvent(RumPerformanceEntryType.FIRST_INPUT) && options.type === RumPerformanceEntryType.FIRST_INPUT) {
-      var _retrieveFirstInputTiming = retrieveFirstInputTiming(configuration, function (timing) {
-        handlePerformanceEntries([timing]);
-      });
-      stopFirstInputTiming = _retrieveFirstInputTiming.stop;
-    }
-    return function () {
-      observer.disconnect();
-      if (stopFirstInputTiming) {
-        stopFirstInputTiming();
-      }
-      timer_clearTimeout(timeoutId);
-    };
-  });
-}
-var resourceTimingBufferFullListener;
-function manageResourceTimingBufferFull(configuration) {
-  if (!resourceTimingBufferFullListener && supportPerformanceObject() && 'addEventListener' in performance) {
-    // https://bugzilla.mozilla.org/show_bug.cgi?id=1559377
-    resourceTimingBufferFullListener = addEventListener(performance, 'resourcetimingbufferfull', function () {
-      performance.clearResourceTimings();
-    });
-  }
-  return function () {
-    resourceTimingBufferFullListener && resourceTimingBufferFullListener.stop();
-  };
-}
-function supportPerformanceObject() {
-  return window.performance !== undefined && 'getEntries' in performance;
-}
-function supportPerformanceTimingEvent(entryType) {
-  return window.PerformanceObserver && PerformanceObserver.supportedEntryTypes !== undefined && PerformanceObserver.supportedEntryTypes.includes(entryType);
-}
-function filterRumPerformanceEntries(configuration, entries) {
-  return entries.filter(function (entry) {
-    return !isForbiddenResource(configuration, entry);
-  });
-}
-function isForbiddenResource(configuration, entry) {
-  return entry.entryType === RumPerformanceEntryType.RESOURCE && (!isAllowedRequestUrl(configuration, entry.name) || !hasValidResourceEntryDuration(entry));
-}
-;// CONCATENATED MODULE: ./src/domain/rumEventsCollection/longTask/longTaskCollection.js
-
-
-function startLongTaskCollection(lifeCycle, configuration) {
-  var performanceLongTaskSubscription = createPerformanceObservable(configuration, {
-    type: RumPerformanceEntryType.LONG_TASK,
-    buffered: true
-  }).subscribe(function (entries) {
-    for (var i = 0; i < entries.length; i++) {
-      var entry = entries[i];
-      if (entry.entryType !== RumPerformanceEntryType.LONG_TASK) {
-        break;
-      }
-      var startClocks = relativeToClocks(entry.startTime);
-      var rawRumEvent = {
-        date: startClocks.timeStamp,
-        longTask: {
-          id: UUID(),
-          entryType: RumLongTaskEntryType.LONG_TASK,
-          duration: toServerDuration(entry.duration)
-        },
-        type: RumEventType.LONG_TASK
-      };
-      lifeCycle.notify(LifeCycleEventType.RAW_RUM_EVENT_COLLECTED, {
-        rawRumEvent: rawRumEvent,
-        startTime: startClocks.relative,
-        domainContext: {
-          performanceEntry: entry
-        }
-      });
-    }
-  });
-  return {
-    stop: function stop() {
-      performanceLongTaskSubscription.unsubscribe();
-    }
-  };
-}
-;// CONCATENATED MODULE: ./src/domain/rumEventsCollection/longTask/longAnimationFrameCollection.js
-
-
-function startLongAnimationFrameCollection(lifeCycle, configuration) {
-  var performanceResourceSubscription = createPerformanceObservable(configuration, {
-    type: RumPerformanceEntryType.LONG_ANIMATION_FRAME,
-    buffered: true
-  }).subscribe(function (entries) {
-    for (var _i = 0, entries_1 = entries; _i < entries_1.length; _i++) {
-      var entry = entries_1[_i];
-      var startClocks = relativeToClocks(entry.startTime);
-      var rawRumEvent = {
-        date: startClocks.timeStamp,
-        longTask: {
-          id: UUID(),
-          entryType: RumLongTaskEntryType.LONG_ANIMATION_FRAME,
-          duration: toServerDuration(entry.duration),
-          blockingDuration: toServerDuration(entry.blockingDuration),
-          firstUiEventTimestamp: toServerDuration(entry.firstUIEventTimestamp),
-          renderStart: toServerDuration(entry.renderStart),
-          styleAndLayoutStart: toServerDuration(entry.styleAndLayoutStart),
-          startTime: toServerDuration(entry.startTime),
-          scripts: entry.scripts.map(function (script) {
-            return {
-              duration: toServerDuration(script.duration),
-              pause_duration: toServerDuration(script.pauseDuration),
-              forced_style_and_layout_duration: toServerDuration(script.forcedStyleAndLayoutDuration),
-              start_time: toServerDuration(script.startTime),
-              execution_start: toServerDuration(script.executionStart),
-              source_url: script.sourceURL,
-              source_function_name: script.sourceFunctionName,
-              source_char_position: script.sourceCharPosition,
-              invoker: script.invoker,
-              invoker_type: script.invokerType,
-              window_attribution: script.windowAttribution
-            };
-          })
-        },
-        type: RumEventType.LONG_TASK
-      };
-      lifeCycle.notify(LifeCycleEventType.RAW_RUM_EVENT_COLLECTED, {
-        rawRumEvent: rawRumEvent,
-        startTime: startClocks.relative,
-        domainContext: {
-          performanceEntry: entry
-        }
-      });
-    }
-  });
-  return {
-    stop: function stop() {
-      performanceResourceSubscription.unsubscribe();
-    }
-  };
-}
 ;// CONCATENATED MODULE: ./src/domain/contexts/pageStateHistory.js
 
 
@@ -7542,6 +6974,481 @@ function processError(error, pageStateHistory) {
       error: error.originalError
     }
   };
+}
+;// CONCATENATED MODULE: ./src/domain/rumEventsCollection/resource/resourceUtils.js
+
+var FAKE_INITIAL_DOCUMENT = 'initial_document';
+var RESOURCE_TYPES = [[ResourceType.DOCUMENT, function (initiatorType) {
+  return FAKE_INITIAL_DOCUMENT === initiatorType;
+}], [ResourceType.XHR, function (initiatorType) {
+  return 'xmlhttprequest' === initiatorType;
+}], [ResourceType.FETCH, function (initiatorType) {
+  return 'fetch' === initiatorType;
+}], [ResourceType.BEACON, function (initiatorType) {
+  return 'beacon' === initiatorType;
+}], [ResourceType.CSS, function (_, path) {
+  return path.match(/\.css$/i) !== null;
+}], [ResourceType.JS, function (_, path) {
+  return path.match(/\.js$/i) !== null;
+}], [ResourceType.IMAGE, function (initiatorType, path) {
+  return includes(['image', 'img', 'icon'], initiatorType) || path.match(/\.(gif|jpg|jpeg|tiff|png|svg|ico)$/i) !== null;
+}], [ResourceType.FONT, function (_, path) {
+  return path.match(/\.(woff|eot|woff2|ttf)$/i) !== null;
+}], [ResourceType.MEDIA, function (initiatorType, path) {
+  return includes(['audio', 'video'], initiatorType) || path.match(/\.(mp3|mp4)$/i) !== null;
+}]];
+function computeResourceEntryType(entry) {
+  var url = entry.name;
+  if (!isValidUrl(url)) {
+    return ResourceType.OTHER;
+  }
+  var path = getPathName(url);
+  var type = ResourceType.OTHER;
+  each(RESOURCE_TYPES, function (res) {
+    var _type = res[0],
+      isType = res[1];
+    if (isType(entry.initiatorType, path)) {
+      type = _type;
+      return false;
+    }
+  });
+  return type;
+}
+function areInOrder() {
+  var numbers = toArray(arguments);
+  for (var i = 1; i < numbers.length; i += 1) {
+    if (numbers[i - 1] > numbers[i]) {
+      return false;
+    }
+  }
+  return true;
+}
+/**
+ * Handles the 'deliveryType' property to distinguish between supported values ('cache', 'navigational-prefetch'),
+ * undefined (unsupported in some browsers), and other cases ('other' for unknown or unrecognized values).
+ * see: https://developer.mozilla.org/en-US/docs/Web/API/PerformanceResourceTiming/deliveryType
+ */
+function computeResourceEntryDeliveryType(entry) {
+  return entry.deliveryType === '' ? 'other' : entry.deliveryType;
+}
+/**
+ * The 'nextHopProtocol' is an empty string for cross-origin resources without CORS headers,
+ * meaning the protocol is unknown, and we shouldn't report it.
+ * https://developer.mozilla.org/en-US/docs/Web/API/PerformanceResourceTiming/nextHopProtocol#cross-origin_resources
+ */
+function computeResourceEntryProtocol(entry) {
+  return entry.nextHopProtocol === '' ? undefined : entry.nextHopProtocol;
+}
+function isResourceEntryRequestType(entry) {
+  return entry.initiatorType === 'xmlhttprequest' || entry.initiatorType === 'fetch';
+}
+var resourceUtils_HAS_MULTI_BYTES_CHARACTERS = /[^\u0000-\u007F]/;
+function getStrSize(candidate) {
+  if (!resourceUtils_HAS_MULTI_BYTES_CHARACTERS.test(candidate)) {
+    return candidate.length;
+  }
+  if (window.TextEncoder !== undefined) {
+    return new TextEncoder().encode(candidate).length;
+  }
+  return new Blob([candidate]).size;
+}
+function isResourceUrlLimit(name, limitSize) {
+  return getStrSize(name) > limitSize;
+}
+function computeResourceEntryDuration(entry) {
+  // Safari duration is always 0 on timings blocked by cross origin policies.
+  if (entry.duration === 0 && entry.startTime < entry.responseEnd) {
+    return msToNs(entry.responseEnd - entry.startTime);
+  }
+  return msToNs(entry.duration);
+}
+function is304(entry) {
+  if (entry.encodedBodySize > 0 && entry.transferSize > 0 && entry.transferSize < entry.encodedBodySize) {
+    return true;
+  }
+
+  // unknown
+  return null;
+}
+function isCacheHit(entry) {
+  // if we transferred bytes, it must not be a cache hit
+  // (will return false for 304 Not Modified)
+  if (entry.transferSize > 0) return false;
+
+  // if the body size is non-zero, it must mean this is a
+  // ResourceTiming2 browser, this was same-origin or TAO,
+  // and transferSize was 0, so it was in the cache
+  if (entry.decodedBodySize > 0) return true;
+
+  // fall back to duration checking (non-RT2 or cross-origin)
+  return entry.duration < 30;
+}
+//  interface PerformanceResourceDetails {
+//   redirect?: PerformanceResourceDetailsElement
+//   dns?: PerformanceResourceDetailsElement
+//   connect?: PerformanceResourceDetailsElement
+//   ssl?: PerformanceResourceDetailsElement
+//   firstByte: PerformanceResourceDetailsElement
+//   download: PerformanceResourceDetailsElement
+//   fmp:
+// }
+// page_fmp	float		首屏时间(用于衡量用户什么时候看到页面的主要内容)，跟FCP的时长非常接近，这里我们就用FCP的时间作为首屏时间	firstPaintContentEnd - firstPaintContentStart
+// page_fpt	float		首次渲染时间，即白屏时间(从请求开始到浏览器开始解析第一批HTML文档字节的时间差。)	responseEnd - fetchStart
+// page_tti	float		首次可交互时间(浏览器完成所有HTML解析并且完成DOM构建，此时浏览器开始加载资源。)	domInteractive - fetchStart
+// page_firstbyte	float		首包时间	responseStart - domainLookupStart
+// page_dom_ready	float		DOM Ready时间(如果页面有同步执行的JS，则同步JS执行时间=ready-tti。)	domContentLoadEventEnd - fetchStart
+// page_load	float		页面完全加载时间(load=首次渲染时间+DOM解析耗时+同步JS执行+资源加载耗时。)	loadEventStart - fetchStart
+// page_dns	float		dns解析时间	domainLookupEnd - domainLookupStart
+// page_tcp	float		tcp连接时间	connectEnd - connectStart
+// page_ssl	float		ssl安全连接时间(仅适用于https)	connectEnd - secureConnectionStart
+// page_ttfb	float		请求响应耗时	responseStart - requestStart
+// page_trans	float		内容传输时间	responseEnd - responseStart
+// page_dom	float		DOM解析耗时	domInteractive - responseEnd
+// page_resource_load_time	float		资源加载时间	loadEventStart - domContentLoadedEventEnd
+
+//  navigationStart：当前浏览器窗口的前一个网页关闭，发生unload事件时的Unix毫秒时间戳。如果没有前一个网页，则等于fetchStart属性。
+
+// ·   unloadEventStart：如果前一个网页与当前网页属于同一个域名，则返回前一个网页的unload事件发生时的Unix毫秒时间戳。如果没有前一个网页，或者之前的网页跳转不是在同一个域名内，则返回值为0。
+
+// ·   unloadEventEnd：如果前一个网页与当前网页属于同一个域名，则返回前一个网页unload事件的回调函数结束时的Unix毫秒时间戳。如果没有前一个网页，或者之前的网页跳转不是在同一个域名内，则返回值为0。
+
+// ·   redirectStart：返回第一个HTTP跳转开始时的Unix毫秒时间戳。如果没有跳转，或者不是同一个域名内部的跳转，则返回值为0。
+
+// ·   redirectEnd：返回最后一个HTTP跳转结束时（即跳转回应的最后一个字节接受完成时）的Unix毫秒时间戳。如果没有跳转，或者不是同一个域名内部的跳转，则返回值为0。
+
+// ·   fetchStart：返回浏览器准备使用HTTP请求读取文档时的Unix毫秒时间戳。该事件在网页查询本地缓存之前发生。
+
+// ·   domainLookupStart：返回域名查询开始时的Unix毫秒时间戳。如果使用持久连接，或者信息是从本地缓存获取的，则返回值等同于fetchStart属性的值。
+
+// ·   domainLookupEnd：返回域名查询结束时的Unix毫秒时间戳。如果使用持久连接，或者信息是从本地缓存获取的，则返回值等同于fetchStart属性的值。
+
+// ·   connectStart：返回HTTP请求开始向服务器发送时的Unix毫秒时间戳。如果使用持久连接（persistent connection），则返回值等同于fetchStart属性的值。
+
+// ·   connectEnd：返回浏览器与服务器之间的连接建立时的Unix毫秒时间戳。如果建立的是持久连接，则返回值等同于fetchStart属性的值。连接建立指的是所有握手和认证过程全部结束。
+
+// ·   secureConnectionStart：返回浏览器与服务器开始安全链接的握手时的Unix毫秒时间戳。如果当前网页不要求安全连接，则返回0。
+
+// ·   requestStart：返回浏览器向服务器发出HTTP请求时（或开始读取本地缓存时）的Unix毫秒时间戳。
+
+// ·   responseStart：返回浏览器从服务器收到（或从本地缓存读取）第一个字节时的Unix毫秒时间戳。
+
+// ·   responseEnd：返回浏览器从服务器收到（或从本地缓存读取）最后一个字节时（如果在此之前HTTP连接已经关闭，则返回关闭时）的Unix毫秒时间戳。
+
+// ·   domLoading：返回当前网页DOM结构开始解析时（即Document.readyState属性变为“loading”、相应的readystatechange事件触发时）的Unix毫秒时间戳。
+
+// ·   domInteractive：返回当前网页DOM结构结束解析、开始加载内嵌资源时（即Document.readyState属性变为“interactive”、相应的readystatechange事件触发时）的Unix毫秒时间戳。
+
+// ·   domContentLoadedEventStart：返回当前网页DOMContentLoaded事件发生时（即DOM结构解析完毕、所有脚本开始运行时）的Unix毫秒时间戳。
+
+// ·   domContentLoadedEventEnd：返回当前网页所有需要执行的脚本执行完成时的Unix毫秒时间戳。
+
+// ·   domComplete：返回当前网页DOM结构生成时（即Document.readyState属性变为“complete”，以及相应的readystatechange事件发生时）的Unix毫秒时间戳。
+
+// ·   loadEventStart：返回当前网页load事件的回调函数开始时的Unix毫秒时间戳。如果该事件还没有发生，返回0。
+
+// ·   loadEventEnd：返回当前网页load事件的回调函数运行结束时的Unix毫秒时间戳。如果该事件还没有发生，返回0
+function computePerformanceResourceDetails(entry) {
+  if (!hasValidResourceEntryTimings(entry)) {
+    return undefined;
+  }
+  var startTime = entry.startTime,
+    fetchStart = entry.fetchStart,
+    redirectStart = entry.redirectStart,
+    redirectEnd = entry.redirectEnd,
+    domainLookupStart = entry.domainLookupStart,
+    domainLookupEnd = entry.domainLookupEnd,
+    connectStart = entry.connectStart,
+    secureConnectionStart = entry.secureConnectionStart,
+    connectEnd = entry.connectEnd,
+    requestStart = entry.requestStart,
+    responseStart = entry.responseStart,
+    responseEnd = entry.responseEnd;
+  var details = {
+    firstbyte: msToNs(responseStart - requestStart),
+    trans: msToNs(responseEnd - responseStart),
+    downloadTime: formatTiming(startTime, responseStart, responseEnd),
+    firstByteTime: formatTiming(startTime, requestStart, responseStart)
+  };
+  if (responseStart > 0 && responseStart <= preferredNow()) {
+    details.ttfb = msToNs(responseStart - requestStart);
+  }
+  // Make sure a connection occurred
+  if (connectEnd !== fetchStart) {
+    details.tcp = msToNs(connectEnd - connectStart);
+    details.connectTime = formatTiming(startTime, connectStart, connectEnd);
+    // Make sure a secure connection occurred
+    if (areInOrder(connectStart, secureConnectionStart, connectEnd)) {
+      details.ssl = msToNs(connectEnd - secureConnectionStart);
+      details.sslTime = formatTiming(startTime, secureConnectionStart, connectEnd);
+    }
+  }
+
+  // Make sure a domain lookup occurred
+  if (domainLookupEnd !== fetchStart) {
+    details.dns = msToNs(domainLookupEnd - domainLookupStart);
+    details.dnsTime = formatTiming(startTime, domainLookupStart, domainLookupEnd);
+  }
+  if (hasRedirection(entry)) {
+    details.redirect = msToNs(redirectEnd - redirectStart);
+    details.redirectTime = formatTiming(startTime, redirectStart, redirectEnd);
+  }
+  // renderBlockstatus
+  if (entry.renderBlockingStatus) {
+    details.renderBlockingStatus = entry.renderBlockingStatus;
+  }
+  return details;
+}
+function hasValidResourceEntryDuration(entry) {
+  return entry.duration >= 0;
+}
+function hasValidResourceEntryTimings(entry) {
+  var areCommonTimingsInOrder = areInOrder(entry.startTime, entry.fetchStart, entry.domainLookupStart, entry.domainLookupEnd, entry.connectStart, entry.connectEnd, entry.requestStart, entry.responseStart, entry.responseEnd);
+  var areRedirectionTimingsInOrder = hasRedirection(entry) ? areInOrder(entry.startTime, entry.redirectStart, entry.redirectEnd, entry.fetchStart) : true;
+  return areCommonTimingsInOrder && areRedirectionTimingsInOrder;
+}
+function hasRedirection(entry) {
+  return entry.redirectEnd > entry.startTime;
+}
+function formatTiming(origin, start, end) {
+  return {
+    duration: msToNs(end - start),
+    start: msToNs(start - origin)
+  };
+}
+function computeResourceEntrySize(entry) {
+  // Make sure a request actually occurred
+  if (entry.startTime < entry.responseStart) {
+    return {
+      size: entry.decodedBodySize,
+      encodedBodySize: entry.encodedBodySize,
+      decodedBodySize: entry.decodedBodySize,
+      transferSize: entry.transferSize
+    };
+    // return {
+    //   size: entry.decodedBodySize,
+    //   encodeSize:
+    //     Number.MAX_SAFE_INTEGER < entry.encodedBodySize
+    //       ? 0
+    //       : entry.encodedBodySize // max safe interger
+    // }
+  }
+  return {
+    size: undefined,
+    encodedBodySize: undefined,
+    decodedBodySize: undefined,
+    transferSize: undefined
+  };
+}
+function isAllowedRequestUrl(configuration, url) {
+  return url && !isIntakeRequest(url, configuration);
+}
+var DATA_URL_REGEX = /data:(.+)?(;base64)?,/g;
+var MAX_ATTRIBUTE_VALUE_CHAR_LENGTH = 24000;
+function isLongDataUrl(url) {
+  if (url.length <= MAX_ATTRIBUTE_VALUE_CHAR_LENGTH) {
+    return false;
+  } else if (url.substring(0, 5) === 'data:') {
+    // Avoid String.match RangeError: Maximum call stack size exceeded
+    url = url.substring(0, MAX_ATTRIBUTE_VALUE_CHAR_LENGTH);
+    return true;
+  }
+  return false;
+}
+function sanitizeDataUrl(url) {
+  return url.match(DATA_URL_REGEX)[0] + '[...]';
+}
+;// CONCATENATED MODULE: ./src/domain/firstInputPolyfill.js
+
+/**
+ * first-input timing entry polyfill based on
+ * https://github.com/GoogleChrome/web-vitals/blob/master/src/lib/polyfills/firstInputPolyfill.ts
+ */
+function retrieveFirstInputTiming(configuration, callback) {
+  var startTimeStamp = dateNow();
+  var timingSent = false;
+  var _addEventListeners = addEventListeners(window, [DOM_EVENT.CLICK, DOM_EVENT.MOUSE_DOWN, DOM_EVENT.KEY_DOWN, DOM_EVENT.TOUCH_START, DOM_EVENT.POINTER_DOWN], function (evt) {
+    // Only count cancelable events, which should trigger behavior important to the user.
+    if (!evt.cancelable) {
+      return;
+    }
+
+    // This timing will be used to compute the "first Input delay", which is the delta between
+    // when the system received the event (e.g. evt.timeStamp) and when it could run the callback
+    // (e.g. performance.now()).
+    var timing = {
+      entryType: 'first-input',
+      processingStart: tools_relativeNow(),
+      processingEnd: tools_relativeNow(),
+      startTime: evt.timeStamp,
+      duration: 0,
+      // arbitrary value to avoid nullable duration and simplify INP logic
+      name: '',
+      cancelable: false,
+      target: null,
+      toJSON: function toJSON() {
+        return {};
+      }
+    };
+    if (evt.type === DOM_EVENT.POINTER_DOWN) {
+      sendTimingIfPointerIsNotCancelled(timing);
+    } else {
+      sendTiming(timing);
+    }
+  }, {
+    passive: true,
+    capture: true
+  });
+  var removeEventListeners = _addEventListeners.stop;
+  return {
+    stop: removeEventListeners
+  };
+
+  /**
+   * Pointer events are a special case, because they can trigger main or compositor thread behavior.
+   * We differentiate these cases based on whether or not we see a pointercancel event, which are
+   * fired when we scroll. If we're scrolling we don't need to report input delay since FID excludes
+   * scrolling and pinch/zooming.
+   */
+  function sendTimingIfPointerIsNotCancelled(timing) {
+    addEventListeners(window, [DOM_EVENT.POINTER_UP, DOM_EVENT.POINTER_CANCEL], function (event) {
+      if (event.type === DOM_EVENT.POINTER_UP) {
+        sendTiming(timing);
+      }
+    }, {
+      once: true
+    });
+  }
+  function sendTiming(timing) {
+    if (!timingSent) {
+      timingSent = true;
+      removeEventListeners();
+      // In some cases the recorded delay is clearly wrong, e.g. it's negative or it's larger than
+      // the time between now and when the page was loaded.
+      // - https://github.com/GoogleChromeLabs/first-input-delay/issues/4
+      // - https://github.com/GoogleChromeLabs/first-input-delay/issues/6
+      // - https://github.com/GoogleChromeLabs/first-input-delay/issues/7
+      var delay = timing.processingStart - timing.startTime;
+      if (delay >= 0 && delay < dateNow() - startTimeStamp) {
+        callback(timing);
+      }
+    }
+  }
+}
+;// CONCATENATED MODULE: ./src/domain/performanceObservable.js
+
+
+
+// We want to use a real enum (i.e. not a const enum) here, to be able to check whether an arbitrary
+// string is an expected performance entry
+// eslint-disable-next-line no-restricted-syntax
+var RumPerformanceEntryType = {
+  EVENT: 'event',
+  FIRST_INPUT: 'first-input',
+  LARGEST_CONTENTFUL_PAINT: 'largest-contentful-paint',
+  LAYOUT_SHIFT: 'layout-shift',
+  LONG_TASK: 'longtask',
+  LONG_ANIMATION_FRAME: 'long-animation-frame',
+  NAVIGATION: 'navigation',
+  PAINT: 'paint',
+  RESOURCE: 'resource',
+  VISIBILITY_STATE: 'visibility-state'
+};
+function createPerformanceObservable(configuration, options) {
+  return new Observable(function (observable) {
+    if (!window.PerformanceObserver) {
+      return;
+    }
+    var handlePerformanceEntries = function handlePerformanceEntries(entries) {
+      var rumPerformanceEntries = filterRumPerformanceEntries(configuration, entries);
+      if (rumPerformanceEntries.length > 0) {
+        observable.notify(rumPerformanceEntries);
+      }
+    };
+    var timeoutId;
+    var isObserverInitializing = true;
+    var observer = new PerformanceObserver(monitor(function (entries) {
+      // In Safari the performance observer callback is synchronous.
+      // Because the buffered performance entry list can be quite large we delay the computation to prevent the SDK from blocking the main thread on init
+      if (isObserverInitializing) {
+        timeoutId = timer_setTimeout(function () {
+          handlePerformanceEntries(entries.getEntries());
+        });
+      } else {
+        handlePerformanceEntries(entries.getEntries());
+      }
+    }));
+    try {
+      observer.observe(options);
+    } catch (_unused) {
+      // Some old browser versions (<= chrome 74 ) don't support the PerformanceObserver type and buffered options
+      // In these cases, fallback to getEntriesByType and PerformanceObserver with entryTypes
+      // TODO: remove this fallback in the next major version
+      var fallbackSupportedEntryTypes = [RumPerformanceEntryType.RESOURCE, RumPerformanceEntryType.NAVIGATION, RumPerformanceEntryType.LONG_TASK, RumPerformanceEntryType.PAINT];
+      if (includes(fallbackSupportedEntryTypes, options.type)) {
+        if (options.buffered) {
+          timeoutId = timer_setTimeout(function () {
+            handlePerformanceEntries(performance.getEntriesByType(options.type));
+          });
+        }
+        try {
+          observer.observe({
+            entryTypes: [options.type]
+          });
+        } catch (_unused2) {
+          // Old versions of Safari are throwing "entryTypes contained only unsupported types"
+          // errors when observing only unsupported entry types.
+          //
+          // We could use `supportPerformanceTimingEvent` to make sure we don't invoke
+          // `observer.observe` with an unsupported entry type, but Safari 11 and 12 don't support
+          // `Performance.supportedEntryTypes`, so doing so would lose support for these versions
+          // even if they do support the entry type.
+          return;
+        }
+      }
+    }
+    isObserverInitializing = false;
+    manageResourceTimingBufferFull(configuration);
+    var stopFirstInputTiming;
+    if (!supportPerformanceTimingEvent(RumPerformanceEntryType.FIRST_INPUT) && options.type === RumPerformanceEntryType.FIRST_INPUT) {
+      var _retrieveFirstInputTiming = retrieveFirstInputTiming(configuration, function (timing) {
+        handlePerformanceEntries([timing]);
+      });
+      stopFirstInputTiming = _retrieveFirstInputTiming.stop;
+    }
+    return function () {
+      observer.disconnect();
+      if (stopFirstInputTiming) {
+        stopFirstInputTiming();
+      }
+      timer_clearTimeout(timeoutId);
+    };
+  });
+}
+var resourceTimingBufferFullListener;
+function manageResourceTimingBufferFull(configuration) {
+  if (!resourceTimingBufferFullListener && supportPerformanceObject() && 'addEventListener' in performance) {
+    // https://bugzilla.mozilla.org/show_bug.cgi?id=1559377
+    resourceTimingBufferFullListener = addEventListener(performance, 'resourcetimingbufferfull', function () {
+      performance.clearResourceTimings();
+    });
+  }
+  return function () {
+    resourceTimingBufferFullListener && resourceTimingBufferFullListener.stop();
+  };
+}
+function supportPerformanceObject() {
+  return window.performance !== undefined && 'getEntries' in performance;
+}
+function supportPerformanceTimingEvent(entryType) {
+  return window.PerformanceObserver && PerformanceObserver.supportedEntryTypes !== undefined && PerformanceObserver.supportedEntryTypes.includes(entryType);
+}
+function filterRumPerformanceEntries(configuration, entries) {
+  return entries.filter(function (entry) {
+    return !isForbiddenResource(configuration, entry);
+  });
+}
+function isForbiddenResource(configuration, entry) {
+  return entry.entryType === RumPerformanceEntryType.RESOURCE && (!isAllowedRequestUrl(configuration, entry.name) || !hasValidResourceEntryDuration(entry));
 }
 ;// CONCATENATED MODULE: ./src/domain/rumEventsCollection/view/trackFirstContentfulPaint.js
 
@@ -9662,9 +9569,9 @@ function discardZeroStatus(statusCode) {
 
 
 
-
-
-
+// import { startLongTaskCollection } from '../domain/rumEventsCollection/longTask/longTaskCollection'
+// import { startLongAnimationFrameCollection } from '../domain/rumEventsCollection/longTask/longAnimationFrameCollection'
+// import { RumPerformanceEntryType } from '../domain/performanceObservable'
 
 
 // import { startRumEventBridge } from '../transport/startRumEventBridge'
@@ -9745,12 +9652,21 @@ function startRum(configuration, recorderApi, customerDataTrackerManager, getCom
   cleanupTasks.push(stopViewCollection);
   var _startResourceCollection = startResourceCollection(lifeCycle, configuration, pageStateHistory);
   cleanupTasks.push(_startResourceCollection.stop);
-  if (PerformanceObserver.supportedEntryTypes && PerformanceObserver.supportedEntryTypes.includes(RumPerformanceEntryType.LONG_ANIMATION_FRAME)) {
-    var longAnimationFrameCollection = startLongAnimationFrameCollection(lifeCycle, configuration);
-    cleanupTasks.push(longAnimationFrameCollection.stop);
-  } else {
-    startLongTaskCollection(lifeCycle, configuration);
-  }
+  // if (
+  //   PerformanceObserver.supportedEntryTypes &&
+  //   PerformanceObserver.supportedEntryTypes.includes(
+  //     RumPerformanceEntryType.LONG_ANIMATION_FRAME
+  //   )
+  // ) {
+  //   var longAnimationFrameCollection = startLongAnimationFrameCollection(
+  //     lifeCycle,
+  //     configuration
+  //   )
+  //   cleanupTasks.push(longAnimationFrameCollection.stop)
+  // } else {
+  //   startLongTaskCollection(lifeCycle, configuration)
+  // }
+
   var _startErrorCollection = startErrorCollection(lifeCycle, configuration, session, pageStateHistory);
   var addError = _startErrorCollection.addError;
   startRequestCollection(lifeCycle, configuration, session);
@@ -9934,36 +9850,56 @@ function validateAndBuildTracingOptions(initConfiguration) {
     return tracingOptions;
   }
 
-  // Handle conversion of allowedTracingOrigins to allowedTracingUrls
-  if (initConfiguration.allowedTracingOrigins !== undefined) {
-    if (!isArray(initConfiguration.allowedTracingOrigins)) {
-      display.error('Allowed Tracing Origins should be an array');
-      return;
-    }
-    var tracingOptions = [];
-    each(initConfiguration.allowedTracingOrigins, function (legacyMatchOption) {
-      var tracingOption = convertLegacyMatchOptionToTracingOption(legacyMatchOption, isNullUndefinedDefaultValue(initConfiguration.traceType, TraceType.DDTRACE));
-      if (tracingOption) {
-        tracingOptions.push(tracingOption);
-      }
-    });
-    return tracingOptions;
-  }
-  // Handle conversion of allowedDDTracingOrigins to allowedTracingUrls
-  if (initConfiguration.allowedDDTracingOrigins !== undefined) {
-    if (!isArray(initConfiguration.allowedDDTracingOrigins)) {
-      display.error('Allowed Tracing Origins should be an array');
-      return;
-    }
-    var tracingOptions = [];
-    each(initConfiguration.allowedDDTracingOrigins, function (legacyMatchOption) {
-      var tracingOption = convertLegacyMatchOptionToTracingOption(legacyMatchOption, isNullUndefinedDefaultValue(initConfiguration.traceType, TraceType.DDTRACE));
-      if (tracingOption) {
-        tracingOptions.push(tracingOption);
-      }
-    });
-    return tracingOptions;
-  }
+  // // Handle conversion of allowedTracingOrigins to allowedTracingUrls
+  // if (initConfiguration.allowedTracingOrigins !== undefined) {
+  //   if (!isArray(initConfiguration.allowedTracingOrigins)) {
+  //     display.error('Allowed Tracing Origins should be an array')
+  //     return
+  //   }
+
+  //   var tracingOptions = []
+  //   each(initConfiguration.allowedTracingOrigins, function (legacyMatchOption) {
+  //     var tracingOption = convertLegacyMatchOptionToTracingOption(
+  //       legacyMatchOption,
+  //       isNullUndefinedDefaultValue(
+  //         initConfiguration.traceType,
+  //         TraceType.DDTRACE
+  //       )
+  //     )
+  //     if (tracingOption) {
+  //       tracingOptions.push(tracingOption)
+  //     }
+  //   })
+
+  //   return tracingOptions
+  // }
+  // // Handle conversion of allowedDDTracingOrigins to allowedTracingUrls
+  // if (initConfiguration.allowedDDTracingOrigins !== undefined) {
+  //   if (!isArray(initConfiguration.allowedDDTracingOrigins)) {
+  //     display.error('Allowed Tracing Origins should be an array')
+  //     return
+  //   }
+
+  //   var tracingOptions = []
+  //   each(
+  //     initConfiguration.allowedDDTracingOrigins,
+  //     function (legacyMatchOption) {
+  //       var tracingOption = convertLegacyMatchOptionToTracingOption(
+  //         legacyMatchOption,
+  //         isNullUndefinedDefaultValue(
+  //           initConfiguration.traceType,
+  //           TraceType.DDTRACE
+  //         )
+  //       )
+  //       if (tracingOption) {
+  //         tracingOptions.push(tracingOption)
+  //       }
+  //     }
+  //   )
+
+  //   return tracingOptions
+  // }
+
   return [];
 }
 
@@ -9971,28 +9907,30 @@ function validateAndBuildTracingOptions(initConfiguration) {
  * Converts parameters from the deprecated allowedTracingOrigins
  * to allowedTracingUrls. Handles the change from origin to full URLs.
  */
-function convertLegacyMatchOptionToTracingOption(item, traceType) {
-  var match;
-  if (typeof item === 'string') {
-    match = item;
-  } else if (item instanceof RegExp) {
-    match = function match(url) {
-      return item.test(getOrigin(url));
-    };
-  } else if (typeof item === 'function') {
-    match = function match(url) {
-      return item(getOrigin(url));
-    };
-  }
-  if (match === undefined) {
-    display.warn('Allowed Tracing Origins parameters should be a string, RegExp or function. Ignoring parameter', item);
-    return undefined;
-  }
-  return {
-    match: match,
-    traceType: traceType
-  };
-}
+// function convertLegacyMatchOptionToTracingOption(item, traceType) {
+//   var match
+//   if (typeof item === 'string') {
+//     match = item
+//   } else if (item instanceof RegExp) {
+//     match = function (url) {
+//       return item.test(getOrigin(url))
+//     }
+//   } else if (typeof item === 'function') {
+//     match = function (url) {
+//       return item(getOrigin(url))
+//     }
+//   }
+
+//   if (match === undefined) {
+//     display.warn(
+//       'Allowed Tracing Origins parameters should be a string, RegExp or function. Ignoring parameter',
+//       item
+//     )
+//     return undefined
+//   }
+
+//   return { match: match, traceType: traceType }
+// }
 ;// CONCATENATED MODULE: ./src/boot/perStartRum.js
 
 
