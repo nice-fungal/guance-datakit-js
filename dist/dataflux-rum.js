@@ -4436,6 +4436,8 @@ var commonTags = {
   network_type: 'device.network_type',
   time_zone: 'device.time_zone',
   device: 'device.device',
+  device_vendor: 'device.device_vendor',
+  device_model: 'device.device_model',
   view_id: 'view.id',
   view_referrer: 'view.referrer',
   view_url: 'view.url',
