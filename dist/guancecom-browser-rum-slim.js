@@ -1668,6 +1668,9 @@
         browser: "device.browser",
         browser_version: "device.browser_version",
         browser_version_major: "device.browser_version_major",
+        webview: "webview.webview",
+        webview_version: "webview.webview_version",
+        webview_version_major: "webview.webview_version_major",
         screen_size: "device.screen_size",
         network_type: "device.network_type",
         time_zone: "device.time_zone",
@@ -2765,6 +2768,7 @@
                         id: configuration.applicationId
                     },
                     device: deviceInfo,
+                    webview: {},
                     env: configuration.env || "",
                     service: viewContext.service || configuration.service || "browser",
                     version: viewContext.version || configuration.version || "",
@@ -2800,6 +2804,7 @@
                 "view" === serverRumEvent.type && (serverRumEvent.session.sampled_for_error_replay = session.errorSessionReplayAllowed, 
                 serverRumEvent.session.sampled_for_error_session = session.isErrorSession, serverRumEvent.session.error_timestamp_for_session = session.sessionErrorTimestamp), 
                 isEmptyObject(commonContext.context.device) || (serverRumEvent.device = extend2Lev(serverRumEvent.device, commonContext.context.device)), 
+                isEmptyObject(commonContext.context.webview) || (serverRumEvent.webview = extend2Lev(serverRumEvent.webview, commonContext.context.webview)), 
                 isEmptyObject(commonContext.user) || (serverRumEvent.user = extend2Lev(serverRumEvent.user, {
                     is_signin: "T",
                     is_login: !0
