@@ -47,7 +47,7 @@ export function startRum(
     lifeCycle.notify(LifeCycleEventType.RAW_ERROR_COLLECTED, { error: error })
   }
   var pageExitObservable = createPageExitObservable()
-  pageExitObservable.subscribe(function (event) {
+  var pageExitSubscription = pageExitObservable.subscribe(function (event) {
     lifeCycle.notify(LifeCycleEventType.PAGE_EXITED, event)
   })
   cleanupTasks.push(function () {
@@ -184,7 +184,9 @@ export function startRum(
     lifeCycle: lifeCycle,
     viewContexts: viewContexts,
     session: session,
-
+    setForcedSession: function () {
+      session.setForcedSession()
+    },
     stopSession: function () {
       session.expire()
     },

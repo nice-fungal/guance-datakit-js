@@ -179,6 +179,9 @@ export function makeRumPublicApi(startRumImpl, recorderApi, options) {
     getInitConfiguration: monitor(function () {
       return deepClone(strategy.initConfiguration)
     }),
+    getRemoteConfiguration: monitor(function () {
+      return deepClone(strategy.remoteConfiguration)
+    }),
     getInternalContext: monitor(function (startTime) {
       return strategy.getInternalContext(startTime)
     }),
@@ -261,6 +264,10 @@ export function makeRumPublicApi(startRumImpl, recorderApi, options) {
       strategy.stopSession()
       addTelemetryUsage({ feature: 'stop-session' })
     }),
+    setForcedSession: monitor(function () {
+      strategy.setForcedSession()
+      addTelemetryUsage({ feature: 'set-forced-session' })
+    }),
     startSessionReplayRecording: monitor(function (options) {
       recorderApi.start(options)
       addTelemetryUsage({
@@ -268,7 +275,8 @@ export function makeRumPublicApi(startRumImpl, recorderApi, options) {
         force: options && options.force
       })
     }),
-    stopSessionReplayRecording: monitor(recorderApi.stop)
+    stopSessionReplayRecording: monitor(recorderApi.stop),
+    takeSubsequentFullSnapshot: monitor(recorderApi.takeSubsequentFullSnapshot)
   })
   return rumPublicApi
 }
@@ -278,7 +286,8 @@ function createPostStartStrategy(preStartStrategy, startRumResult) {
       init: function (initConfiguration) {
         displayAlreadyInitializedError('DATAFLUX_RUM', initConfiguration)
       },
-      initConfiguration: preStartStrategy.getInitConfiguration()
+      initConfiguration: preStartStrategy.getInitConfiguration(),
+      remoteConfiguration: preStartStrategy.getRemoteConfiguration()
     },
     startRumResult
   )

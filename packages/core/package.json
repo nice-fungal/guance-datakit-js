@@ -1,6 +1,6 @@
 {
     "name": "@cloudcare/browser-core",
-    "version": "3.2.39",
+    "version": "3.2.40",
     "main": "cjs/index.js",
     "module": "esm/index.js",
     "types": "types/index.d.ts",
@@ -15,11 +15,11 @@
         "sdk"
     ],
     "repository": {
-        "url": "https://github.com/DataFlux-cn/datakit-js",
+        "url": "https://github.com/GuanceCloud/datakit-js",
         "type": "git",
         "directory": "packages/core"
     },
     "author": "dataflux",
     "license": "MIT",
-    "gitHead": "bb05ce75b0853226ead81fc8f0a9e31ac722a6a5"
+    "gitHead": "73b515d510f5195a7d748a767c5b6685bab67606"
 }
