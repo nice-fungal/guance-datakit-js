@@ -4,6 +4,7 @@ import {
   CustomerDataType,
   clocksNow,
   ActionType,
+  ResourceType,
   deepClone,
   createHandlingStack,
   sanitizeUser,
@@ -179,8 +180,8 @@ export function makeRumPublicApi(startRumImpl, recorderApi, options) {
     getInitConfiguration: monitor(function () {
       return deepClone(strategy.initConfiguration)
     }),
-    getRemoteConfiguration: monitor(function () {
-      return deepClone(strategy.remoteConfiguration)
+    getRemoteConfiguration: monitor(function (callback) {
+      return strategy.getRemoteConfiguration(callback)
     }),
     getInternalContext: monitor(function (startTime) {
       return strategy.getInternalContext(startTime)
@@ -188,6 +189,18 @@ export function makeRumPublicApi(startRumImpl, recorderApi, options) {
     addDebugSession: monitor(function (id) {}),
     clearDebugSession: monitor(function () {}),
     getDebugSession: monitor(function () {}),
+    addResource: monitor(function (context) {
+      const handlingStack = createHandlingStack()
+      callMonitored(function () {
+        strategy.addResource({
+          context: sanitize(context),
+          startClocks: clocksNow(),
+          type: ResourceType.CUSTOM,
+          handlingStack: handlingStack
+        })
+        addTelemetryUsage({ feature: 'add-resource' })
+      })
+    }),
     addTypeAction: monitor(function (name, type, context) {
       const handlingStack = createHandlingStack()
 
@@ -286,8 +299,7 @@ function createPostStartStrategy(preStartStrategy, startRumResult) {
       init: function (initConfiguration) {
         displayAlreadyInitializedError('DATAFLUX_RUM', initConfiguration)
       },
-      initConfiguration: preStartStrategy.getInitConfiguration(),
-      remoteConfiguration: preStartStrategy.getRemoteConfiguration()
+      initConfiguration: preStartStrategy.getInitConfiguration()
     },
     startRumResult
   )
