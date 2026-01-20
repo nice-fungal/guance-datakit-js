@@ -1,12 +1,5 @@
 !function() {
     "use strict";
-    function typeof_typeof(o) {
-        return (typeof_typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function(o) {
-            return typeof o;
-        } : function(o) {
-            return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o;
-        })(o);
-    }
     var ConsoleApiName = {
         log: "log",
         debug: "debug",
@@ -15,7 +8,7 @@
         error: "error"
     }, globalConsole = console, originalConsoleMethods = {};
     Object.keys(ConsoleApiName).forEach((function(name) {
-        originalConsoleMethods[name] = globalConsole[name];
+        originalConsoleMethods[name] = globalConsole[name] || tools_noop;
     }));
     var onMonitorErrorCollected, PREFIX = "GUANCE Browser SDK:", display = {
         debug: originalConsoleMethods.debug.bind(globalConsole, PREFIX),
@@ -58,7 +51,7 @@
         };
     }
     function getGlobalObject() {
-        if ("object" === ("undefined" == typeof globalThis ? "undefined" : typeof_typeof(globalThis))) return globalThis;
+        if ("object" == typeof globalThis) return globalThis;
         Object.defineProperty(Object.prototype, "_gc_temp_", {
             get: function() {
                 return this;
@@ -66,7 +59,7 @@
             configurable: !0
         });
         var globalObject = _gc_temp_;
-        return delete Object.prototype._gc_temp_, "object" !== typeof_typeof(globalObject) && (globalObject = "object" === ("undefined" == typeof self ? "undefined" : typeof_typeof(self)) ? self : "object" === ("undefined" == typeof window ? "undefined" : typeof_typeof(window)) ? window : {}), 
+        return delete Object.prototype._gc_temp_, "object" != typeof globalObject && (globalObject = "object" == typeof self ? self : "object" == typeof window ? window : {}), 
         globalObject;
     }
     function getZoneJsOriginalValue(target, name) {
@@ -86,7 +79,7 @@
     function timer_clearInterval(timeoutId) {
         getZoneJsOriginalValue(getGlobalObject(), "clearInterval")(timeoutId);
     }
-    var ArrayProto = Array.prototype, ObjProto = (Function.prototype, Object.prototype), slice = ArrayProto.slice, tools_toString = ObjProto.toString, tools_hasOwnProperty = ObjProto.hasOwnProperty, nativeForEach = ArrayProto.forEach, nativeIsArray = Array.isArray, each = function(obj, iterator, context) {
+    var ArrayProto = Array.prototype, ObjProto = Object.prototype, slice = ArrayProto.slice, tools_toString = ObjProto.toString, tools_hasOwnProperty = ObjProto.hasOwnProperty, nativeForEach = ArrayProto.forEach, nativeIsArray = Array.isArray, each = function(obj, iterator, context) {
         if (null === obj) return !1;
         if (nativeForEach && obj.forEach === nativeForEach) obj.forEach(iterator, context); else if (obj.length === +obj.length) {
             for (var i = 0, l = obj.length; i < l; i++) if (i in obj && false === iterator.call(context, obj[i], i, obj)) return !1;
@@ -173,7 +166,9 @@
     }, isNumber = function(obj) {
         return "[object Number]" === tools_toString.call(obj) && /[\d\.]+/.test(String(obj));
     }, throttle = (Date.now, function(fn, wait, options) {
-        var pendingExecutionWithParameters, pendingTimeoutId, needLeadingExecution = !options || void 0 === options.leading || options.leading, needTrailingExecution = !options || void 0 === options.trailing || options.trailing, inWaitPeriod = !1, context = this;
+        var needLeadingExecution = !options || void 0 === options.leading || options.leading, needTrailingExecution = !options || void 0 === options.trailing || options.trailing;
+        let pendingExecutionWithParameters, pendingTimeoutId, inWaitPeriod = !1;
+        var context = this;
         return {
             throttled: function() {
                 inWaitPeriod ? pendingExecutionWithParameters = arguments : (needLeadingExecution ? fn.apply(context, arguments) : pendingExecutionWithParameters = arguments, 
@@ -215,7 +210,7 @@
         }, URLParser.prototype._initValues = function() {
             for (var a in this._fields) this._values[a] = "";
         }, URLParser.prototype.addQueryString = function(queryObj) {
-            if ("object" !== typeof_typeof(queryObj)) return !1;
+            if ("object" != typeof queryObj) return !1;
             var query = this._values.QueryString || "";
             for (var i in queryObj) query = new RegExp(i + "[^&]+").test(query) ? query.replace(new RegExp(i + "[^&]+"), i + "=" + queryObj[i]) : "&" === query.slice(-1) ? query + i + "=" + queryObj[i] : "" === query ? i + "=" + queryObj[i] : query + "&" + i + "=" + queryObj[i];
             this._values.QueryString = query;
@@ -249,7 +244,7 @@
         return args;
     };
     function getType(value) {
-        return null === value ? "null" : Array.isArray(value) ? "array" : typeof_typeof(value);
+        return null === value ? "null" : Array.isArray(value) ? "array" : typeof value;
     }
     function mergeInto(destination, source, circularReferenceChecker) {
         if (void 0 === circularReferenceChecker && (circularReferenceChecker = function() {
@@ -270,7 +265,7 @@
                 }
             };
         }()), void 0 === source) return destination;
-        if ("object" !== typeof_typeof(source) || null === source) return source;
+        if ("object" != typeof source || null === source) return source;
         if (source instanceof Date) return new Date(source.getTime());
         if (source instanceof RegExp) {
             var flags = source.flags || [ source.global ? "g" : "", source.ignoreCase ? "i" : "", source.multiline ? "m" : "", source.sticky ? "y" : "", source.unicode ? "u" : "" ].join("");
@@ -367,7 +362,7 @@
         return lastChar >= 55296 && lastChar <= 56319 ? candidate.slice(0, length + 1) : candidate.slice(0, length);
     }
     function isMatchOption(item) {
-        var itemType = getType(item);
+        const itemType = getType(item);
         return "string" === itemType || "function" === itemType || item instanceof RegExp;
     }
     function includes(candidate, search) {
@@ -393,9 +388,9 @@
     var browserCache, Browser_IE = 0, Browser_CHROMIUM = 1, Browser_SAFARI = 2, Browser_OTHER = 3;
     function detectBrowserCached() {
         return isNullUndefinedDefaultValue(browserCache, browserCache = function(browserWindow) {
-            var _browserWindow$naviga;
-            void 0 === browserWindow && (browserWindow = window);
-            var userAgent = browserWindow.navigator.userAgent;
+            var _browserWindow, _browserWindow$naviga;
+            void 0 === browserWindow && (browserWindow = window || {});
+            var userAgent = (null === (_browserWindow = browserWindow) || void 0 === _browserWindow || null === (_browserWindow = _browserWindow.navigator) || void 0 === _browserWindow ? void 0 : _browserWindow.userAgent) || "";
             if (browserWindow.chrome || /HeadlessChrome/.test(userAgent)) return Browser_CHROMIUM;
             if (0 === (null === (_browserWindow$naviga = browserWindow.navigator.vendor) || void 0 === _browserWindow$naviga ? void 0 : _browserWindow$naviga.indexOf("Apple")) || /safari/i.test(userAgent) && !/chrome|android/i.test(userAgent)) return Browser_SAFARI;
             if (browserWindow.document.documentMode) return Browser_IE;
@@ -414,7 +409,7 @@
     function deepSnakeCase(candidate) {
         return isArray(candidate) ? tools_map(candidate, (function(value) {
             return deepSnakeCase(value);
-        })) : "object" === typeof_typeof(candidate) && null !== candidate ? withSnakeCaseKeys(candidate) : candidate;
+        })) : "object" == typeof candidate && null !== candidate ? withSnakeCaseKeys(candidate) : candidate;
     }
     function isNullUndefinedDefaultValue(data, defaultValue) {
         return null != data ? data : defaultValue;
@@ -434,10 +429,6 @@
         var index = array.indexOf(item);
         index >= 0 && array.splice(index, 1);
     }
-    function isHashAnAnchor(hash) {
-        var correspondingId = hash.substr(1);
-        return !!correspondingId && !!document.getElementById(correspondingId);
-    }
     function getPathFromHash(hash) {
         var index = hash.indexOf("?");
         return index < 0 ? hash : hash.slice(0, index);
@@ -445,7 +436,8 @@
     function discardNegativeDuration(duration) {
         return isNumber(duration) && duration < 0 ? void 0 : duration;
     }
-    var cleanupHistoriesInterval = null, cleanupTasks = new Set;
+    let cleanupHistoriesInterval = null;
+    const cleanupTasks = new Set;
     function createValueHistory(params) {
         var expireDelay = params.expireDelay, maxEntries = params.maxEntries, entries = [];
         function clearExpiredValues() {
@@ -506,11 +498,6 @@
     var VariableLibrary = {
         navigator: "undefined" != typeof window && void 0 !== window.navigator ? window.navigator : {}
     }, MethodLibrary = {
-        getLanguage: monitor((function() {
-            var arr;
-            return this.language = ((arr = (VariableLibrary.navigator.browserLanguage || VariableLibrary.navigator.language || "").split("-"))[1] && (arr[1] = arr[1].toUpperCase()), 
-            arr.join("_")), this.language;
-        })),
         getNetwork: monitor((function() {
             var connection = window.navigator.connection || window.navigator.mozConnection || window.navigator.webkitConnection, result = "unknown", type = connection ? connection.type || connection.effectiveType : null;
             if (type && "string" == typeof type) switch (type) {
@@ -545,16 +532,26 @@
             }
             return result;
         })),
+        getLanguage: monitor((function() {
+            var arr;
+            return this.language = ((arr = (VariableLibrary.navigator.browserLanguage || VariableLibrary.navigator.language || "").split("-"))[1] && (arr[1] = arr[1].toUpperCase()), 
+            arr.join("_")), this.language;
+        })),
         getTimeZone: monitor((function() {
-            return Intl.DateTimeFormat().resolvedOptions().timeZone;
+            try {
+                return (new Intl.DateTimeFormat).resolvedOptions().timeZone;
+            } catch (_unused) {
+                return;
+            }
         }))
     }, _deviceInfo = {};
     "undefined" != typeof window && (_deviceInfo = {
         screenSize: window.screen.width + "*" + window.screen.height,
         networkType: MethodLibrary.getNetwork(),
+        userAgent: VariableLibrary.navigator.userAgent || "",
         timeZone: MethodLibrary.getTimeZone()
     });
-    var deviceInfo = _deviceInfo, DOM_EVENT_BEFORE_UNLOAD = "beforeunload", DOM_EVENT_CLICK = "click", DOM_EVENT_KEY_DOWN = "keydown", DOM_EVENT_LOAD = "load", DOM_EVENT_POP_STATE = "popstate", DOM_EVENT_SCROLL = "scroll", DOM_EVENT_TOUCH_START = "touchstart", DOM_EVENT_VISIBILITY_CHANGE = "visibilitychange", DOM_EVENT_PAGE_SHOW = "pageshow", DOM_EVENT_FREEZE = "freeze", DOM_EVENT_RESUME = "resume", DOM_EVENT_DOM_CONTENT_LOADED = "DOMContentLoaded", DOM_EVENT_POINTER_DOWN = "pointerdown", DOM_EVENT_POINTER_UP = "pointerup", DOM_EVENT_POINTER_CANCEL = "pointercancel", DOM_EVENT_HASH_CHANGE = "hashchange", DOM_EVENT_PAGE_HIDE = "pagehide", DOM_EVENT_MOUSE_DOWN = "mousedown", DOM_EVENT_FOCUS = "focus", DOM_EVENT_BLUR = "blur", DOM_EVENT_RESIZE = "resize", DOM_EVENT_SECURITY_POLICY_VIOLATION = "securitypolicyviolation", DOM_EVENT_STORAGE = "storage", ResourceType_DOCUMENT = "document", ResourceType_XHR = "xhr", ResourceType_BEACON = "beacon", ResourceType_FETCH = "fetch", ResourceType_CSS = "css", ResourceType_JS = "js", ResourceType_IMAGE = "image", ResourceType_FONT = "font", ResourceType_MEDIA = "media", ResourceType_OTHER = "other", ActionType_CUSTOM = "custom", RumEventType = {
+    var deviceInfo = _deviceInfo, DOM_EVENT_BEFORE_UNLOAD = "beforeunload", DOM_EVENT_CLICK = "click", DOM_EVENT_KEY_DOWN = "keydown", DOM_EVENT_LOAD = "load", DOM_EVENT_POP_STATE = "popstate", DOM_EVENT_SCROLL = "scroll", DOM_EVENT_TOUCH_START = "touchstart", DOM_EVENT_VISIBILITY_CHANGE = "visibilitychange", DOM_EVENT_PAGE_SHOW = "pageshow", DOM_EVENT_FREEZE = "freeze", DOM_EVENT_RESUME = "resume", DOM_EVENT_DOM_CONTENT_LOADED = "DOMContentLoaded", DOM_EVENT_POINTER_DOWN = "pointerdown", DOM_EVENT_POINTER_UP = "pointerup", DOM_EVENT_POINTER_CANCEL = "pointercancel", DOM_EVENT_HASH_CHANGE = "hashchange", DOM_EVENT_PAGE_HIDE = "pagehide", DOM_EVENT_MOUSE_DOWN = "mousedown", DOM_EVENT_FOCUS = "focus", DOM_EVENT_BLUR = "blur", DOM_EVENT_RESIZE = "resize", DOM_EVENT_SECURITY_POLICY_VIOLATION = "securitypolicyviolation", DOM_EVENT_STORAGE = "storage", ResourceType_DOCUMENT = "document", ResourceType_XHR = "xhr", ResourceType_BEACON = "beacon", ResourceType_FETCH = "fetch", ResourceType_CSS = "css", ResourceType_JS = "js", ResourceType_IMAGE = "image", ResourceType_FONT = "font", ResourceType_MEDIA = "media", ResourceType_OTHER = "other", ResourceType_CUSTOM = "custom", ActionType_CLICK = "click", ActionType_CUSTOM = "custom", RumEventType = {
         ACTION: "action",
         ERROR: "error",
         LONG_TASK: "long_task",
@@ -566,7 +563,7 @@
         XHR: ResourceType_XHR
     }, TraceType_DDTRACE = "ddtrace", enums_ErrorHandling_HANDLED = "handled", enums_ErrorHandling_UNHANDLED = "unhandled", NonErrorPrefix_UNCAUGHT = "Uncaught", NonErrorPrefix_PROVIDED = "Provided";
     function jsonStringify_jsonStringify(value, replacer, space) {
-        if ("object" !== typeof_typeof(value) || null === value) return JSON.stringify(value);
+        if ("object" != typeof value || null === value) return JSON.stringify(value);
         var restoreObjectPrototypeToJson = detachToJsonMethod(Object.prototype), restoreArrayPrototypeToJson = detachToJsonMethod(Array.prototype), restoreValuePrototypeToJson = detachToJsonMethod(Object.getPrototypeOf(value)), restoreValueToJson = detachToJsonMethod(value);
         try {
             return JSON.stringify(value, replacer, space);
@@ -578,7 +575,7 @@
         }
     }
     function detachToJsonMethod(value) {
-        var object = value, objectToJson = object.toJSON;
+        const object = value, objectToJson = object.toJSON;
         return objectToJson ? (delete object.toJSON, function() {
             object.toJSON = objectToJson;
         }) : tools_noop;
@@ -644,7 +641,7 @@
     var WINJS_LINE_RE = /^\s*at (?:((?:\[object object\])?.+) )?\(?((?:file|ms-appx|https?|webpack|blob):.*?):(\d+)(?::(\d+))?\)?\s*$/i;
     var GECKO_LINE_RE = /^\s*(.*?)(?:\((.*?)\))?(?:^|@)((?:file|https?|blob|chrome|webpack|resource|capacitor|\[native).*?|[^@]*bundle|\[wasm code\])(?::(\d+))?(?::(\d+))?\s*$/i, GECKO_EVAL_RE = /(\S+) line (\d+)(?: > eval line \d+)* > eval/i;
     function tryToGetString(candidate, property) {
-        if ("object" === typeof_typeof(candidate) && candidate && property in candidate) {
+        if ("object" == typeof candidate && candidate && property in candidate) {
             var value = candidate[property];
             return "string" == typeof value ? value : void 0;
         }
@@ -660,7 +657,7 @@
                         column: column,
                         line: line
                     }, parse = function(messageObj) {
-                        var name, message;
+                        let name, message;
                         if ("[object String]" === {}.toString.call(messageObj)) {
                             var groups = ERROR_TYPES_RE.exec(messageObj);
                             groups && (name = groups[1], message = groups[2]);
@@ -729,10 +726,10 @@
             } catch (_unused2) {}
             return value;
         }(source);
-        if (!sourceToSanitize || "object" !== typeof_typeof(sourceToSanitize)) return function(value) {
+        if (!sourceToSanitize || "object" != typeof sourceToSanitize) return function(value) {
             if ("bigint" == typeof value) return "[BigInt] " + value.toString();
             if ("function" == typeof value) return "[Function] " + value.name || 0;
-            if ("symbol" === typeof_typeof(value)) return "[Symbol] " + value.description || 0;
+            if ("symbol" == typeof value) return "[Symbol] " + value.description || 0;
             return value;
         }(sourceToSanitize);
         var sanitizedSource = sanitizeObjects(sourceToSanitize);
@@ -764,14 +761,7 @@
     function warnOverCharacterLimit(maxCharacterCount, changeType, source) {
         display.warn("The data provided has been " + changeType + " as it is over the limit of " + maxCharacterCount + " characters:", source);
     }
-    var errorTools_ErrorSource = {
-        AGENT: "agent",
-        CONSOLE: "console",
-        NETWORK: "network",
-        SOURCE: "source",
-        LOGGER: "logger",
-        CUSTOM: "custom"
-    };
+    var errorTools_ErrorSource_AGENT = "agent", errorTools_ErrorSource_CONSOLE = "console", errorTools_ErrorSource_SOURCE = "source", errorTools_ErrorSource_CUSTOM = "custom", errorTools_ErrorSource_REPORT = "report";
     function computeRawError(data) {
         var stackTrace = data.stackTrace, originalError = data.originalError, handlingStack = data.handlingStack, startClocks = data.startClocks, nonErrorPrefix = data.nonErrorPrefix, source = data.source, handling = data.handling, isErrorInstance = originalError instanceof Error, message = function(stackTrace, isErrorInstance, nonErrorPrefix, originalError) {
             return stackTrace && stackTrace.message && stackTrace && stackTrace.name ? stackTrace.message : isErrorInstance ? "Empty message" : nonErrorPrefix + " " + jsonStringify_jsonStringify(sanitize(originalError));
@@ -927,7 +917,7 @@
                 causes: firstErrorParam ? flattenErrorCauses(firstErrorParam, "console") : void 0,
                 startClocks: clocksNow(),
                 message: message,
-                source: errorTools_ErrorSource.CONSOLE,
+                source: errorTools_ErrorSource_CONSOLE,
                 handling: enums_ErrorHandling_HANDLED,
                 handlingStack: handlingStack
             };
@@ -949,20 +939,28 @@
         options = options && options.passive ? {
             capture: options.capture,
             passive: options.passive
-        } : options && options.capture;
-        var listenerTarget = window.EventTarget && eventTarget instanceof EventTarget ? window.EventTarget.prototype : eventTarget, add = getZoneJsOriginalValue(listenerTarget, "addEventListener");
-        each(eventNames, (function(eventName) {
-            add.call(eventTarget, eventName, wrappedListener, options);
+        } : options && options.capture, each(eventNames, (function(eventName) {
+            withOriginalOrZoneJsPatchedMethod(eventTarget, "addEventListener", (method => method.call(eventTarget, eventName, wrappedListener, options)));
         }));
         var stop = function() {
-            var remove = getZoneJsOriginalValue(listenerTarget, "removeEventListener");
             each(eventNames, (function(eventName) {
-                remove.call(eventTarget, eventName, wrappedListener, options);
+                withOriginalOrZoneJsPatchedMethod(eventTarget, "removeEventListener", (method => method.call(eventTarget, eventName, wrappedListener, options)));
             }));
         };
         return {
             stop: stop
         };
+    }
+    function withOriginalOrZoneJsPatchedMethod(eventTarget, methodName, cb) {
+        const originalMethod = getZoneJsOriginalValue(window.EventTarget && eventTarget instanceof EventTarget ? window.EventTarget.prototype : eventTarget, methodName);
+        try {
+            cb(originalMethod);
+        } catch (error) {
+            if (function(error, methodName) {
+                return error instanceof Error && (error.message.includes("Illegal invocation") || error.message.includes("'".concat(methodName, "' called on an object that does not implement interface EventTarget.")) || error.message.includes("Can only call EventTarget.".concat(methodName, " on instances of EventTarget")));
+            }(error, methodName)) return cb(eventTarget[methodName]);
+            throw error;
+        }
     }
     var RawReportType_intervention = "intervention", RawReportType_cspViolation = "csp_violation";
     function initReportObservable(configuration, apis) {
@@ -1035,73 +1033,21 @@
     function LifeCycle() {
         this.callbacks = {};
     }
-    function _arrayWithHoles(r) {
-        if (Array.isArray(r)) return r;
-    }
-    function _arrayLikeToArray(r, a) {
-        (null == a || a > r.length) && (a = r.length);
-        for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e];
-        return n;
-    }
-    function _unsupportedIterableToArray(r, a) {
-        if (r) {
-            if ("string" == typeof r) return _arrayLikeToArray(r, a);
-            var t = {}.toString.call(r).slice(8, -1);
-            return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0;
-        }
-    }
-    function _nonIterableRest() {
-        throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
-    }
-    function _toArray(r) {
-        return _arrayWithHoles(r) || function(r) {
-            if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r);
-        }(r) || _unsupportedIterableToArray(r) || _nonIterableRest();
-    }
-    function _slicedToArray(r, e) {
-        return _arrayWithHoles(r) || function(r, l) {
-            var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"];
-            if (null != t) {
-                var e, n, i, u, a = [], f = !0, o = !1;
-                try {
-                    if (i = (t = t.call(r)).next, 0 === l) {
-                        if (Object(t) !== t) return;
-                        f = !1;
-                    } else for (;!(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0) ;
-                } catch (r) {
-                    o = !0, n = r;
-                } finally {
-                    try {
-                        if (!f && null != t.return && (u = t.return(), Object(u) !== u)) return;
-                    } finally {
-                        if (o) throw n;
-                    }
-                }
-                return a;
-            }
-        }(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest();
-    }
     function limitModification(object, modifiableFieldPaths, modifier) {
-        var clone = deepClone(object), result = modifier(clone);
-        return objectEntries(modifiableFieldPaths).forEach((function(_ref) {
-            var _ref2 = _slicedToArray(_ref, 2), fieldPath = _ref2[0], fieldType = _ref2[1];
+        const clone = deepClone(object), result = modifier(clone);
+        return objectEntries(modifiableFieldPaths).forEach((_ref => {
+            let [fieldPath, fieldType] = _ref;
             return setValueAtPath(object, clone, fieldPath.split(/\.|(?=\[\])/), fieldType);
         })), result;
     }
     function setValueAtPath(object, clone, pathSegments, fieldType) {
-        var _pathSegments = _toArray(pathSegments), field = _pathSegments[0], restPathSegments = function(r, a) {
-            (null == a || a > r.length) && (a = r.length);
-            for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e];
-            return n;
-        }(_pathSegments).slice(1);
+        const [field, ...restPathSegments] = pathSegments;
         if ("[]" !== field) {
             if (isValidObject(object) && isValidObject(clone)) return restPathSegments.length > 0 ? setValueAtPath(object[field], clone[field], restPathSegments, fieldType) : void function(object, field, value, fieldType) {
-                var newType = getType(value);
+                const newType = getType(value);
                 newType === fieldType ? object[field] = sanitize(value) : "object" !== fieldType || "undefined" !== newType && "null" !== newType || (object[field] = {});
             }(object, field, clone[field], fieldType);
-        } else Array.isArray(object) && Array.isArray(clone) && object.forEach((function(item, i) {
-            return setValueAtPath(item, clone[i], restPathSegments, fieldType);
-        }));
+        } else Array.isArray(object) && Array.isArray(clone) && object.forEach(((item, i) => setValueAtPath(item, clone[i], restPathSegments, fieldType)));
     }
     function isValidObject(object) {
         return "object" === getType(object);
@@ -1119,7 +1065,7 @@
                     try {
                         onLimitReached({
                             message: "Reached max number of " + eventType + "s by minute: " + limit,
-                            source: errorTools_ErrorSource.AGENT,
+                            source: errorTools_ErrorSource_AGENT,
                             startClocks: clocksNow()
                         });
                     } finally {
@@ -1158,13 +1104,13 @@
     }
     function requestIdleCallback(callback, opts) {
         if (window.requestIdleCallback && window.cancelIdleCallback) {
-            var id = window.requestIdleCallback(monitor(callback), opts);
+            const id = window.requestIdleCallback(monitor(callback), opts);
             return function() {
                 return window.cancelIdleCallback(id);
             };
         }
         return function(callback) {
-            var start = dateNow(), timeoutId = timer_setTimeout((function() {
+            const start = dateNow(), timeoutId = timer_setTimeout((function() {
                 callback({
                     didTimeout: !1,
                     timeRemaining: function() {
@@ -1235,7 +1181,7 @@
     function deleteCookie(name, options) {
         setCookie(name, "", 0, options);
     }
-    var SESSION_ENTRY_REGEXP = /^([a-zA-Z]+)=([a-z0-9-]+)$/;
+    const SessionPersistence_COOKIE = "cookie", SessionPersistence_LOCAL_STORAGE = "local-storage", SESSION_ENTRY_REGEXP = /^([a-zA-Z]+)=([a-z0-9-]+)$/;
     function isSessionInNotStartedState(session) {
         return isEmptyObject(session);
     }
@@ -1252,29 +1198,32 @@
         })).join("&");
     }
     function toSessionState(sessionString) {
-        var session = {};
+        const session = {};
         return function(sessionString) {
             return !!sessionString && (-1 !== sessionString.indexOf("&") || SESSION_ENTRY_REGEXP.test(sessionString));
         }(sessionString) && sessionString.split("&").forEach((function(entry) {
-            var matches = SESSION_ENTRY_REGEXP.exec(entry);
+            const matches = SESSION_ENTRY_REGEXP.exec(entry);
             if (null !== matches) {
-                var _matches = _slicedToArray(matches, 3), key = _matches[1], value = _matches[2];
+                const [, key, value] = matches;
                 session[key] = value;
             }
         })), session;
     }
     function selectCookieStrategy(initConfiguration) {
-        var cookieOptions = function(initConfiguration) {
-            var cookieOptions = {};
+        const cookieOptions = function(initConfiguration) {
+            const cookieOptions = {};
             cookieOptions.secure = !!initConfiguration.useSecureSessionCookie || !!initConfiguration.usePartitionedCrossSiteSessionCookie || !!initConfiguration.useCrossSiteSessionCookie, 
             cookieOptions.crossSite = !!initConfiguration.usePartitionedCrossSiteSessionCookie || !!initConfiguration.useCrossSiteSessionCookie, 
             cookieOptions.partitioned = !!initConfiguration.usePartitionedCrossSiteSessionCookie, 
             initConfiguration.trackSessionAcrossSubdomains && (cookieOptions.domain = function() {
                 if (void 0 === getCurrentSiteCache) {
-                    for (var testCookieName = "gc_site_test_".concat(UUID()), domainLevels = window.location.hostname.split("."), candidateDomain = domainLevels.pop(); domainLevels.length && !cookie_getCookie(testCookieName, {
+                    const testCookieName = "gc_site_test_".concat(UUID()), testCookieValue = "test", domainLevels = window.location.hostname.split(".");
+                    let candidateDomain = domainLevels.pop();
+                    for (;domainLevels.length && !cookie_getCookie(testCookieName, {
                         domain: candidateDomain
-                    }); ) setCookie(testCookieName, "test", 1e3, {
-                        domain: candidateDomain = "".concat(domainLevels.pop(), ".").concat(candidateDomain)
+                    }); ) candidateDomain = "".concat(domainLevels.pop(), ".").concat(candidateDomain), 
+                    setCookie(testCookieName, testCookieValue, 1e3, {
+                        domain: candidateDomain
                     });
                     deleteCookie(testCookieName, {
                         domain: candidateDomain
@@ -1289,13 +1238,13 @@
             try {
                 var testCookieName = "gc_cookie_test_".concat(UUID());
                 setCookie(testCookieName, "test", 6e4, options);
-                var isCookieCorrectlySet = "test" === cookie_getCookie(testCookieName, options);
+                const isCookieCorrectlySet = "test" === cookie_getCookie(testCookieName, options);
                 return deleteCookie(testCookieName, options), isCookieCorrectlySet;
             } catch (error) {
                 return !1;
             }
         }(cookieOptions) ? {
-            type: "Cookie",
+            type: SessionPersistence_COOKIE,
             cookieOptions: cookieOptions
         } : void 0;
     }
@@ -1321,6 +1270,18 @@
             return toSessionState(cookie_getCookie("_gc_s", options));
         };
     }
+    function selectLocalStorageStrategy() {
+        try {
+            const id = UUID(), testKey = "".concat("_gc_test_").concat(id);
+            localStorage.setItem(testKey, id);
+            const retrievedId = localStorage.getItem(testKey);
+            return localStorage.removeItem(testKey), id === retrievedId ? {
+                type: SessionPersistence_LOCAL_STORAGE
+            } : void 0;
+        } catch (e) {
+            return;
+        }
+    }
     function persistInLocalStorage(sessionState) {
         localStorage.setItem("_gc_s", toSessionString(sessionState));
     }
@@ -1332,37 +1293,57 @@
             isExpired: "1"
         });
     }
-    var ongoingOperations, bufferedOperations = [];
+    function _objectWithoutProperties(e, t) {
+        if (null == e) return {};
+        var o, r, i = function(r, e) {
+            if (null == r) return {};
+            var t = {};
+            for (var n in r) if ({}.hasOwnProperty.call(r, n)) {
+                if (-1 !== e.indexOf(n)) continue;
+                t[n] = r[n];
+            }
+            return t;
+        }(e, t);
+        if (Object.getOwnPropertySymbols) {
+            var n = Object.getOwnPropertySymbols(e);
+            for (r = 0; r < n.length; r++) o = n[r], -1 === t.indexOf(o) && {}.propertyIsEnumerable.call(e, o) && (i[o] = e[o]);
+        }
+        return i;
+    }
+    const _excluded = [ "lock" ], bufferedOperations = [];
+    let ongoingOperations;
     function processSessionStoreOperations(operations, sessionStoreStrategy) {
-        var numberOfRetries = arguments.length > 2 && void 0 !== arguments[2] ? arguments[2] : 0, isLockEnabled = sessionStoreStrategy.isLockEnabled, persistSession = sessionStoreStrategy.persistSession, expireSession = sessionStoreStrategy.expireSession, persistWithLock = function(session) {
+        let numberOfRetries = arguments.length > 2 && void 0 !== arguments[2] ? arguments[2] : 0;
+        const {isLockEnabled: isLockEnabled, persistSession: persistSession, expireSession: expireSession} = sessionStoreStrategy, persistWithLock = function(session) {
             return persistSession(tools_assign({}, session, {
                 lock: currentLock
             }));
         }, retrieveStore = function() {
-            var session = sessionStoreStrategy.retrieveSession(), lock = session.lock;
-            return session.lock && delete session.lock, {
-                session: session,
-                lock: lock
+            const _sessionStoreStrategy = sessionStoreStrategy.retrieveSession(), {lock: lock} = _sessionStoreStrategy;
+            return {
+                session: _objectWithoutProperties(_sessionStoreStrategy, _excluded),
+                lock: lock && !isLockExpired(lock) ? lock : void 0
             };
         };
-        if (ongoingOperations || (ongoingOperations = operations), operations === ongoingOperations) if (isLockEnabled && numberOfRetries >= 100) next(sessionStoreStrategy); else {
-            var currentLock, currentStore = retrieveStore();
-            if (isLockEnabled) {
-                if (currentStore.lock) return void retryLater(operations, sessionStoreStrategy, numberOfRetries);
-                if (currentLock = UUID(), persistWithLock(currentStore.session), (currentStore = retrieveStore()).lock !== currentLock) return void retryLater(operations, sessionStoreStrategy, numberOfRetries);
+        if (ongoingOperations || (ongoingOperations = operations), operations !== ongoingOperations) return void bufferedOperations.push(operations);
+        if (isLockEnabled && numberOfRetries >= 100) return void next(sessionStoreStrategy);
+        let currentLock, currentStore = retrieveStore();
+        if (isLockEnabled) {
+            if (currentStore.lock) return void retryLater(operations, sessionStoreStrategy, numberOfRetries);
+            if (currentLock = createLock(), persistWithLock(currentStore.session), currentStore = retrieveStore(), 
+            currentStore.lock !== currentLock) return void retryLater(operations, sessionStoreStrategy, numberOfRetries);
+        }
+        let processedSession = operations.process(currentStore.session);
+        if (isLockEnabled && (currentStore = retrieveStore(), currentStore.lock !== currentLock)) retryLater(operations, sessionStoreStrategy, numberOfRetries); else {
+            if (processedSession && (isSessionInExpiredState(processedSession) ? expireSession() : (expandSessionState(processedSession), 
+            isLockEnabled ? persistWithLock(processedSession) : persistSession(processedSession))), 
+            isLockEnabled && (!processedSession || !isSessionInExpiredState(processedSession))) {
+                if (currentStore = retrieveStore(), currentStore.lock !== currentLock) return void retryLater(operations, sessionStoreStrategy, numberOfRetries);
+                persistSession(currentStore.session), processedSession = currentStore.session;
             }
-            var processedSession = operations.process(currentStore.session);
-            if (isLockEnabled && (currentStore = retrieveStore()).lock !== currentLock) retryLater(operations, sessionStoreStrategy, numberOfRetries); else {
-                if (processedSession && (isSessionInExpiredState(processedSession) ? expireSession() : (expandSessionState(processedSession), 
-                isLockEnabled ? persistWithLock(processedSession) : persistSession(processedSession))), 
-                isLockEnabled && (!processedSession || !isSessionInExpiredState(processedSession))) {
-                    if ((currentStore = retrieveStore()).lock !== currentLock) return void retryLater(operations, sessionStoreStrategy, numberOfRetries);
-                    persistSession(currentStore.session), processedSession = currentStore.session;
-                }
-                operations.after && operations.after(processedSession || currentStore.session), 
-                next(sessionStoreStrategy);
-            }
-        } else bufferedOperations.push(operations);
+            operations.after && operations.after(processedSession || currentStore.session), 
+            next(sessionStoreStrategy);
+        }
     }
     function retryLater(operations, sessionStore, currentNumberOfRetries) {
         timer_setTimeout((function() {
@@ -1371,31 +1352,42 @@
     }
     function next(sessionStore) {
         ongoingOperations = void 0;
-        var nextOperations = bufferedOperations.shift();
+        const nextOperations = bufferedOperations.shift();
         nextOperations && processSessionStoreOperations(nextOperations, sessionStore);
     }
+    function createLock() {
+        return UUID() + "--" + timeStampNow();
+    }
+    function isLockExpired(lock) {
+        const [, timeStamp] = lock.split("--");
+        return !timeStamp || tools_elapsed(Number(timeStamp), timeStampNow()) > 1e3;
+    }
     function selectSessionStoreStrategyType(initConfiguration) {
-        var sessionStoreStrategyType = selectCookieStrategy(initConfiguration);
-        return !sessionStoreStrategyType && initConfiguration.allowFallbackToLocalStorage && (sessionStoreStrategyType = function() {
-            try {
-                var id = UUID(), testKey = "".concat("_gc_test_").concat(id);
-                localStorage.setItem(testKey, id);
-                var retrievedId = localStorage.getItem(testKey);
-                return localStorage.removeItem(testKey), id === retrievedId ? {
-                    type: "LocalStorage"
-                } : void 0;
-            } catch (e) {
-                return;
+        switch (initConfiguration.sessionPersistence) {
+          case SessionPersistence_COOKIE:
+            return selectCookieStrategy(initConfiguration);
+
+          case SessionPersistence_LOCAL_STORAGE:
+            return selectLocalStorageStrategy();
+
+          case void 0:
+            {
+                let sessionStoreStrategyType = selectCookieStrategy(initConfiguration);
+                return !sessionStoreStrategyType && initConfiguration.allowFallbackToLocalStorage && (sessionStoreStrategyType = selectLocalStorageStrategy()), 
+                sessionStoreStrategyType;
             }
-        }()), sessionStoreStrategyType;
+
+          default:
+            display.error("Invalid session persistence '".concat(String(initConfiguration.sessionPersistence), "'"));
+        }
     }
     function startSessionStore(sessionStoreStrategyType, productKey, computeSessionState) {
-        var sessionCache, renewObservable = new Observable, expireObservable = new Observable, sessionStateUpdateObservable = new Observable, sessionStoreStrategy = "Cookie" === sessionStoreStrategyType.type ? initCookieStrategy(sessionStoreStrategyType.cookieOptions) : {
+        const renewObservable = new Observable, expireObservable = new Observable, sessionStateUpdateObservable = new Observable, sessionStoreStrategy = sessionStoreStrategyType.type === SessionPersistence_COOKIE ? initCookieStrategy(sessionStoreStrategyType.cookieOptions) : {
             isLockEnabled: !1,
             persistSession: persistInLocalStorage,
             retrieveSession: retrieveSessionFromLocalStorage,
             expireSession: expireSessionFromLocalStorage
-        }, expireSession = sessionStoreStrategy.expireSession, watchSessionTimeoutId = timer_setInterval((function() {
+        }, {expireSession: expireSession} = sessionStoreStrategy, watchSessionTimeoutId = timer_setInterval((function() {
             processSessionStoreOperations({
                 process: function(sessionState) {
                     return isSessionInExpiredState(sessionState) ? {
@@ -1405,19 +1397,19 @@
                 after: synchronizeSession
             }, sessionStoreStrategy);
         }), 1e3);
+        let sessionCache;
         startSession();
-        var _throttle = throttle((function() {
+        const {throttled: throttledExpandOrRenewSession, cancel: cancelExpandOrRenewSession} = throttle((function() {
             processSessionStoreOperations({
                 process: function(sessionState) {
-                    if (!isSessionInNotStartedState(sessionState)) {
-                        var synchronizedSession = synchronizeSession(sessionState);
-                        return function(sessionState) {
-                            if (isSessionInNotStartedState(sessionState)) return !1;
-                            var _computeSessionState = computeSessionState(sessionState[productKey]), trackingType = _computeSessionState.trackingType, isTracked = _computeSessionState.isTracked;
-                            sessionState[productKey] = trackingType, delete sessionState.isExpired, isTracked && !sessionState.id && (sessionState.id = UUID(), 
-                            sessionState.created = String(dateNow()));
-                        }(synchronizedSession), synchronizedSession;
-                    }
+                    if (isSessionInNotStartedState(sessionState)) return;
+                    const synchronizedSession = synchronizeSession(sessionState);
+                    return function(sessionState) {
+                        if (isSessionInNotStartedState(sessionState)) return !1;
+                        const {trackingType: trackingType, isTracked: isTracked} = computeSessionState(sessionState[productKey]);
+                        sessionState[productKey] = trackingType, delete sessionState.isExpired, isTracked && !sessionState.id && (sessionState.id = UUID(), 
+                        sessionState.created = String(dateNow()));
+                    }(synchronizedSession), synchronizedSession;
                 },
                 after: function(sessionState) {
                     isSessionInNotStartedState(sessionState) || hasSessionInCache() || function(sessionState) {
@@ -1425,7 +1417,7 @@
                     }(sessionState), sessionCache = sessionState;
                 }
             }, sessionStoreStrategy);
-        }), 1e3), throttledExpandOrRenewSession = _throttle.throttled, cancelExpandOrRenewSession = _throttle.cancel;
+        }), 1e3);
         function synchronizeSession(sessionState) {
             return isSessionInExpiredState(sessionState) && (sessionState = {
                 isExpired: "1"
@@ -1499,6 +1491,7 @@
                 return tools_assign({
                     beforeSend: initConfiguration.beforeSend && catchUserErrors(initConfiguration.beforeSend, "beforeSend threw an error:"),
                     sessionStoreStrategyType: selectSessionStoreStrategyType(initConfiguration),
+                    isOpenWay: initConfiguration.site && initConfiguration.clientToken,
                     sessionSampleRate: isNullUndefinedDefaultValue(sessionSampleRate, 100),
                     service: initConfiguration.service,
                     version: initConfiguration.version,
@@ -1521,7 +1514,11 @@
                     var isIntakeUrl = function(url) {
                         return !1;
                     };
-                    "isIntakeUrl" in initConfiguration && isFunction(initConfiguration.isIntakeUrl) && isBoolean(initConfiguration.isIntakeUrl()) && (isIntakeUrl = initConfiguration.isIntakeUrl);
+                    "isIntakeUrl" in initConfiguration && isArray(initConfiguration.isIntakeUrl) ? isIntakeUrl = function(url) {
+                        return some(initConfiguration.isIntakeUrl, (function(takeUrl) {
+                            return 0 === url.indexOf(takeUrl);
+                        }));
+                    } : "isIntakeUrl" in initConfiguration && isFunction(initConfiguration.isIntakeUrl) && isBoolean(initConfiguration.isIntakeUrl()) && (isIntakeUrl = initConfiguration.isIntakeUrl);
                     var isServerError = function(request) {
                         return !1;
                     };
@@ -1612,9 +1609,10 @@
                 }(call, observable);
             }), {
                 computeHandlingStack: !0
-            }), abortInstrumentMethod = instrumentMethod(XMLHttpRequest.prototype, "abort", abortXhr);
+            }), setRequestHeaderInstrumentMethod = instrumentMethod(XMLHttpRequest.prototype, "setRequestHeader", setRequestHeaderXhr), abortInstrumentMethod = instrumentMethod(XMLHttpRequest.prototype, "abort", abortXhr);
             return function() {
-                openInstrumentMethod.stop(), sendInstrumentMethod.stop(), abortInstrumentMethod.stop();
+                openInstrumentMethod.stop(), sendInstrumentMethod.stop(), abortInstrumentMethod.stop(), 
+                setRequestHeaderInstrumentMethod.stop();
             };
         }))), xhrObservable;
     }
@@ -1625,6 +1623,13 @@
             method: String(method).toUpperCase(),
             url: normalizeUrl(String(url))
         });
+    }
+    function setRequestHeaderXhr(params) {
+        var xhr = params.target, headerKey = params.parameters[0], headerValue = params.parameters[1], context = xhrContexts.get(xhr);
+        if (context && headerKey) {
+            var requestHeaderContexts = context.requestHeaderContexts || {};
+            requestHeaderContexts[headerKey] = headerValue, context.requestHeaderContexts = requestHeaderContexts;
+        }
     }
     function abortXhr(params) {
         var xhr = params.target, context = xhrContexts.get(xhr);
@@ -1660,6 +1665,7 @@
         user_name: "user.name",
         session_id: "session.id",
         session_type: "session.type",
+        session_is_forced: "session.is_forced_session",
         session_sampling: "session.is_sampling",
         is_signin: "user.is_signin",
         os: "device.os",
@@ -1680,13 +1686,15 @@
         device: "device.device",
         device_vendor: "device.device_vendor",
         device_model: "device.device_model",
+        user_agent: "device.user_agent",
         view_id: "view.id",
         view_referrer: "view.referrer",
         view_url: "view.url",
         view_host: "view.host",
         view_path: "view.path",
         view_name: "view.name",
-        view_path_group: "view.path_group"
+        view_path_group: "view.path_group",
+        view_path_name: "view.pathname"
     }, commonFields = {
         view_url_query: "view.url_query",
         action_id: "action.id",
@@ -1710,6 +1718,7 @@
                 view_privacy_replay_level: "privacy.replay_level"
             },
             fields: {
+                view_update_time: "_gc.view_update_time",
                 sampled_for_replay: "session.sampled_for_replay",
                 sampled_for_error_replay: "session.sampled_for_error_replay",
                 sampled_for_error_session: "session.sampled_for_error_session",
@@ -1872,20 +1881,28 @@
                 error_stack: [ "string", "error.stack" ]
             }
         }
-    }, stopCallbacks = [];
+    };
+    let stopCallbacks = [];
     function startSessionManager(configuration, productKey, computeSessionState) {
-        var renewObservable = new Observable, expireObservable = new Observable, sessionStore = startSessionStore(configuration.sessionStoreStrategyType, productKey, computeSessionState);
+        const renewObservable = new Observable, expireObservable = new Observable, sessionStore = startSessionStore(configuration.sessionStoreStrategyType, productKey, computeSessionState);
         stopCallbacks.push((function() {
             return sessionStore.stop();
         }));
-        var stop, sessionContextHistory = createValueHistory({
+        const sessionContextHistory = createValueHistory({
             expireDelay: 144e5
         });
         function buildSessionContext() {
-            return {
-                id: sessionStore.getSession().id,
-                trackingType: sessionStore.getSession()[productKey],
-                hasError: !!sessionStore.getSession().hasError
+            const session = sessionStore.getSession();
+            return session ? {
+                id: session.id,
+                trackingType: session[productKey],
+                hasError: !!session.hasError,
+                isSessionForced: !!session.forcedSession
+            } : {
+                id: "invalid",
+                trackingType: "0",
+                isSessionForced: !1,
+                hasError: !1
             };
         }
         return stopCallbacks.push((function() {
@@ -1895,26 +1912,29 @@
         })), sessionStore.expireObservable.subscribe((function() {
             expireObservable.notify(), sessionContextHistory.closeActive(tools_relativeNow());
         })), sessionStore.expandOrRenewSession(), sessionContextHistory.add(buildSessionContext(), clocksOrigin().relative), 
-        stop = addEventListeners(window, [ DOM_EVENT_CLICK, DOM_EVENT_TOUCH_START, DOM_EVENT_KEY_DOWN, DOM_EVENT_SCROLL ], (function() {
-            sessionStore.expandOrRenewSession();
-        }), {
-            capture: !0,
-            passive: !0
-        }).stop, stopCallbacks.push(stop), function(expandSession) {
-            var expandSessionWhenVisible = function() {
-                "visible" === document.visibilityState && expandSession();
-            }, stop = addEventListener(document, DOM_EVENT_VISIBILITY_CHANGE, expandSessionWhenVisible).stop;
+        function(expandOrRenewSession) {
+            const {stop: stop} = addEventListeners(window, [ DOM_EVENT_CLICK, DOM_EVENT_TOUCH_START, DOM_EVENT_KEY_DOWN, DOM_EVENT_SCROLL ], expandOrRenewSession, {
+                capture: !0,
+                passive: !0
+            });
             stopCallbacks.push(stop);
-            var visibilityCheckInterval = timer_setInterval(expandSessionWhenVisible, 6e4);
+        }((function() {
+            sessionStore.expandOrRenewSession();
+        })), function(expandSession) {
+            const expandSessionWhenVisible = function() {
+                "visible" === document.visibilityState && expandSession();
+            }, {stop: stop} = addEventListener(document, DOM_EVENT_VISIBILITY_CHANGE, expandSessionWhenVisible);
+            stopCallbacks.push(stop);
+            const visibilityCheckInterval = timer_setInterval(expandSessionWhenVisible, 6e4);
             stopCallbacks.push((function() {
                 timer_clearInterval(visibilityCheckInterval);
             }));
         }((function() {
             return sessionStore.expandSession();
         })), function(cb) {
-            var stop = addEventListener(window, DOM_EVENT_RESUME, cb, {
+            const {stop: stop} = addEventListener(window, DOM_EVENT_RESUME, cb, {
                 capture: !0
-            }).stop;
+            });
             stopCallbacks.push(stop);
         }((function() {
             sessionStore.restartSession();
@@ -1966,8 +1986,8 @@
     }
     function retryQueuedPayloads(reason, state, sendStrategy, endpointUrl, reportError) {
         reason === RetryReason_AFTER_SUCCESS && state.queuedPayloads.isFull() && !state.queueFullReported && (reportError({
-            message: "Reached max " + endpointUrl + " events size queued for upload: 3MiB",
-            source: errorTools_ErrorSource.AGENT,
+            message: "Reached max " + endpointUrl + " events size queued for upload: 20MiB",
+            source: errorTools_ErrorSource_AGENT,
             startClocks: clocksNow()
         }), state.queueFullReported = !0);
         var previousQueue = state.queuedPayloads;
@@ -1991,7 +2011,7 @@
                 return queue.length;
             },
             isFull: function() {
-                return this.bytesCount >= 3145728;
+                return this.bytesCount >= 20971520;
             }
         };
     }
@@ -2038,15 +2058,37 @@
                         keepalive: !0,
                         mode: "cors"
                     };
-                    payload.type && (fetchOption.headers = {
-                        "Content-Type": payload.type
-                    }), fetch(url, fetchOption).then(monitor((function(response) {
+                    const headers = {
+                        "x-client-timestamp": Date.now().toString()
+                    };
+                    payload.type && (headers["Content-Type"] = payload.type), fetchOption.headers = headers, 
+                    fetch(url, fetchOption).then(monitor((function(response) {
                         "function" == typeof onResponse && onResponse({
                             status: response.status,
                             type: response.type
                         });
-                    })), monitor((function() {
-                        sendXHR(url, payload, onResponse);
+                    }))).catch(monitor((function() {
+                        !function(url, payload, onResponse) {
+                            const fetchOption = {
+                                method: "POST",
+                                body: payload.data,
+                                keepalive: !0,
+                                mode: "cors"
+                            }, headers = {
+                                "x-client-timestamp": Date.now().toString()
+                            };
+                            payload.type && (headers["Content-Type"] = payload.type);
+                            fetchOption.headers = headers, fetch(url, fetchOption).then(monitor((function(response) {
+                                "function" == typeof onResponse && onResponse({
+                                    status: response.status,
+                                    type: response.type
+                                });
+                            }))).catch(monitor((function() {
+                                "function" == typeof onResponse && onResponse({
+                                    status: 0
+                                });
+                            })));
+                        }(url, payload, onResponse);
                     })));
                 } else sendXHR(url, payload, onResponse);
             }(endpointUrl, bytesLimit, payload, onResponse);
@@ -2073,9 +2115,9 @@
     }
     var hasReportedBeaconError = !1;
     function sendXHR(url, payload, onResponse) {
-        var data = payload.data, request = new XMLHttpRequest;
+        const data = payload.data, request = new XMLHttpRequest;
         request.open("POST", url, !0), data instanceof Blob ? request.setRequestHeader("Content-Type", data.type) : payload.type && request.setRequestHeader("Content-Type", payload.type), 
-        addEventListener(request, "loadend", (function() {
+        request.setRequestHeader("x-client-timestamp", Date.now().toString()), addEventListener(request, "loadend", (function() {
             "function" == typeof onResponse && onResponse({
                 status: request.status
             });
@@ -2084,20 +2126,20 @@
         }), request.send(data);
     }
     function escapeRowData(str) {
-        if ("object" === typeof_typeof(str) && str) str = jsonStringify_jsonStringify(str); else if (!isString(str)) return str;
+        if ("object" == typeof str && str) str = jsonStringify_jsonStringify(str); else if (!isString(str)) return str;
         return String(str).replace(/[\s=,"]/g, (function(word) {
             return "\\" + word;
         }));
     }
     function escapeJsonValue(value, isTag) {
-        return "object" === typeof_typeof(value) && value ? value = jsonStringify_jsonStringify(value) : isTag && (value = "" + value), 
+        return "object" == typeof value && value ? value = jsonStringify_jsonStringify(value) : isTag && (value = "" + value), 
         value;
     }
     function escapeFieldValueStr(str) {
         return '"' + str.replace(/\\/g, "\\\\").replace(/"/g, '\\"') + '"';
     }
     function escapeRowField(value) {
-        return "object" === typeof_typeof(value) && value ? escapeFieldValueStr(jsonStringify_jsonStringify(value)) : isString(value) ? escapeFieldValueStr(value) : value;
+        return "object" == typeof value && value ? escapeFieldValueStr(jsonStringify_jsonStringify(value)) : isString(value) ? escapeFieldValueStr(value) : value;
     }
     var processedMessageByDataMap = function(message) {
         if (!message || !message.type) return {
@@ -2158,7 +2200,7 @@
                 if (isPageExit && encoder.isAsync) {
                     var encoderResult = encoder.finishSync();
                     encoderResult.outputBytesCount && send(formatPayloadFromEncoder(encoderResult, sendContentTypeByJson));
-                    var pendingMessages = [ encoderResult.pendingData, upsertMessages ].filter(Boolean).join("\n");
+                    var pendingMessages = [ ...encoderResult.pendingData, upsertMessages ].filter(Boolean).join("\n");
                     pendingMessages && send({
                         data: pendingMessages,
                         bytesCount: computeBytesCount(pendingMessages)
@@ -2175,11 +2217,11 @@
             }(event);
         }));
         function getMessageText(messages) {
-            var isEmpty = arguments.length > 1 && void 0 !== arguments[1] && arguments[1];
+            let isEmpty = arguments.length > 1 && void 0 !== arguments[1] && arguments[1];
             return sendContentTypeByJson ? isEmpty ? "[" + messages.join(",") : "," + messages.join(",") : isEmpty ? messages.join("\n") : "\n" + messages.join("\n");
         }
         function addOrUpdate(message, key) {
-            var serializedMessage = function(message) {
+            const serializedMessage = function(message) {
                 return sendContentTypeByJson ? jsonStringify_jsonStringify(processedMessageByDataMap(message).rowData) : processedMessageByDataMap(message).rowStr;
             }(message), estimatedMessageBytesCount = encoder.estimateEncodedBytesCount(serializedMessage);
             estimatedMessageBytesCount >= messageBytesLimit ? display.warn("Discarded a message whose size was bigger than the maximum allowed size ".concat(messageBytesLimit, "KB.")) : (function(key) {
@@ -2214,13 +2256,12 @@
         };
     }
     function createFlushController(_ref) {
-        var messagesLimit = _ref.messagesLimit, bytesLimit = _ref.bytesLimit, durationLimit = _ref.durationLimit, pageExitObservable = _ref.pageExitObservable, sessionExpireObservable = _ref.sessionExpireObservable;
-        pageExitObservable.subscribe((function(event) {
+        let {messagesLimit: messagesLimit, bytesLimit: bytesLimit, durationLimit: durationLimit, pageExitObservable: pageExitObservable, sessionExpireObservable: sessionExpireObservable} = _ref;
+        var durationLimitTimeoutId, pageExitSubscription = pageExitObservable.subscribe((function(event) {
             return flush(event.reason);
-        })), sessionExpireObservable.subscribe((function() {
+        })), sessionExpireSubscription = sessionExpireObservable.subscribe((function() {
             return flush("session_expire");
-        }));
-        var durationLimitTimeoutId, flushObservable = new Observable((function() {
+        })), flushObservable = new Observable((function() {
             return function() {
                 pageExitSubscription.unsubscribe(), sessionExpireSubscription.unsubscribe();
             };
@@ -2263,18 +2304,25 @@
         arguments.length > 0 && void 0 !== arguments[0] || null === (_getGlobalObject$loca = getGlobalObject().location) || void 0 === _getGlobalObject$loca || _getGlobalObject$loca.hostname;
         return !1;
     }
+    function _typeof(o) {
+        return (_typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function(o) {
+            return typeof o;
+        } : function(o) {
+            return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o;
+        })(o);
+    }
     function toPropertyKey(t) {
         var i = function(t, r) {
-            if ("object" != typeof_typeof(t) || !t) return t;
+            if ("object" != _typeof(t) || !t) return t;
             var e = t[Symbol.toPrimitive];
             if (void 0 !== e) {
                 var i = e.call(t, r || "default");
-                if ("object" != typeof_typeof(i)) return i;
+                if ("object" != _typeof(i)) return i;
                 throw new TypeError("@@toPrimitive must return a primitive value.");
             }
             return ("string" === r ? String : Number)(t);
         }(t, "string");
-        return "symbol" == typeof_typeof(i) ? i : i + "";
+        return "symbol" == _typeof(i) ? i : i + "";
     }
     function _defineProperty(e, r, t) {
         return (r = toPropertyKey(r)) in e ? Object.defineProperty(e, r, {
@@ -2295,7 +2343,7 @@
         return t;
     }
     function ensureProperties(context, propertiesConfig, name) {
-        for (var newContext = function(e) {
+        const newContext = function(e) {
             for (var r = 1; r < arguments.length; r++) {
                 var t = null != arguments[r] ? arguments[r] : {};
                 r % 2 ? ownKeys(Object(t), !0).forEach((function(r) {
@@ -2305,33 +2353,31 @@
                 }));
             }
             return e;
-        }({}, context), _i = 0, _Object$entries = Object.entries(propertiesConfig); _i < _Object$entries.length; _i++) {
-            var _Object$entries$_i = _slicedToArray(_Object$entries[_i], 2), key = _Object$entries$_i[0], _Object$entries$_i$ = _Object$entries$_i[1], required = _Object$entries$_i$.required;
-            "string" === _Object$entries$_i$.type && key in newContext && (newContext[key] = String(newContext[key])), 
-            required && !(key in context) && display.warn("The property ".concat(key, " of ").concat(name, " context is required; context will not be sent to the intake."));
-        }
+        }({}, context);
+        for (const [key, {required: required, type: type}] of Object.entries(propertiesConfig)) "string" === type && key in newContext && (newContext[key] = String(newContext[key])), 
+        required && !(key in context) && display.warn("The property ".concat(key, " of ").concat(name, " context is required; context will not be sent to the intake."));
         return newContext;
     }
     function createContextManager() {
-        var name = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : "", _ref = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : {}, customerDataTracker = _ref.customerDataTracker, _ref$propertiesConfig = _ref.propertiesConfig, propertiesConfig = void 0 === _ref$propertiesConfig ? {} : _ref$propertiesConfig, context = {}, changeObservable = new Observable, contextManager = {
-            getContext: function() {
-                return deepClone(context);
-            },
-            setContext: function(newContext) {
+        let name = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : "", {customerDataTracker: customerDataTracker, propertiesConfig: propertiesConfig = {}} = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : {}, context = {};
+        const changeObservable = new Observable, contextManager = {
+            getContext: () => deepClone(context),
+            setContext: newContext => {
                 "object" === getType(newContext) ? (context = sanitize(ensureProperties(newContext, propertiesConfig, name)), 
                 null == customerDataTracker || customerDataTracker.updateCustomerData(context)) : contextManager.clearContext(), 
                 changeObservable.notify();
             },
-            setContextProperty: function(key, property) {
-                context[key] = sanitize(ensureProperties(_defineProperty({}, key, property), propertiesConfig, name)[key]), 
-                null == customerDataTracker || customerDataTracker.updateCustomerData(context), 
+            setContextProperty: (key, property) => {
+                context[key] = sanitize(ensureProperties({
+                    [key]: property
+                }, propertiesConfig, name)[key]), null == customerDataTracker || customerDataTracker.updateCustomerData(context), 
                 changeObservable.notify();
             },
-            removeContextProperty: function(key) {
+            removeContextProperty: key => {
                 delete context[key], null == customerDataTracker || customerDataTracker.updateCustomerData(context), 
                 ensureProperties(context, propertiesConfig, name), changeObservable.notify();
             },
-            clearContext: function() {
+            clearContext: () => {
                 context = {}, null == customerDataTracker || customerDataTracker.resetCustomerData(), 
                 changeObservable.notify();
             },
@@ -2345,7 +2391,7 @@
             return configuration.storeContextsKey && isString(configuration.storeContextsKey) ? "_gc_s_" + productKey + "_" + customerDataType + "_" + configuration.storeContextsKey : "_gc_s_" + productKey + "_" + customerDataType;
         }(configuration, productKey, customerDataType);
         function getFromStorage() {
-            var rawContext = localStorage.getItem(storageKey);
+            const rawContext = localStorage.getItem(storageKey);
             return null !== rawContext ? JSON.parse(rawContext) : {};
         }
         return storageListeners.push(addEventListener(window, DOM_EVENT_STORAGE, (function(params) {
@@ -2355,22 +2401,21 @@
         })), contextManager.setContext(extend2Lev(getFromStorage(), contextManager.getContext())), 
         contextManager;
     }
-    var CustomerDataCompressionStatus_Unknown = 0, CustomerDataCompressionStatus_Enabled = 1, CustomerDataCompressionStatus_Disabled = 2;
+    const CustomerDataCompressionStatus_Unknown = 0, CustomerDataCompressionStatus_Enabled = 1, CustomerDataCompressionStatus_Disabled = 2;
     function createCustomerDataTracker(checkCustomerDataLimit) {
-        var bytesCountCache = 0, _throttle = throttle((function(context) {
+        let bytesCountCache = 0;
+        const {throttled: computeBytesCountThrottled, cancel: cancelComputeBytesCount} = throttle((context => {
             bytesCountCache = computeBytesCount(jsonStringify_jsonStringify(context)), checkCustomerDataLimit();
-        }), 200), computeBytesCountThrottled = _throttle.throttled, cancelComputeBytesCount = _throttle.cancel, resetBytesCount = function() {
+        }), 200), resetBytesCount = () => {
             cancelComputeBytesCount(), bytesCountCache = 0;
         };
         return {
-            updateCustomerData: function(context) {
+            updateCustomerData: context => {
                 isEmptyObject(context) ? resetBytesCount() : computeBytesCountThrottled(context);
             },
             resetCustomerData: resetBytesCount,
-            getBytesCount: function() {
-                return bytesCountCache;
-            },
-            stop: function() {
+            getBytesCount: () => bytesCountCache,
+            stop: () => {
                 cancelComputeBytesCount();
             }
         };
@@ -2397,7 +2442,7 @@
                     output: output,
                     outputBytesCount: outputBytesCount,
                     rawBytesCount: outputBytesCount,
-                    pendingData: ""
+                    pendingData: []
                 };
                 return output = "", outputBytesCount = 0, result;
             },
@@ -2427,11 +2472,13 @@
     }, polyfills_WeakSet.prototype.has = function(value) {
         return this.map.has(value);
     };
-    var RumSessionPlan_WITHOUT_SESSION_REPLAY = 1, RumSessionPlan_WITH_SESSION_REPLAY = 2, RumSessionPlan_WITH_ERROR_SESSION_REPLAY = 3, RumTrackingType_NOT_TRACKED = "0", RumTrackingType_TRACKED_WITH_SESSION_AND_WITH_SESSION_REPLAY = "1", RumTrackingType_TRACKED_WITH_SESSION_AND_WITHOUT_SESSION_REPLAY = "2", RumTrackingType_TRACKED_WITH_SESSION_AND_WITH_ERROR_SESSION_REPLAY = "3", RumTrackingType_TRACKED_WITH_ERROR_SESSION_AND_WITH_SESSION_REPLAY = "4", RumTrackingType_TRACKED_WITH_ERROR_SESSION_AND_WITHOUT_SESSION_REPLAY = "5", RumTrackingType_TRACKED_WITH_ERROR_SESSION_AND_WITH_ERROR_SESSION_REPLAY = "6";
+    var RumSessionPlan_WITHOUT_SESSION_REPLAY = 1, RumSessionPlan_WITH_SESSION_REPLAY = 2, RumSessionPlan_WITH_ERROR_SESSION_REPLAY = 3;
+    var RumTrackingType_NOT_TRACKED = "0", RumTrackingType_TRACKED_WITH_SESSION_AND_WITH_SESSION_REPLAY = "1", RumTrackingType_TRACKED_WITH_SESSION_AND_WITHOUT_SESSION_REPLAY = "2", RumTrackingType_TRACKED_WITH_SESSION_AND_WITH_ERROR_SESSION_REPLAY = "3", RumTrackingType_TRACKED_WITH_ERROR_SESSION_AND_WITH_SESSION_REPLAY = "4", RumTrackingType_TRACKED_WITH_ERROR_SESSION_AND_WITHOUT_SESSION_REPLAY = "5", RumTrackingType_TRACKED_WITH_ERROR_SESSION_AND_WITH_ERROR_SESSION_REPLAY = "6";
     function startRumSessionManager(configuration, lifeCycle) {
         var sessionManager = startSessionManager(configuration, "rum", (function(rawTrackingType) {
             return function(configuration, rawTrackingType) {
-                var trackingType, sessionSampleRate = configuration.sessionSampleRate, sessionOnErrorSampleRate = configuration.sessionOnErrorSampleRate, sessionReplaySampleRate = configuration.sessionReplaySampleRate, sessionReplayOnErrorSampleRate = configuration.sessionReplayOnErrorSampleRate, isSession = performDraw(sessionSampleRate), isErrorSession = performDraw(sessionOnErrorSampleRate), isSessionReplay = performDraw(sessionReplaySampleRate), isErrorSessionReplay = performDraw(sessionReplayOnErrorSampleRate);
+                const {sessionSampleRate: sessionSampleRate, sessionOnErrorSampleRate: sessionOnErrorSampleRate, sessionReplaySampleRate: sessionReplaySampleRate, sessionReplayOnErrorSampleRate: sessionReplayOnErrorSampleRate} = configuration, isSession = performDraw(sessionSampleRate), isErrorSession = performDraw(sessionOnErrorSampleRate), isSessionReplay = performDraw(sessionReplaySampleRate), isErrorSessionReplay = performDraw(sessionReplayOnErrorSampleRate);
+                var trackingType;
                 !function(trackingType) {
                     return trackingType === RumTrackingType_NOT_TRACKED || trackingType === RumTrackingType_TRACKED_WITH_ERROR_SESSION_AND_WITHOUT_SESSION_REPLAY || trackingType === RumTrackingType_TRACKED_WITH_ERROR_SESSION_AND_WITH_ERROR_SESSION_REPLAY || trackingType === RumTrackingType_TRACKED_WITH_ERROR_SESSION_AND_WITH_SESSION_REPLAY || trackingType === RumTrackingType_TRACKED_WITH_SESSION_AND_WITHOUT_SESSION_REPLAY || trackingType === RumTrackingType_TRACKED_WITH_SESSION_AND_WITH_ERROR_SESSION_REPLAY || trackingType === RumTrackingType_TRACKED_WITH_SESSION_AND_WITH_SESSION_REPLAY;
                 }(rawTrackingType) ? isErrorSession || isSession ? isSession && isSessionReplay ? trackingType = RumTrackingType_TRACKED_WITH_SESSION_AND_WITH_SESSION_REPLAY : isSession && isErrorSessionReplay ? trackingType = RumTrackingType_TRACKED_WITH_SESSION_AND_WITH_ERROR_SESSION_REPLAY : !isSession || isSessionReplay || isErrorSessionReplay ? isErrorSession && isSessionReplay ? trackingType = RumTrackingType_TRACKED_WITH_ERROR_SESSION_AND_WITH_SESSION_REPLAY : isErrorSession && isErrorSessionReplay ? trackingType = RumTrackingType_TRACKED_WITH_ERROR_SESSION_AND_WITH_ERROR_SESSION_REPLAY : !isErrorSession || isSessionReplay || isErrorSessionReplay || (trackingType = RumTrackingType_TRACKED_WITH_ERROR_SESSION_AND_WITHOUT_SESSION_REPLAY) : trackingType = RumTrackingType_TRACKED_WITH_SESSION_AND_WITHOUT_SESSION_REPLAY : trackingType = RumTrackingType_NOT_TRACKED : trackingType = rawTrackingType;
@@ -2445,36 +2492,45 @@
             lifeCycle.notify(LifeCycleEventType_SESSION_EXPIRED);
         })), sessionManager.renewObservable.subscribe((function() {
             lifeCycle.notify(LifeCycleEventType_SESSION_RENEWED);
-        })), sessionManager.sessionStateUpdateObservable.subscribe((function(_ref) {
-            var previousState = _ref.previousState, newState = _ref.newState;
+        })), sessionManager.sessionStateUpdateObservable.subscribe((_ref => {
+            let {previousState: previousState, newState: newState} = _ref;
             if (!previousState.hasError && newState.hasError) {
-                var sessionEntity = sessionManager.findSession();
+                const sessionEntity = sessionManager.findSession();
                 sessionEntity && (sessionEntity.hasError = !0, sessionEntity.ets = newState.ets || timeStampNow());
+            }
+            if (!previousState.forcedSession && newState.forcedSession) {
+                const sessionEntity = sessionManager.findSession();
+                sessionEntity && (sessionEntity.isSessionForced = !0);
             }
         })), {
             findTrackedSession: function(startTime) {
                 var session = sessionManager.findSession(startTime);
-                if (session && isTypeTracked(session.trackingType)) {
-                    var isErrorSession = session.trackingType === RumTrackingType_TRACKED_WITH_ERROR_SESSION_AND_WITHOUT_SESSION_REPLAY || session.trackingType === RumTrackingType_TRACKED_WITH_ERROR_SESSION_AND_WITH_SESSION_REPLAY || session.trackingType === RumTrackingType_TRACKED_WITH_ERROR_SESSION_AND_WITH_ERROR_SESSION_REPLAY, plan = RumSessionPlan_WITHOUT_SESSION_REPLAY;
-                    return session.trackingType === RumTrackingType_TRACKED_WITH_SESSION_AND_WITH_SESSION_REPLAY || session.trackingType === RumTrackingType_TRACKED_WITH_ERROR_SESSION_AND_WITH_SESSION_REPLAY ? plan = RumSessionPlan_WITH_SESSION_REPLAY : session.trackingType !== RumTrackingType_TRACKED_WITH_ERROR_SESSION_AND_WITH_ERROR_SESSION_REPLAY && session.trackingType !== RumTrackingType_TRACKED_WITH_SESSION_AND_WITH_ERROR_SESSION_REPLAY || (plan = RumSessionPlan_WITH_ERROR_SESSION_REPLAY), 
-                    {
-                        id: session.id,
-                        plan: plan,
-                        errorSessionReplayAllowed: plan === RumSessionPlan_WITH_ERROR_SESSION_REPLAY,
-                        sessionHasError: session.hasError,
-                        isErrorSession: isErrorSession,
-                        sessionErrorTimestamp: session.ets,
-                        sessionReplayAllowed: plan === RumSessionPlan_WITH_SESSION_REPLAY || plan === RumSessionPlan_WITH_ERROR_SESSION_REPLAY
-                    };
-                }
+                if (!session) return;
+                if (!isTypeTracked(session.trackingType) && !session.isSessionForced) return;
+                const isErrorSession = session.trackingType === RumTrackingType_TRACKED_WITH_ERROR_SESSION_AND_WITHOUT_SESSION_REPLAY || session.trackingType === RumTrackingType_TRACKED_WITH_ERROR_SESSION_AND_WITH_SESSION_REPLAY || session.trackingType === RumTrackingType_TRACKED_WITH_ERROR_SESSION_AND_WITH_ERROR_SESSION_REPLAY;
+                let plan = RumSessionPlan_WITHOUT_SESSION_REPLAY;
+                return session.trackingType === RumTrackingType_TRACKED_WITH_SESSION_AND_WITH_SESSION_REPLAY || session.trackingType === RumTrackingType_TRACKED_WITH_ERROR_SESSION_AND_WITH_SESSION_REPLAY ? plan = RumSessionPlan_WITH_SESSION_REPLAY : session.trackingType !== RumTrackingType_TRACKED_WITH_ERROR_SESSION_AND_WITH_ERROR_SESSION_REPLAY && session.trackingType !== RumTrackingType_TRACKED_WITH_SESSION_AND_WITH_ERROR_SESSION_REPLAY || (plan = RumSessionPlan_WITH_ERROR_SESSION_REPLAY), 
+                {
+                    id: session.id,
+                    plan: plan,
+                    errorSessionReplayAllowed: plan === RumSessionPlan_WITH_ERROR_SESSION_REPLAY,
+                    sessionHasError: session.hasError,
+                    isErrorSession: isErrorSession,
+                    sessionErrorTimestamp: session.ets,
+                    isSessionForced: session.isSessionForced,
+                    sessionReplayAllowed: plan === RumSessionPlan_WITH_SESSION_REPLAY || plan === RumSessionPlan_WITH_ERROR_SESSION_REPLAY || session.isSessionForced
+                };
             },
             expire: sessionManager.expire,
             expireObservable: sessionManager.expireObservable,
             sessionStateUpdateObservable: sessionManager.sessionStateUpdateObservable,
-            setErrorForSession: function() {
-                return sessionManager.updateSessionState({
-                    hasError: "1",
-                    ets: timeStampNow()
+            setErrorForSession: () => sessionManager.updateSessionState({
+                hasError: "1",
+                ets: timeStampNow()
+            }),
+            setForcedSession: () => {
+                sessionManager.updateSessionState({
+                    forcedSession: "1"
                 });
             }
         };
@@ -2483,8 +2539,11 @@
         return rumSessionType !== RumTrackingType_NOT_TRACKED;
     }
     var startCacheUsrCache = function(configuration) {
-        var usrCacheId;
-        if (configuration.sessionStoreStrategyType) return usrCacheId = "Cookie" === configuration.sessionStoreStrategyType.type ? function(cookieOptions) {
+        if (!configuration.sessionStoreStrategyType) return {
+            getId: tools_noop
+        };
+        let usrCacheId;
+        return usrCacheId = configuration.sessionStoreStrategyType.type === SessionPersistence_COOKIE ? function(cookieOptions) {
             var usrCacheId = cookie_getCookie("_gc_usr_id", cookieOptions);
             return usrCacheId || setCookie("_gc_usr_id", usrCacheId = UUID(), 5184e6, cookieOptions), 
             usrCacheId;
@@ -2529,9 +2588,9 @@
         var currentLocation = shallowClone(location);
         return new Observable((function(observable) {
             var onHistoryChange, pushState, replaceState, popState, _trackHistory = (onHistoryChange = onLocationChange, 
-            pushState = instrumentMethod(History.prototype, "pushState", (function(params) {
+            pushState = instrumentMethod(getHistoryInstrumentationTarget("pushState"), "pushState", (function(params) {
                 (0, params.onPostCall)(onHistoryChange);
-            })), replaceState = instrumentMethod(History.prototype, "replaceState", (function(params) {
+            })), replaceState = instrumentMethod(getHistoryInstrumentationTarget("replaceState"), "replaceState", (function(params) {
                 (0, params.onPostCall)(onHistoryChange);
             })), popState = addEventListener(window, DOM_EVENT_POP_STATE, onHistoryChange), 
             {
@@ -2553,388 +2612,8 @@
             };
         }));
     }
-    var PageState_ACTIVE = "active", PageState_PASSIVE = "passive", PageState_HIDDEN = "hidden", PageState_FROZEN = "frozen", PageState_TERMINATED = "terminated";
-    function startPageStateHistory(maxPageStateEntriesSelectable) {
-        void 0 === maxPageStateEntriesSelectable && (maxPageStateEntriesSelectable = 500);
-        var currentPageState, pageStateEntryHistory = createValueHistory({
-            expireDelay: 144e5,
-            maxEntries: 4e3
-        });
-        addPageState(getPageState(), tools_relativeNow());
-        var stopEventListeners = addEventListeners(window, [ DOM_EVENT_PAGE_SHOW, DOM_EVENT_FOCUS, DOM_EVENT_BLUR, DOM_EVENT_VISIBILITY_CHANGE, DOM_EVENT_RESUME, DOM_EVENT_FREEZE, DOM_EVENT_PAGE_HIDE ], (function(event) {
-            addPageState(function(event) {
-                if (event.type === DOM_EVENT_FREEZE) return PageState_FROZEN;
-                if (event.type === DOM_EVENT_PAGE_HIDE) return event.persisted ? PageState_FROZEN : PageState_TERMINATED;
-                return getPageState();
-            }(event), event.timeStamp);
-        }), {
-            capture: !0
-        }).stop;
-        function addPageState(nextPageState, startTime) {
-            void 0 === startTime && (startTime = tools_relativeNow()), nextPageState !== currentPageState && (currentPageState = nextPageState, 
-            pageStateEntryHistory.closeActive(startTime), pageStateEntryHistory.add({
-                state: currentPageState,
-                startTime: startTime
-            }, startTime));
-        }
-        var pageStateHistory = {
-            findAll: function(eventStartTime, duration) {
-                var pageStateEntries = pageStateEntryHistory.findAll(eventStartTime, duration);
-                if (0 !== pageStateEntries.length) {
-                    for (var pageStateServerEntries = [], limit = Math.max(0, pageStateEntries.length - maxPageStateEntriesSelectable), index = pageStateEntries.length - 1; index >= limit; index--) {
-                        var pageState = pageStateEntries[index], relativeStartTime = tools_elapsed(eventStartTime, pageState.startTime);
-                        pageStateServerEntries.push({
-                            state: pageState.state,
-                            start: toServerDuration(relativeStartTime)
-                        });
-                    }
-                    return pageStateServerEntries;
-                }
-            },
-            wasInPageStateAt: function(state, startTime) {
-                return pageStateHistory.wasInPageStateDuringPeriod(state, startTime, 0);
-            },
-            wasInPageStateDuringPeriod: function(state, startTime, duration) {
-                return pageStateEntryHistory.findAll(startTime, duration).some((function(pageState) {
-                    return pageState.state === state;
-                }));
-            },
-            addPageState: addPageState,
-            stop: function() {
-                stopEventListeners(), pageStateEntryHistory.stop();
-            }
-        };
-        return pageStateHistory;
-    }
-    function getPageState() {
-        return "hidden" === document.visibilityState ? PageState_HIDDEN : document.hasFocus() ? PageState_ACTIVE : PageState_PASSIVE;
-    }
-    function processAction(action, pageStateHistory) {
-        var autoActionProperties = isAutoAction(action) ? {
-            action: {
-                error: {
-                    count: action.counts.errorCount
-                },
-                id: action.id,
-                loadingTime: discardNegativeDuration(toServerDuration(action.duration)),
-                frustration: {
-                    type: action.frustrationTypes
-                },
-                long_task: {
-                    count: action.counts.longTaskCount
-                },
-                resource: {
-                    count: action.counts.resourceCount
-                }
-            },
-            _gc: {
-                action: {
-                    target: action.target,
-                    position: action.position
-                }
-            }
-        } : {
-            action: {
-                loadingTime: 0
-            }
-        };
-        return {
-            customerContext: isAutoAction(action) ? void 0 : action.context,
-            rawRumEvent: extend2Lev({
-                action: {
-                    id: UUID(),
-                    target: {
-                        name: action.name
-                    },
-                    type: action.type
-                },
-                date: action.startClocks.timeStamp,
-                type: RumEventType.ACTION,
-                view: {
-                    in_foreground: pageStateHistory.wasInPageStateAt(PageState_ACTIVE, action.startClocks.relative)
-                }
-            }, autoActionProperties),
-            startTime: action.startClocks.relative,
-            domainContext: isAutoAction(action) ? {
-                event: action.event,
-                events: action.events
-            } : {}
-        };
-    }
-    function isAutoAction(action) {
-        return action.type !== ActionType_CUSTOM;
-    }
-    function startRumBatch(configuration, lifeCycle, telemetryEventObservable, reportError, pageExitObservable, sessionExpireObservable, createEncoder) {
-        var batch = function(configuration, primary, reportError, pageExitObservable, sessionExpireObservable, batchFactoryImp) {
-            void 0 === batchFactoryImp && (batchFactoryImp = createBatch);
-            var primaryBatch = function(configuration, batchConfiguration) {
-                return batchFactoryImp({
-                    encoder: batchConfiguration.encoder,
-                    request: createHttpRequest(batchConfiguration.endpoint, configuration.batchBytesLimit, configuration.retryMaxSize, reportError),
-                    flushController: createFlushController({
-                        messagesLimit: configuration.batchMessagesLimit,
-                        bytesLimit: configuration.batchBytesLimit,
-                        durationLimit: configuration.flushTimeout,
-                        pageExitObservable: pageExitObservable,
-                        sessionExpireObservable: sessionExpireObservable
-                    }),
-                    messageBytesLimit: configuration.messageBytesLimit,
-                    sendContentTypeByJson: configuration.sendContentTypeByJson
-                });
-            }(configuration, primary);
-            return {
-                flushObservable: primaryBatch.flushController.flushObservable,
-                add: function(message) {
-                    primaryBatch.add(message);
-                },
-                upsert: function(message, key) {
-                    primaryBatch.upsert(message, key);
-                },
-                stop: function() {
-                    primaryBatch.stop();
-                }
-            };
-        }(configuration, {
-            endpoint: configuration.rumEndpoint,
-            encoder: createEncoder(2)
-        }, reportError, pageExitObservable, sessionExpireObservable);
-        return lifeCycle.subscribe(LifeCycleEventType_RUM_EVENT_COLLECTED, (function(serverRumEvent) {
-            serverRumEvent.type === RumEventType.VIEW ? batch.upsert(serverRumEvent, serverRumEvent.view.id) : batch.add(serverRumEvent);
-        })), batch;
-    }
-    function assembly_ownKeys(e, r) {
-        var t = Object.keys(e);
-        if (Object.getOwnPropertySymbols) {
-            var o = Object.getOwnPropertySymbols(e);
-            r && (o = o.filter((function(r) {
-                return Object.getOwnPropertyDescriptor(e, r).enumerable;
-            }))), t.push.apply(t, o);
-        }
-        return t;
-    }
-    function assembly_objectSpread(e) {
-        for (var r = 1; r < arguments.length; r++) {
-            var t = null != arguments[r] ? arguments[r] : {};
-            r % 2 ? assembly_ownKeys(Object(t), !0).forEach((function(r) {
-                _defineProperty(e, r, t[r]);
-            })) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : assembly_ownKeys(Object(t)).forEach((function(r) {
-                Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r));
-            }));
-        }
-        return e;
-    }
-    var viewportObservable, SessionType_SYNTHETICS = "synthetics", SessionType_USER = "user", VIEW_MODIFIABLE_FIELD_PATHS = {
-        "view.url": "string",
-        "view.referrer": "string"
-    }, USER_CUSTOMIZABLE_FIELD_PATHS = {
-        context: "object"
-    }, ROOT_MODIFIABLE_FIELD_PATHS = {
-        service: "string",
-        version: "string"
-    }, modifiableFieldPathsByEvent = {};
-    function startRumAssembly(configuration, lifeCycle, sessionManager, userSessionManager, viewContexts, urlContexts, actionContexts, displayContext, getCommonContext, reportError) {
-        modifiableFieldPathsByEvent[RumEventType.VIEW] = assembly_objectSpread(assembly_objectSpread({}, USER_CUSTOMIZABLE_FIELD_PATHS), VIEW_MODIFIABLE_FIELD_PATHS), 
-        modifiableFieldPathsByEvent[RumEventType.ERROR] = tools_assign({
-            "error.message": "string",
-            "error.stack": "string",
-            "error.resource.url": "string"
-        }, USER_CUSTOMIZABLE_FIELD_PATHS, VIEW_MODIFIABLE_FIELD_PATHS, ROOT_MODIFIABLE_FIELD_PATHS), 
-        modifiableFieldPathsByEvent[RumEventType.RESOURCE] = tools_assign({
-            "resource.url": "string"
-        }, USER_CUSTOMIZABLE_FIELD_PATHS, VIEW_MODIFIABLE_FIELD_PATHS, ROOT_MODIFIABLE_FIELD_PATHS), 
-        modifiableFieldPathsByEvent[RumEventType.ACTION] = tools_assign({
-            "action.target.name": "string"
-        }, USER_CUSTOMIZABLE_FIELD_PATHS, VIEW_MODIFIABLE_FIELD_PATHS, ROOT_MODIFIABLE_FIELD_PATHS), 
-        modifiableFieldPathsByEvent[RumEventType.LONG_TASK] = tools_assign({}, USER_CUSTOMIZABLE_FIELD_PATHS, VIEW_MODIFIABLE_FIELD_PATHS);
-        var eventRateLimiters = {};
-        eventRateLimiters[RumEventType.ERROR] = createEventRateLimiter(RumEventType.ERROR, configuration.eventRateLimiterThreshold, reportError), 
-        eventRateLimiters[RumEventType.ACTION] = createEventRateLimiter(RumEventType.ACTION, configuration.eventRateLimiterThreshold, reportError), 
-        lifeCycle.subscribe(LifeCycleEventType_RAW_RUM_EVENT_COLLECTED, (function(data) {
-            var event, startTime = data.startTime, rawRumEvent = data.rawRumEvent, savedCommonContext = data.savedCommonContext, customerContext = data.customerContext, domainContext = data.domainContext, viewContext = viewContexts.findView(startTime), urlContext = urlContexts.findUrl(startTime), session = sessionManager.findTrackedSession(startTime);
-            if ((!session || !session.isErrorSession || session.sessionHasError) && (session && viewContext && urlContext)) {
-                var actionId = actionContexts.findActionId(startTime), actionIds = actionContexts.findAllActionId(startTime), commonContext = savedCommonContext || getCommonContext(), rumContext = {
-                    _gc: {
-                        sdkName: configuration.sdkName,
-                        sdkVersion: configuration.sdkVersion,
-                        drift: Math.round(dateNow() - (getNavigationStart() + performance.now())),
-                        configuration: {
-                            session_sample_rate: round(configuration.sessionSampleRate, 3),
-                            session_replay_sample_rate: round(configuration.sessionReplaySampleRate, 3),
-                            session_on_error_sample_rate: round(configuration.sessionOnErrorSampleRate, 3),
-                            session_replay_on_error_sample_rate: round(configuration.sessionReplayOnErrorSampleRate, 3)
-                        }
-                    },
-                    terminal: {
-                        type: "web"
-                    },
-                    application: {
-                        id: configuration.applicationId
-                    },
-                    device: deviceInfo,
-                    webview: {},
-                    env: configuration.env || "",
-                    service: viewContext.service || configuration.service || "browser",
-                    version: viewContext.version || configuration.version || "",
-                    source: "browser",
-                    date: timeStampNow(),
-                    user: {
-                        id: userSessionManager.getId(),
-                        is_signin: "F",
-                        is_login: !1
-                    },
-                    session: {
-                        type: void 0 === window._DATAFLUX_SYNTHETICS_BROWSER ? SessionType_USER : SessionType_SYNTHETICS,
-                        id: session.id
-                    },
-                    view: {
-                        id: viewContext.id,
-                        name: viewContext.name || urlContext.path,
-                        url: urlContext.url,
-                        referrer: urlContext.referrer,
-                        host: urlContext.host,
-                        path: urlContext.path,
-                        pathGroup: urlContext.pathGroup,
-                        urlQuery: urlContext.urlQuery
-                    },
-                    action: (event = rawRumEvent, -1 !== [ RumEventType.ERROR, RumEventType.RESOURCE, RumEventType.LONG_TASK ].indexOf(event.type) && actionId ? {
-                        id: actionId,
-                        ids: actionIds
-                    } : void 0),
-                    display: displayContext.get()
-                }, serverRumEvent = withSnakeCaseKeys(extend2Lev(rumContext, viewContext, rawRumEvent)), context = extend2Lev({}, commonContext.context, viewContext.context, customerContext);
-                isEmptyObject(context) || (serverRumEvent.context = context), "has_replay" in serverRumEvent.session || (serverRumEvent.session.has_replay = commonContext.hasReplay), 
-                session.errorSessionReplayAllowed && (serverRumEvent.session.has_replay = serverRumEvent.session.has_replay && session.sessionHasError), 
-                "view" === serverRumEvent.type && (serverRumEvent.session.sampled_for_error_replay = session.errorSessionReplayAllowed, 
-                serverRumEvent.session.sampled_for_error_session = session.isErrorSession, serverRumEvent.session.error_timestamp_for_session = session.sessionErrorTimestamp), 
-                isEmptyObject(commonContext.context.device) || (serverRumEvent.device = extend2Lev(serverRumEvent.device, commonContext.context.device)), 
-                isEmptyObject(commonContext.context.webview) || (serverRumEvent.webview = extend2Lev(serverRumEvent.webview, commonContext.context.webview)), 
-                isEmptyObject(commonContext.user) || (serverRumEvent.user = extend2Lev(serverRumEvent.user, {
-                    is_signin: "T",
-                    is_login: !0
-                }, commonContext.user)), function(event, beforeSend, domainContext, eventRateLimiters) {
-                    if (beforeSend) {
-                        var result = limitModification(event, modifiableFieldPathsByEvent[event.type], (function(event) {
-                            return beforeSend(event, domainContext);
-                        }));
-                        if (!1 === result && event.type !== RumEventType.VIEW) return !1;
-                        !1 === result && display.warn("Can't dismiss view events using beforeSend!");
-                    }
-                    var rateLimitReached = !1;
-                    eventRateLimiters[event.type] && (rateLimitReached = eventRateLimiters[event.type].isLimitReached());
-                    return !rateLimitReached;
-                }(serverRumEvent, configuration.beforeSend, domainContext, eventRateLimiters) && (isEmptyObject(serverRumEvent.context) && delete serverRumEvent.context, 
-                lifeCycle.notify(LifeCycleEventType_RUM_EVENT_COLLECTED, serverRumEvent));
-            }
-        }));
-    }
-    function initViewportObservable() {
-        return viewportObservable || (viewportObservable = new Observable((function(observable) {
-            var updateDimension = throttle((function() {
-                observable.notify(getViewportDimension());
-            }), 200).throttled;
-            return addEventListener(window, DOM_EVENT_RESIZE, updateDimension, {
-                capture: !0,
-                passive: !0
-            }).stop;
-        }))), viewportObservable;
-    }
-    function getViewportDimension() {
-        var visual = window.visualViewport;
-        return visual ? {
-            width: Number(visual.width * visual.scale),
-            height: Number(visual.height * visual.scale)
-        } : {
-            width: Number(window.innerWidth || 0),
-            height: Number(window.innerHeight || 0)
-        };
-    }
-    function startErrorCollection(lifeCycle, configuration, sessionManager, pageStateHistory) {
-        var errorObservable = new Observable;
-        !function(errorObservable) {
-            var subscription = initConsoleObservable([ ConsoleApiName.error ]).subscribe((function(consoleLog) {
-                errorObservable.notify(consoleLog.error);
-            }));
-        }(errorObservable), function(errorObservable) {
-            startUnhandledErrorCollection((function(stackTrace, originalError) {
-                errorObservable.notify(computeRawError({
-                    stackTrace: stackTrace,
-                    originalError: originalError,
-                    startClocks: clocksNow(),
-                    nonErrorPrefix: NonErrorPrefix_UNCAUGHT,
-                    source: errorTools_ErrorSource.SOURCE,
-                    handling: enums_ErrorHandling_UNHANDLED
-                }));
-            }));
-        }(errorObservable), function(configuration, errorObservable) {
-            var subscription = initReportObservable(0, [ RawReportType_intervention ]).subscribe((function(reportError) {
-                errorObservable.notify({
-                    startClocks: clocksNow(),
-                    message: reportError.message,
-                    stack: reportError.stack,
-                    type: reportError.subtype,
-                    source: errorTools_ErrorSource.REPORT,
-                    handling: enums_ErrorHandling_UNHANDLED
-                });
-            }));
-        }(0, errorObservable);
-        var session = sessionManager.findTrackedSession(), hasError = session.isErrorSession && session.sessionHasError;
-        return session.isErrorSession && lifeCycle.subscribe(LifeCycleEventType_SESSION_RENEWED, (function() {
-            hasError = !1;
-        })), errorObservable.subscribe((function(error) {
-            session.isErrorSession && !hasError && (sessionManager.setErrorForSession(), hasError = !0), 
-            lifeCycle.notify(LifeCycleEventType_RAW_ERROR_COLLECTED, {
-                error: error
-            });
-        })), function(lifeCycle, pageStateHistory) {
-            return lifeCycle.subscribe(LifeCycleEventType_RAW_ERROR_COLLECTED, (function(error) {
-                lifeCycle.notify(LifeCycleEventType_RAW_RUM_EVENT_COLLECTED, tools_assign({
-                    customerContext: error.customerContext,
-                    savedCommonContext: error.savedCommonContext
-                }, function(error, pageStateHistory) {
-                    return {
-                        rawRumEvent: {
-                            date: error.startClocks.timeStamp,
-                            error: {
-                                id: UUID(),
-                                message: error.message,
-                                source: error.source,
-                                stack: error.stack,
-                                handling_stack: error.handlingStack,
-                                type: error.type,
-                                handling: error.handling,
-                                causes: error.causes,
-                                source_type: "browser"
-                            },
-                            type: RumEventType.ERROR,
-                            view: {
-                                in_foreground: pageStateHistory.wasInPageStateAt(PageState_ACTIVE, error.startClocks.relative)
-                            }
-                        },
-                        startTime: error.startClocks.relative,
-                        domainContext: {
-                            error: error.originalError
-                        }
-                    };
-                }(error.error, pageStateHistory)));
-            })), {
-                addError: function(providedError, savedCommonContext) {
-                    var error = providedError.error, rawError = computeRawError({
-                        stackTrace: error instanceof Error ? computeStackTrace(error) : void 0,
-                        originalError: error,
-                        handlingStack: providedError.handlingStack,
-                        startClocks: providedError.startClocks,
-                        nonErrorPrefix: NonErrorPrefix_PROVIDED,
-                        source: errorTools_ErrorSource.CUSTOM,
-                        handling: enums_ErrorHandling_HANDLED
-                    });
-                    lifeCycle.notify(LifeCycleEventType_RAW_ERROR_COLLECTED, {
-                        customerContext: providedError.context,
-                        savedCommonContext: savedCommonContext,
-                        error: rawError
-                    });
-                }
-            };
-        }(lifeCycle, pageStateHistory);
+    function getHistoryInstrumentationTarget(methodName) {
+        return Object.prototype.hasOwnProperty.call(history, methodName) ? history : History.prototype;
     }
     var RESOURCE_TYPES = [ [ ResourceType_DOCUMENT, function(initiatorType) {
         return "initial_document" === initiatorType;
@@ -3099,55 +2778,448 @@
     var resourceTimingBufferFullListener, RumPerformanceEntryType_EVENT = "event", RumPerformanceEntryType_FIRST_INPUT = "first-input", RumPerformanceEntryType_LARGEST_CONTENTFUL_PAINT = "largest-contentful-paint", RumPerformanceEntryType_LAYOUT_SHIFT = "layout-shift", RumPerformanceEntryType_LONG_TASK = "longtask", RumPerformanceEntryType_NAVIGATION = "navigation", RumPerformanceEntryType_PAINT = "paint", RumPerformanceEntryType_RESOURCE = "resource", RumPerformanceEntryType_VISIBILITY_STATE = "visibility-state";
     function createPerformanceObservable(configuration, options) {
         return new Observable((function(observable) {
-            if (window.PerformanceObserver) {
-                var timeoutId, stopFirstInputTiming, handlePerformanceEntries = function(entries) {
-                    var rumPerformanceEntries = function(configuration, entries) {
-                        return entries.filter((function(entry) {
-                            return !function(configuration, entry) {
-                                return !(entry.entryType !== RumPerformanceEntryType_RESOURCE || isAllowedRequestUrl(configuration, entry.name) && hasValidResourceEntryDuration(entry));
-                            }(configuration, entry);
-                        }));
-                    }(configuration, entries);
-                    rumPerformanceEntries.length > 0 && observable.notify(rumPerformanceEntries);
-                }, isObserverInitializing = !0, observer = new PerformanceObserver(monitor((function(entries) {
-                    isObserverInitializing ? timeoutId = timer_setTimeout((function() {
-                        handlePerformanceEntries(entries.getEntries());
-                    })) : handlePerformanceEntries(entries.getEntries());
-                })));
-                try {
-                    observer.observe(options);
-                } catch (_unused) {
-                    if (includes([ RumPerformanceEntryType_RESOURCE, RumPerformanceEntryType_NAVIGATION, RumPerformanceEntryType_LONG_TASK, RumPerformanceEntryType_PAINT ], options.type)) {
-                        options.buffered && (timeoutId = timer_setTimeout((function() {
-                            handlePerformanceEntries(performance.getEntriesByType(options.type));
-                        })));
-                        try {
-                            observer.observe({
-                                entryTypes: [ options.type ]
-                            });
-                        } catch (_unused2) {
-                            return;
-                        }
+            if (!window.PerformanceObserver) return;
+            var timeoutId, handlePerformanceEntries = function(entries) {
+                var rumPerformanceEntries = function(configuration, entries) {
+                    return entries.filter((function(entry) {
+                        return !function(configuration, entry) {
+                            return !(entry.entryType !== RumPerformanceEntryType_RESOURCE || isAllowedRequestUrl(configuration, entry.name) && hasValidResourceEntryDuration(entry));
+                        }(configuration, entry);
+                    }));
+                }(configuration, entries);
+                rumPerformanceEntries.length > 0 && observable.notify(rumPerformanceEntries);
+            }, isObserverInitializing = !0;
+            const observer = new PerformanceObserver(monitor((function(entries) {
+                isObserverInitializing ? timeoutId = timer_setTimeout((function() {
+                    handlePerformanceEntries(entries.getEntries());
+                })) : handlePerformanceEntries(entries.getEntries());
+            })));
+            try {
+                observer.observe(options);
+            } catch (_unused) {
+                if (includes([ RumPerformanceEntryType_RESOURCE, RumPerformanceEntryType_NAVIGATION, RumPerformanceEntryType_LONG_TASK, RumPerformanceEntryType_PAINT ], options.type)) {
+                    options.buffered && (timeoutId = timer_setTimeout((function() {
+                        handlePerformanceEntries(performance.getEntriesByType(options.type));
+                    })));
+                    try {
+                        observer.observe({
+                            entryTypes: [ options.type ]
+                        });
+                    } catch (_unused2) {
+                        return;
                     }
                 }
-                if (isObserverInitializing = !1, function(configuration) {
-                    !resourceTimingBufferFullListener && void 0 !== window.performance && "getEntries" in performance && "addEventListener" in performance && (resourceTimingBufferFullListener = addEventListener(performance, "resourcetimingbufferfull", (function() {
-                        performance.clearResourceTimings();
-                    })));
-                }(), !supportPerformanceTimingEvent(RumPerformanceEntryType_FIRST_INPUT) && options.type === RumPerformanceEntryType_FIRST_INPUT) {
-                    var _retrieveFirstInputTiming = retrieveFirstInputTiming(0, (function(timing) {
-                        handlePerformanceEntries([ timing ]);
-                    }));
-                    stopFirstInputTiming = _retrieveFirstInputTiming.stop;
-                }
-                return function() {
-                    observer.disconnect(), stopFirstInputTiming && stopFirstInputTiming(), timer_clearTimeout(timeoutId);
-                };
             }
+            var stopFirstInputTiming;
+            if (isObserverInitializing = !1, function(configuration) {
+                !resourceTimingBufferFullListener && void 0 !== window.performance && "getEntries" in performance && "addEventListener" in performance && (resourceTimingBufferFullListener = addEventListener(performance, "resourcetimingbufferfull", (function() {
+                    performance.clearResourceTimings();
+                })));
+            }(), !supportPerformanceTimingEvent(RumPerformanceEntryType_FIRST_INPUT) && options.type === RumPerformanceEntryType_FIRST_INPUT) {
+                var _retrieveFirstInputTiming = retrieveFirstInputTiming(0, (function(timing) {
+                    handlePerformanceEntries([ timing ]);
+                }));
+                stopFirstInputTiming = _retrieveFirstInputTiming.stop;
+            }
+            return function() {
+                observer.disconnect(), stopFirstInputTiming && stopFirstInputTiming(), timer_clearTimeout(timeoutId);
+            };
         }));
     }
     function supportPerformanceTimingEvent(entryType) {
         return window.PerformanceObserver && void 0 !== PerformanceObserver.supportedEntryTypes && PerformanceObserver.supportedEntryTypes.includes(entryType);
+    }
+    var PageState_ACTIVE = "active", PageState_PASSIVE = "passive", PageState_HIDDEN = "hidden", PageState_FROZEN = "frozen", PageState_TERMINATED = "terminated";
+    function startPageStateHistory(maxPageStateEntriesSelectable) {
+        void 0 === maxPageStateEntriesSelectable && (maxPageStateEntriesSelectable = 500);
+        var currentPageState, pageStateEntryHistory = createValueHistory({
+            expireDelay: 144e5,
+            maxEntries: 4e3
+        });
+        if (supportPerformanceTimingEvent(RumPerformanceEntryType_VISIBILITY_STATE)) {
+            performance.getEntriesByType(RumPerformanceEntryType_VISIBILITY_STATE).forEach((entry => {
+                addPageState("hidden" === entry.name ? PageState_HIDDEN : PageState_ACTIVE, entry.startTime);
+            }));
+        }
+        addPageState(getPageState(), tools_relativeNow());
+        var stopEventListeners = addEventListeners(window, [ DOM_EVENT_PAGE_SHOW, DOM_EVENT_FOCUS, DOM_EVENT_BLUR, DOM_EVENT_VISIBILITY_CHANGE, DOM_EVENT_RESUME, DOM_EVENT_FREEZE, DOM_EVENT_PAGE_HIDE ], (function(event) {
+            addPageState(function(event) {
+                if (event.type === DOM_EVENT_FREEZE) return PageState_FROZEN;
+                if (event.type === DOM_EVENT_PAGE_HIDE) return event.persisted ? PageState_FROZEN : PageState_TERMINATED;
+                return getPageState();
+            }(event), event.timeStamp);
+        }), {
+            capture: !0
+        }).stop;
+        function addPageState(nextPageState, startTime) {
+            void 0 === startTime && (startTime = tools_relativeNow()), nextPageState !== currentPageState && (currentPageState = nextPageState, 
+            pageStateEntryHistory.closeActive(startTime), pageStateEntryHistory.add({
+                state: currentPageState,
+                startTime: startTime
+            }, startTime));
+        }
+        const pageStateHistory = {
+            findAll: function(startTime, duration) {
+                return function(pageStateEntries, eventStartTime, maxPageStateEntriesSelectable) {
+                    if (0 === pageStateEntries.length) return;
+                    return pageStateEntries.slice(-maxPageStateEntriesSelectable).reverse().map((_ref => {
+                        let {state: state, startTime: startTime} = _ref;
+                        return {
+                            state: state,
+                            start: toServerDuration(tools_elapsed(eventStartTime, startTime))
+                        };
+                    }));
+                }(pageStateEntryHistory.findAll(startTime, duration), startTime, maxPageStateEntriesSelectable);
+            },
+            wasInPageStateAt: function(state, startTime) {
+                return pageStateHistory.wasInPageStateDuringPeriod(state, startTime, 0);
+            },
+            wasInPageStateDuringPeriod: function(state, startTime, duration) {
+                return pageStateEntryHistory.findAll(startTime, duration).some((function(pageState) {
+                    return pageState.state === state;
+                }));
+            },
+            addPageState: addPageState,
+            stop: function() {
+                stopEventListeners(), pageStateEntryHistory.stop();
+            }
+        };
+        return pageStateHistory;
+    }
+    function getPageState() {
+        return "hidden" === document.visibilityState ? PageState_HIDDEN : document.hasFocus() ? PageState_ACTIVE : PageState_PASSIVE;
+    }
+    function processAction(action, pageStateHistory) {
+        var _action$context, autoActionProperties = isAutoAction(action) ? {
+            action: {
+                error: {
+                    count: action.counts.errorCount
+                },
+                id: action.id,
+                loadingTime: discardNegativeDuration(toServerDuration(action.duration)),
+                frustration: {
+                    type: action.frustrationTypes
+                },
+                long_task: {
+                    count: action.counts.longTaskCount
+                },
+                resource: {
+                    count: action.counts.resourceCount
+                }
+            },
+            _gc: {
+                action: {
+                    target: action.target,
+                    position: action.position
+                }
+            }
+        } : {
+            action: {
+                loadingTime: (null === (_action$context = action.context) || void 0 === _action$context ? void 0 : _action$context.duration) || 0
+            }
+        };
+        return {
+            customerContext: isAutoAction(action) ? void 0 : action.context,
+            rawRumEvent: extend2Lev({
+                action: {
+                    id: UUID(),
+                    target: {
+                        name: action.name
+                    },
+                    type: action.type
+                },
+                date: action.startClocks.timeStamp,
+                type: RumEventType.ACTION,
+                view: {
+                    in_foreground: pageStateHistory.wasInPageStateAt(PageState_ACTIVE, action.startClocks.relative)
+                }
+            }, autoActionProperties),
+            startTime: action.startClocks.relative,
+            domainContext: isAutoAction(action) ? {
+                event: action.event,
+                events: action.events
+            } : {}
+        };
+    }
+    function isAutoAction(action) {
+        return action.type === ActionType_CLICK;
+    }
+    function startRumBatch(configuration, lifeCycle, telemetryEventObservable, reportError, pageExitObservable, sessionExpireObservable, createEncoder) {
+        const batch = function(configuration, primary, reportError, pageExitObservable, sessionExpireObservable, batchFactoryImp) {
+            void 0 === batchFactoryImp && (batchFactoryImp = createBatch);
+            var primaryBatch = function(configuration, batchConfiguration) {
+                return batchFactoryImp({
+                    encoder: batchConfiguration.encoder,
+                    request: createHttpRequest(batchConfiguration.endpoint, configuration.batchBytesLimit, configuration.retryMaxSize, reportError),
+                    flushController: createFlushController({
+                        messagesLimit: configuration.batchMessagesLimit,
+                        bytesLimit: configuration.batchBytesLimit,
+                        durationLimit: configuration.flushTimeout,
+                        pageExitObservable: pageExitObservable,
+                        sessionExpireObservable: sessionExpireObservable
+                    }),
+                    messageBytesLimit: configuration.messageBytesLimit,
+                    sendContentTypeByJson: configuration.sendContentTypeByJson
+                });
+            }(configuration, primary);
+            return {
+                flushObservable: primaryBatch.flushController.flushObservable,
+                add: function(message) {
+                    primaryBatch.add(message);
+                },
+                upsert: function(message, key) {
+                    primaryBatch.upsert(message, key);
+                },
+                stop: function() {
+                    primaryBatch.stop();
+                }
+            };
+        }(configuration, {
+            endpoint: configuration.rumEndpoint,
+            encoder: createEncoder(2)
+        }, reportError, pageExitObservable, sessionExpireObservable);
+        return lifeCycle.subscribe(LifeCycleEventType_RUM_EVENT_COLLECTED, (function(serverRumEvent) {
+            serverRumEvent.type === RumEventType.VIEW ? batch.upsert(serverRumEvent, serverRumEvent.view.id) : batch.add(serverRumEvent);
+        })), batch;
+    }
+    function assembly_ownKeys(e, r) {
+        var t = Object.keys(e);
+        if (Object.getOwnPropertySymbols) {
+            var o = Object.getOwnPropertySymbols(e);
+            r && (o = o.filter((function(r) {
+                return Object.getOwnPropertyDescriptor(e, r).enumerable;
+            }))), t.push.apply(t, o);
+        }
+        return t;
+    }
+    function assembly_objectSpread(e) {
+        for (var r = 1; r < arguments.length; r++) {
+            var t = null != arguments[r] ? arguments[r] : {};
+            r % 2 ? assembly_ownKeys(Object(t), !0).forEach((function(r) {
+                _defineProperty(e, r, t[r]);
+            })) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : assembly_ownKeys(Object(t)).forEach((function(r) {
+                Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r));
+            }));
+        }
+        return e;
+    }
+    var SessionType_SYNTHETICS = "synthetics", SessionType_USER = "user", VIEW_MODIFIABLE_FIELD_PATHS = {
+        "view.url": "string",
+        "view.referrer": "string"
+    }, USER_CUSTOMIZABLE_FIELD_PATHS = {
+        context: "object"
+    };
+    const ROOT_MODIFIABLE_FIELD_PATHS = {
+        service: "string",
+        version: "string"
+    };
+    var viewportObservable, modifiableFieldPathsByEvent = {};
+    function startRumAssembly(configuration, lifeCycle, sessionManager, userSessionManager, viewContexts, urlContexts, actionContexts, displayContext, getCommonContext, reportError) {
+        modifiableFieldPathsByEvent[RumEventType.VIEW] = assembly_objectSpread(assembly_objectSpread({}, USER_CUSTOMIZABLE_FIELD_PATHS), VIEW_MODIFIABLE_FIELD_PATHS), 
+        modifiableFieldPathsByEvent[RumEventType.ERROR] = tools_assign({
+            "error.message": "string",
+            "error.stack": "string",
+            "error.resource.url": "string"
+        }, USER_CUSTOMIZABLE_FIELD_PATHS, VIEW_MODIFIABLE_FIELD_PATHS, ROOT_MODIFIABLE_FIELD_PATHS), 
+        modifiableFieldPathsByEvent[RumEventType.RESOURCE] = tools_assign({
+            "resource.url": "string"
+        }, USER_CUSTOMIZABLE_FIELD_PATHS, VIEW_MODIFIABLE_FIELD_PATHS, ROOT_MODIFIABLE_FIELD_PATHS), 
+        modifiableFieldPathsByEvent[RumEventType.ACTION] = tools_assign({
+            "action.target.name": "string"
+        }, USER_CUSTOMIZABLE_FIELD_PATHS, VIEW_MODIFIABLE_FIELD_PATHS, ROOT_MODIFIABLE_FIELD_PATHS), 
+        modifiableFieldPathsByEvent[RumEventType.LONG_TASK] = tools_assign({}, USER_CUSTOMIZABLE_FIELD_PATHS, VIEW_MODIFIABLE_FIELD_PATHS);
+        var eventRateLimiters = {};
+        eventRateLimiters[RumEventType.ERROR] = createEventRateLimiter(RumEventType.ERROR, configuration.eventRateLimiterThreshold, reportError), 
+        eventRateLimiters[RumEventType.ACTION] = createEventRateLimiter(RumEventType.ACTION, configuration.eventRateLimiterThreshold, reportError), 
+        lifeCycle.subscribe(LifeCycleEventType_RAW_RUM_EVENT_COLLECTED, (function(data) {
+            var event, startTime = data.startTime, rawRumEvent = data.rawRumEvent, savedCommonContext = data.savedCommonContext, customerContext = data.customerContext, domainContext = data.domainContext, viewContext = viewContexts.findView(startTime), urlContext = urlContexts.findUrl(startTime), session = sessionManager.findTrackedSession(startTime);
+            if ((!session || !session.isErrorSession || session.sessionHasError) && (session && viewContext && urlContext)) {
+                var actionId = actionContexts.findActionId(startTime), actionIds = actionContexts.findAllActionId(startTime), commonContext = savedCommonContext || getCommonContext(), rumContext = {
+                    _gc: {
+                        sdkName: configuration.sdkName,
+                        sdkVersion: configuration.sdkVersion,
+                        drift: Math.round(dateNow() - (getNavigationStart() + performance.now())),
+                        configuration: {
+                            session_sample_rate: round(configuration.sessionSampleRate, 3),
+                            session_replay_sample_rate: round(configuration.sessionReplaySampleRate, 3),
+                            session_on_error_sample_rate: round(configuration.sessionOnErrorSampleRate, 3),
+                            session_replay_on_error_sample_rate: round(configuration.sessionReplayOnErrorSampleRate, 3)
+                        }
+                    },
+                    terminal: {
+                        type: "web"
+                    },
+                    application: {
+                        id: configuration.applicationId
+                    },
+                    device: deviceInfo,
+                    webview: {},
+                    env: configuration.env || "",
+                    service: viewContext.service || configuration.service || "browser",
+                    version: viewContext.version || configuration.version || "",
+                    source: "browser",
+                    date: timeStampNow(),
+                    user: {
+                        id: userSessionManager.getId(),
+                        is_signin: "F",
+                        is_login: !1
+                    },
+                    session: {
+                        type: void 0 === window._DATAFLUX_SYNTHETICS_BROWSER ? SessionType_USER : SessionType_SYNTHETICS,
+                        id: session.id,
+                        is_forced_session: session.isSessionForced
+                    },
+                    view: {
+                        id: viewContext.id,
+                        name: viewContext.name || urlContext.path,
+                        url: urlContext.url,
+                        referrer: urlContext.referrer,
+                        host: urlContext.host,
+                        path: urlContext.path,
+                        pathGroup: urlContext.pathGroup,
+                        pathname: urlContext.pathname,
+                        urlQuery: urlContext.urlQuery
+                    },
+                    action: (event = rawRumEvent, -1 !== [ RumEventType.ERROR, RumEventType.RESOURCE, RumEventType.LONG_TASK ].indexOf(event.type) && actionId ? {
+                        id: actionId,
+                        ids: actionIds
+                    } : void 0),
+                    display: displayContext.get()
+                }, serverRumEvent = withSnakeCaseKeys(extend2Lev(rumContext, viewContext, rawRumEvent)), context = extend2Lev({}, commonContext.context, viewContext.context, customerContext);
+                isEmptyObject(context) || (serverRumEvent.context = context), "has_replay" in serverRumEvent.session || (serverRumEvent.session.has_replay = commonContext.hasReplay), 
+                session.errorSessionReplayAllowed && (serverRumEvent.session.has_replay = serverRumEvent.session.has_replay && session.sessionHasError), 
+                "view" === serverRumEvent.type && (serverRumEvent.session.sampled_for_error_replay = session.errorSessionReplayAllowed, 
+                serverRumEvent.session.sampled_for_error_session = session.isErrorSession, serverRumEvent.session.error_timestamp_for_session = session.sessionErrorTimestamp), 
+                isEmptyObject(commonContext.context.device) || (serverRumEvent.device = extend2Lev(serverRumEvent.device, commonContext.context.device)), 
+                isEmptyObject(commonContext.context.webview) || (serverRumEvent.webview = extend2Lev(serverRumEvent.webview, commonContext.context.webview)), 
+                isEmptyObject(commonContext.user) || (serverRumEvent.user = extend2Lev(serverRumEvent.user, {
+                    is_signin: "T",
+                    is_login: !0
+                }, commonContext.user)), function(event, beforeSend, domainContext, eventRateLimiters) {
+                    if (beforeSend) {
+                        var result = limitModification(event, modifiableFieldPathsByEvent[event.type], (function(event) {
+                            return beforeSend(event, domainContext);
+                        }));
+                        if (!1 === result && event.type !== RumEventType.VIEW) return !1;
+                        !1 === result && display.warn("Can't dismiss view events using beforeSend!");
+                    }
+                    var rateLimitReached = !1;
+                    eventRateLimiters[event.type] && (rateLimitReached = eventRateLimiters[event.type].isLimitReached());
+                    return !rateLimitReached;
+                }(serverRumEvent, configuration.beforeSend, domainContext, eventRateLimiters) && (isEmptyObject(serverRumEvent.context) && delete serverRumEvent.context, 
+                lifeCycle.notify(LifeCycleEventType_RUM_EVENT_COLLECTED, serverRumEvent));
+            }
+        }));
+    }
+    function initViewportObservable() {
+        return viewportObservable || (viewportObservable = new Observable((function(observable) {
+            var updateDimension = throttle((function() {
+                observable.notify(getViewportDimension());
+            }), 200).throttled;
+            return addEventListener(window, DOM_EVENT_RESIZE, updateDimension, {
+                capture: !0,
+                passive: !0
+            }).stop;
+        }))), viewportObservable;
+    }
+    function getViewportDimension() {
+        var visual = window.visualViewport;
+        return visual ? {
+            width: Number(visual.width * visual.scale),
+            height: Number(visual.height * visual.scale)
+        } : {
+            width: Number(window.innerWidth || 0),
+            height: Number(window.innerHeight || 0)
+        };
+    }
+    function startErrorCollection(lifeCycle, configuration, sessionManager, pageStateHistory) {
+        var errorObservable = new Observable;
+        !function(errorObservable) {
+            var subscription = initConsoleObservable([ ConsoleApiName.error ]).subscribe((function(consoleLog) {
+                errorObservable.notify(consoleLog.error);
+            }));
+        }(errorObservable), function(errorObservable) {
+            startUnhandledErrorCollection((function(stackTrace, originalError) {
+                errorObservable.notify(computeRawError({
+                    stackTrace: stackTrace,
+                    originalError: originalError,
+                    startClocks: clocksNow(),
+                    nonErrorPrefix: NonErrorPrefix_UNCAUGHT,
+                    source: errorTools_ErrorSource_SOURCE,
+                    handling: enums_ErrorHandling_UNHANDLED
+                }));
+            }));
+        }(errorObservable), function(configuration, errorObservable) {
+            var subscription = initReportObservable(0, [ RawReportType_intervention ]).subscribe((function(reportError) {
+                errorObservable.notify({
+                    startClocks: clocksNow(),
+                    message: reportError.message,
+                    stack: reportError.stack,
+                    type: reportError.subtype,
+                    source: errorTools_ErrorSource_REPORT,
+                    handling: enums_ErrorHandling_UNHANDLED
+                });
+            }));
+        }(0, errorObservable);
+        var session = sessionManager.findTrackedSession();
+        let hasError = session && session.isErrorSession && session.sessionHasError;
+        return session && session.isErrorSession && lifeCycle.subscribe(LifeCycleEventType_SESSION_RENEWED, (function() {
+            hasError = !1;
+        })), errorObservable.subscribe((function(error) {
+            session && session.isErrorSession && !hasError && (sessionManager.setErrorForSession(), 
+            hasError = !0), lifeCycle.notify(LifeCycleEventType_RAW_ERROR_COLLECTED, {
+                error: error
+            });
+        })), function(lifeCycle, pageStateHistory) {
+            return lifeCycle.subscribe(LifeCycleEventType_RAW_ERROR_COLLECTED, (function(error) {
+                lifeCycle.notify(LifeCycleEventType_RAW_RUM_EVENT_COLLECTED, tools_assign({
+                    customerContext: error.customerContext,
+                    savedCommonContext: error.savedCommonContext
+                }, function(error, pageStateHistory) {
+                    return {
+                        rawRumEvent: {
+                            date: error.startClocks.timeStamp,
+                            error: {
+                                id: UUID(),
+                                message: error.message,
+                                source: error.source,
+                                stack: error.stack,
+                                handling_stack: error.handlingStack,
+                                type: error.type,
+                                handling: error.handling,
+                                causes: error.causes,
+                                source_type: "browser"
+                            },
+                            type: RumEventType.ERROR,
+                            view: {
+                                in_foreground: pageStateHistory.wasInPageStateAt(PageState_ACTIVE, error.startClocks.relative)
+                            }
+                        },
+                        startTime: error.startClocks.relative,
+                        domainContext: {
+                            error: error.originalError
+                        }
+                    };
+                }(error.error, pageStateHistory)));
+            })), {
+                addError: function(providedError, savedCommonContext) {
+                    var error = providedError.error, rawError = computeRawError({
+                        stackTrace: error instanceof Error ? computeStackTrace(error) : void 0,
+                        originalError: error,
+                        handlingStack: providedError.handlingStack,
+                        startClocks: providedError.startClocks,
+                        nonErrorPrefix: NonErrorPrefix_PROVIDED,
+                        source: errorTools_ErrorSource_CUSTOM,
+                        handling: enums_ErrorHandling_HANDLED
+                    });
+                    lifeCycle.notify(LifeCycleEventType_RAW_ERROR_COLLECTED, {
+                        customerContext: providedError.context,
+                        savedCommonContext: savedCommonContext,
+                        error: rawError
+                    });
+                }
+            };
+        }(lifeCycle, pageStateHistory);
     }
     var supportScopeSelectorCache, STABLE_ATTRIBUTES = [ "data-guance-action-name", "data-testid", "data-test", "data-qa", "data-cy", "data-test-id", "data-qa-id", "data-testing", "data-component", "data-element", "data-source-file" ], GLOBALLY_UNIQUE_SELECTOR_GETTERS = [ getStableAttributeSelector, function(element) {
         if (element.id && !isGeneratedValue(element.id)) return "#" + cssEscape(element.id);
@@ -3161,18 +3233,18 @@
         return cssEscape(element.tagName);
     } ];
     function getSelectorFromElement(targetElement, actionNameAttribute) {
-        if (function(element) {
+        if (!function(element) {
             if ("isConnected" in element) return element.isConnected;
             return element.ownerDocument.documentElement.contains(element);
-        }(targetElement)) {
-            for (var targetElementSelector, currentElement = targetElement; currentElement && "HTML" !== currentElement.nodeName; ) {
-                var globallyUniqueSelector = findSelector(currentElement, GLOBALLY_UNIQUE_SELECTOR_GETTERS, isSelectorUniqueGlobally, actionNameAttribute, targetElementSelector);
-                if (globallyUniqueSelector) return globallyUniqueSelector;
-                targetElementSelector = findSelector(currentElement, UNIQUE_AMONG_CHILDREN_SELECTOR_GETTERS, isSelectorUniqueAmongSiblings, actionNameAttribute, targetElementSelector) || combineSelector(getPositionSelector(currentElement), targetElementSelector), 
-                currentElement = currentElement.parentElement;
-            }
-            return targetElementSelector;
+        }(targetElement)) return;
+        let targetElementSelector, currentElement = targetElement;
+        for (;currentElement && "HTML" !== currentElement.nodeName; ) {
+            const globallyUniqueSelector = findSelector(currentElement, GLOBALLY_UNIQUE_SELECTOR_GETTERS, isSelectorUniqueGlobally, actionNameAttribute, targetElementSelector);
+            if (globallyUniqueSelector) return globallyUniqueSelector;
+            targetElementSelector = findSelector(currentElement, UNIQUE_AMONG_CHILDREN_SELECTOR_GETTERS, isSelectorUniqueAmongSiblings, actionNameAttribute, targetElementSelector) || combineSelector(getPositionSelector(currentElement), targetElementSelector), 
+            currentElement = currentElement.parentElement;
         }
+        return targetElementSelector;
     }
     function isGeneratedValue(value) {
         return /[0-9]/.test(value);
@@ -3203,11 +3275,9 @@
         return 1 === element.ownerDocument.querySelectorAll(combineSelector(elementSelector, childSelector)).length;
     }
     function isSelectorUniqueAmongSiblings(currentElement, currentElementSelector, childSelector) {
-        var isSiblingMatching;
-        if (void 0 === childSelector) isSiblingMatching = function(sibling) {
-            return sibling.matches(currentElementSelector);
-        }; else {
-            var scopedSelector = function() {
+        let isSiblingMatching;
+        if (void 0 === childSelector) isSiblingMatching = sibling => sibling.matches(currentElementSelector); else {
+            const scopedSelector = function() {
                 if (void 0 === supportScopeSelectorCache) try {
                     document.querySelector(":scope"), supportScopeSelectorCache = !0;
                 } catch (_unused) {
@@ -3215,11 +3285,10 @@
                 }
                 return supportScopeSelectorCache;
             }() ? combineSelector("".concat(currentElementSelector, ":scope"), childSelector) : combineSelector(currentElementSelector, childSelector);
-            isSiblingMatching = function(sibling) {
-                return null !== sibling.querySelector(scopedSelector);
-            };
+            isSiblingMatching = sibling => null !== sibling.querySelector(scopedSelector);
         }
-        for (var sibling = currentElement.parentElement.firstElementChild; sibling; ) {
+        let sibling = currentElement.parentElement.firstElementChild;
+        for (;sibling; ) {
             if (sibling !== currentElement && isSiblingMatching(sibling)) return !1;
             sibling = sibling.nextElementSibling;
         }
@@ -3291,44 +3360,39 @@
             }(entry));
         }));
     }
-    function trackFirstHidden(eventTarget) {
+    function trackFirstHidden(viewStart, eventTarget) {
         if (void 0 === eventTarget && (eventTarget = window), "hidden" === document.visibilityState) return {
-            getTimeStamp: function() {
-                return 0;
-            },
+            getTimeStamp: () => 0,
             stop: tools_noop
         };
         if (supportPerformanceTimingEvent(RumPerformanceEntryType_VISIBILITY_STATE)) {
-            var firstHiddenEntry = performance.getEntriesByType(RumPerformanceEntryType_VISIBILITY_STATE).find((function(entry) {
-                return "hidden" === entry.name;
-            }));
+            const firstHiddenEntry = performance.getEntriesByType(RumPerformanceEntryType_VISIBILITY_STATE).filter((entry => "hidden" === entry.name)).find((entry => entry.startTime >= viewStart.relative));
             if (firstHiddenEntry) return {
-                getTimeStamp: function() {
-                    return firstHiddenEntry.startTime;
-                },
+                getTimeStamp: () => firstHiddenEntry.startTime,
                 stop: tools_noop
             };
         }
-        var timeStamp = 1 / 0, _stop = addEventListeners(eventTarget, [ DOM_EVENT_PAGE_HIDE, DOM_EVENT_VISIBILITY_CHANGE ], (function(event) {
+        let timeStamp = 1 / 0;
+        const {stop: stop} = addEventListeners(eventTarget, [ DOM_EVENT_PAGE_HIDE, DOM_EVENT_VISIBILITY_CHANGE ], (event => {
             event.type !== DOM_EVENT_PAGE_HIDE && "hidden" !== document.visibilityState || (timeStamp = event.timeStamp, 
-            _stop());
+            stop());
         }), {
             capture: !0
-        }).stop;
+        });
         return {
             getTimeStamp: function() {
                 return timeStamp;
             },
             stop: function() {
-                _stop();
+                stop();
             }
         };
     }
-    function trackInitialViewMetrics(configuration, setLoadEvent, scheduleViewUpdate) {
+    function trackInitialViewMetrics(configuration, viewStart, setLoadEvent, scheduleViewUpdate) {
         var initialViewMetrics = {}, _trackNavigationTimings = trackNavigationTimings(0, (function(navigationTimings) {
             setLoadEvent(navigationTimings.loadEvent), initialViewMetrics.navigationTimings = navigationTimings, 
             scheduleViewUpdate();
-        })), firstHidden = trackFirstHidden(), stopNavigationTracking = _trackNavigationTimings.stop, stopFCPTracking = function(configuration, firstHidden, callback) {
+        })), firstHidden = trackFirstHidden(viewStart), stopNavigationTracking = _trackNavigationTimings.stop, stopFCPTracking = function(configuration, firstHidden, callback) {
             return {
                 stop: createPerformanceObservable(configuration, {
                     type: RumPerformanceEntryType_PAINT,
@@ -3374,7 +3438,7 @@
         }(configuration, firstHidden, window, (function(largestContentfulPaint) {
             initialViewMetrics.largestContentfulPaint = largestContentfulPaint, scheduleViewUpdate();
         })).stop, stopFIDTracking = function(configuration, firstHidden, callback) {
-            var performanceFirstInputSubscription = createPerformanceObservable(configuration, {
+            const performanceFirstInputSubscription = createPerformanceObservable(configuration, {
                 type: RumPerformanceEntryType_FIRST_INPUT,
                 buffered: !0
             }).subscribe((function(entries) {
@@ -3491,7 +3555,7 @@
         }(function(lifeCycle, domMutationObservable, configuration) {
             return new Observable((function(observable) {
                 var firstRequestIndex, subscriptions = [], pendingRequestsCount = 0;
-                subscriptions.push(domMutationObservable.subscribe((function() {
+                subscriptions.push(domMutationObservable.subscribe((() => {
                     notifyPageActivity();
                 })), createPerformanceObservable(configuration, {
                     type: RumPerformanceEntryType_RESOURCE
@@ -3601,17 +3665,18 @@
     var interactionCountEstimate = 0, minKnownInteractionId = 1 / 0, maxKnownInteractionId = 0;
     var getInteractionCount = function() {
         return observer ? interactionCountEstimate : window.performance.interactionCount || 0;
-    }, interactionSelectorCache = new Map;
+    };
+    const interactionSelectorCache = new Map;
     function trackInteractionToNextPaint(configuration, viewStart, viewLoadingType) {
         if (!(supportPerformanceTimingEvent("event") && window.PerformanceEventTiming && "interactionId" in PerformanceEventTiming.prototype)) return {
             getInteractionToNextPaint: function() {},
             setViewEnd: tools_noop,
             stop: tools_noop
         };
-        var interactionToNextPaintTargetSelector, interactionToNextPaintStartTime, _trackViewInteractionCount = function(viewLoadingType) {
+        var _trackViewInteractionCount = function(viewLoadingType) {
             "interactionCount" in performance || observer || (observer = new window.PerformanceObserver(monitor((function(entries) {
                 entries.getEntries().forEach((function(e) {
-                    var entry = e;
+                    const entry = e;
                     entry.interactionId && (minKnownInteractionId = Math.min(minKnownInteractionId, entry.interactionId), 
                     maxKnownInteractionId = Math.max(maxKnownInteractionId, entry.interactionId), interactionCountEstimate = (maxKnownInteractionId - minKnownInteractionId) / 7 + 1);
                 }));
@@ -3637,7 +3702,9 @@
                     };
                 }
             };
-        }(viewLoadingType), getViewInteractionCount = _trackViewInteractionCount.getViewInteractionCount, stopViewInteractionCount = _trackViewInteractionCount.stopViewInteractionCount, viewEnd = 1 / 0, longestInteractions = function(getViewInteractionCount) {
+        }(viewLoadingType), getViewInteractionCount = _trackViewInteractionCount.getViewInteractionCount, stopViewInteractionCount = _trackViewInteractionCount.stopViewInteractionCount;
+        let viewEnd = 1 / 0;
+        var interactionToNextPaintTargetSelector, interactionToNextPaintStartTime, longestInteractions = function(getViewInteractionCount) {
             var longestInteractions = [];
             function sortAndTrimLongestInteractions() {
                 longestInteractions.sort((function(a, b) {
@@ -3664,11 +3731,13 @@
                 var entry = entries_1[_i];
                 entry.interactionId && entry.startTime >= viewStart && entry.startTime <= viewEnd && longestInteractions.process(entry);
             }
-            var relativeTimestamp, selector, newInteraction = longestInteractions.estimateP98Interaction();
+            var newInteraction = longestInteractions.estimateP98Interaction();
             newInteraction && newInteraction.duration !== interactionToNextPaint && (interactionToNextPaint = newInteraction.duration, 
             interactionToNextPaintStartTime = tools_elapsed(viewStart, newInteraction.startTime), 
-            relativeTimestamp = newInteraction.startTime, selector = interactionSelectorCache.get(relativeTimestamp), 
-            interactionSelectorCache.delete(relativeTimestamp), !(interactionToNextPaintTargetSelector = selector) && newInteraction.target && isElementNode(newInteraction.target) && (interactionToNextPaintTargetSelector = getSelectorFromElement(newInteraction.target, configuration.actionNameAttribute)));
+            !(interactionToNextPaintTargetSelector = function(relativeTimestamp) {
+                const selector = interactionSelectorCache.get(relativeTimestamp);
+                return interactionSelectorCache.delete(relativeTimestamp), selector;
+            }(newInteraction.startTime)) && newInteraction.target && isElementNode(newInteraction.target) && (interactionToNextPaintTargetSelector = getSelectorFromElement(newInteraction.target, configuration.actionNameAttribute)));
         }
         var firstInputSubscription = createPerformanceObservable(configuration, {
             type: RumPerformanceEntryType_FIRST_INPUT,
@@ -3698,14 +3767,14 @@
     }
     function trackCommonViewMetrics(lifeCycle, domMutationObservable, configuration, scheduleViewUpdate, loadingType, viewStart) {
         var commonViewMetrics = {}, _trackLoadingTime = function(lifeCycle, domMutationObservable, configuration, loadType, viewStart, callback) {
-            var isWaitingForLoadEvent = loadType === ViewLoadingType_INITIAL_LOAD, isWaitingForActivityLoadingTime = !0, loadingTimeCandidates = [], firstHidden = trackFirstHidden();
+            var isWaitingForLoadEvent = loadType === ViewLoadingType_INITIAL_LOAD, isWaitingForActivityLoadingTime = !0, loadingTimeCandidates = [], firstHidden = trackFirstHidden(viewStart);
             function invokeCallbackIfAllCandidatesAreReceived() {
                 if (!isWaitingForActivityLoadingTime && !isWaitingForLoadEvent && loadingTimeCandidates.length > 0) {
                     var loadingTime = Math.max.apply(Math, loadingTimeCandidates);
-                    loadingTime < firstHidden.getTimeStamp() && callback(loadingTime);
+                    loadingTime < firstHidden.getTimeStamp() - viewStart.relative && callback(loadingTime);
                 }
             }
-            var _stop = waitPageActivityEnd(lifeCycle, domMutationObservable, configuration, (function(event) {
+            var stop = waitPageActivityEnd(lifeCycle, domMutationObservable, configuration, (function(event) {
                 isWaitingForActivityLoadingTime && (isWaitingForActivityLoadingTime = !1, event.hadActivity && loadingTimeCandidates.push(tools_elapsed(viewStart.timeStamp, event.end)), 
                 invokeCallbackIfAllCandidatesAreReceived());
             })).stop;
@@ -3715,7 +3784,7 @@
                     invokeCallbackIfAllCandidatesAreReceived());
                 },
                 stop: function() {
-                    _stop(), firstHidden.stop(), isWaitingForActivityLoadingTime && (isWaitingForActivityLoadingTime = !1, 
+                    stop(), firstHidden.stop(), isWaitingForActivityLoadingTime && (isWaitingForActivityLoadingTime = !1, 
                     invokeCallbackIfAllCandidatesAreReceived());
                 }
             };
@@ -3790,7 +3859,9 @@
         function startNewView(loadingType, startClocks, viewOptions) {
             var newlyCreatedView = function(lifeCycle, domMutationObservable, configuration, initialLocation, loadingType, startClocks, viewOptions) {
                 void 0 === startClocks && (startClocks = clocksNow());
-                var endClocks, name, service, version, context, id = UUID(), stopObservable = new Observable, customTimings = {}, documentVersion = 0, location = shallowClone(initialLocation), contextManager = createContextManager(), sessionIsActive = !0;
+                var endClocks, id = UUID(), stopObservable = new Observable, customTimings = {}, documentVersion = 0, location = shallowClone(initialLocation);
+                const contextManager = createContextManager();
+                var name, service, version, context, sessionIsActive = !0;
                 viewOptions && (name = viewOptions.name, service = viewOptions.service, version = viewOptions.version, 
                 context = viewOptions.context);
                 context && contextManager.setContext(context);
@@ -3804,12 +3875,11 @@
                 lifeCycle.notify(LifeCycleEventType_BEFORE_VIEW_CREATED, viewCreatedEvent), lifeCycle.notify(LifeCycleEventType_VIEW_CREATED, viewCreatedEvent);
                 var _scheduleViewUpdate = throttle(triggerViewUpdate, 3e3, {
                     leading: !1
-                }), throttled = _scheduleViewUpdate.throttled, cancelScheduleViewUpdate = _scheduleViewUpdate.cancel, _trackCommonViewMetrics = trackCommonViewMetrics(lifeCycle, domMutationObservable, configuration, scheduleViewUpdate, loadingType, startClocks), setLoadEvent = _trackCommonViewMetrics.setLoadEvent, getCommonViewMetrics = (_trackCommonViewMetrics.stop, 
-                _trackCommonViewMetrics.getCommonViewMetrics), stopINPTracking = _trackCommonViewMetrics.stopINPTracking, _trackInitialViewTimings = (_trackCommonViewMetrics.setViewEnd, 
-                loadingType === ViewLoadingType_INITIAL_LOAD ? trackInitialViewMetrics(configuration, setLoadEvent, scheduleViewUpdate) : {
+                }), throttled = _scheduleViewUpdate.throttled, cancelScheduleViewUpdate = _scheduleViewUpdate.cancel, _trackCommonViewMetrics = trackCommonViewMetrics(lifeCycle, domMutationObservable, configuration, scheduleViewUpdate, loadingType, startClocks), setLoadEvent = _trackCommonViewMetrics.setLoadEvent, stopCommonViewMetricsTracking = _trackCommonViewMetrics.stop, getCommonViewMetrics = _trackCommonViewMetrics.getCommonViewMetrics, stopINPTracking = _trackCommonViewMetrics.stopINPTracking, setViewEnd = _trackCommonViewMetrics.setViewEnd, _trackInitialViewTimings = loadingType === ViewLoadingType_INITIAL_LOAD ? trackInitialViewMetrics(configuration, startClocks, setLoadEvent, scheduleViewUpdate) : {
                     stop: tools_noop,
                     initialViewMetrics: {}
-                }), stopInitialViewMetricsTracking = _trackInitialViewTimings.stop, initialViewMetrics = _trackInitialViewTimings.initialViewMetrics, _trackViewEventCounts = trackViewEventCounts(lifeCycle, id, scheduleViewUpdate), stopEventCountsTracking = _trackViewEventCounts.stop, eventCounts = _trackViewEventCounts.eventCounts, keepAliveIntervalId = timer_setInterval(triggerViewUpdate, 3e5), pageMayExitSubscription = lifeCycle.subscribe(LifeCycleEventType_PAGE_EXITED, (function(pageMayExitEvent) {
+                }, stopInitialViewMetricsTracking = _trackInitialViewTimings.stop, initialViewMetrics = _trackInitialViewTimings.initialViewMetrics, _trackViewEventCounts = trackViewEventCounts(lifeCycle, id, scheduleViewUpdate), stopEventCountsTracking = _trackViewEventCounts.stop, eventCounts = _trackViewEventCounts.eventCounts, keepAliveIntervalId = timer_setInterval(triggerViewUpdate, 3e5);
+                const pageMayExitSubscription = lifeCycle.subscribe(LifeCycleEventType_PAGE_EXITED, (pageMayExitEvent => {
                     pageMayExitEvent.reason === PageExitReason.UNLOADING && triggerViewUpdate();
                 }));
                 function triggerBeforeViewUpdate() {
@@ -3859,8 +3929,8 @@
                             endClocks: endClocks
                         }), lifeCycle.notify(LifeCycleEventType_AFTER_VIEW_ENDED, {
                             endClocks: endClocks
-                        }), timer_clearInterval(keepAliveIntervalId), pageMayExitSubscription.unsubscribe(), 
-                        triggerViewUpdate(), timer_setTimeout((function() {
+                        }), timer_clearInterval(keepAliveIntervalId), setViewEnd(endClocks.relative), stopCommonViewMetricsTracking(), 
+                        pageMayExitSubscription.unsubscribe(), triggerViewUpdate(), timer_setTimeout((function() {
                             result.stop();
                         }), 3e5));
                     },
@@ -3880,7 +3950,7 @@
                             }(name)] = relativeTime, scheduleViewUpdate();
                         }
                     },
-                    setViewName: function(updatedName) {
+                    setViewName(updatedName) {
                         name = updatedName, triggerViewUpdate();
                     }
                 };
@@ -3904,8 +3974,9 @@
             });
         })), areViewsTrackedAutomatically && (locationChangeSubscription = function(locationChangeObservable) {
             return locationChangeObservable.subscribe((function(params) {
-                var currentLocation, otherLocation, oldLocation = params.oldLocation, newLocation = params.newLocation;
-                if (otherLocation = newLocation, (currentLocation = oldLocation).pathname !== otherLocation.pathname || !isHashAnAnchor(otherLocation.hash) && getPathFromHash(otherLocation.hash) !== getPathFromHash(currentLocation.hash)) return currentView.end(), 
+                var currentLocation, otherLocation, hash, correspondingId, oldLocation = params.oldLocation, newLocation = params.newLocation;
+                if (otherLocation = newLocation, (currentLocation = oldLocation).pathname !== otherLocation.pathname || (hash = otherLocation.hash, 
+                !((correspondingId = hash.substr(1)) && document.getElementById(correspondingId) || getPathFromHash(otherLocation.hash) === getPathFromHash(currentLocation.hash)))) return currentView.end(), 
                 void (currentView = startNewView(ViewLoadingType_ROUTE_CHANGE));
             }));
         }(locationChangeObservable)), {
@@ -3917,18 +3988,16 @@
                     endClocks: startClocks
                 }), currentView = startNewView(ViewLoadingType_ROUTE_CHANGE, startClocks, options);
             },
-            setViewContext: function(context) {
+            setViewContext: context => {
                 currentView.contextManager.setContext(context);
             },
-            setViewContextProperty: function(key, value) {
+            setViewContextProperty: (key, value) => {
                 currentView.contextManager.setContextProperty(key, value);
             },
-            setViewName: function(name) {
+            setViewName: name => {
                 currentView.setViewName(name);
             },
-            getViewContext: function() {
-                return currentView.contextManager.getContext();
-            },
+            getViewContext: () => currentView.contextManager.getContext(),
             stop: function() {
                 locationChangeSubscription && locationChangeSubscription.unsubscribe(), currentView.end(), 
                 activeViews.forEach((function(view) {
@@ -3943,7 +4012,8 @@
                 var pageStates = pageStateHistory.findAll(view.startClocks.relative, view.duration), viewEvent = {
                     _gc: {
                         document_version: view.documentVersion,
-                        page_states: pageStates
+                        page_states: pageStates,
+                        view_update_time: view.documentVersion
                     },
                     date: view.startClocks.timeStamp,
                     type: RumEventType.VIEW,
@@ -4070,6 +4140,7 @@
                         url: context.url,
                         xhr: context.xhr,
                         isAborted: context.isAborted,
+                        requestHeaderContexts: context.requestHeaderContexts,
                         handlingStack: context.handlingStack
                     });
                 }
@@ -4126,6 +4197,7 @@
                             collectStreamBody: !1
                         }) : callback(tools_elapsed(context.startClocks.timeStamp, timeStampNow()));
                     }(context, (function(duration) {
+                        var _context$init;
                         tracer.clearTracingIfNeeded(context), lifeCycle.notify(LifeCycleEventType_REQUEST_COMPLETED, {
                             duration: duration,
                             method: context.method,
@@ -4136,6 +4208,7 @@
                             status: context.status,
                             traceId: context.traceId,
                             traceSampled: context.traceSampled,
+                            requestHeaderContexts: null === (_context$init = context.init) || void 0 === _context$init ? void 0 : _context$init.headers,
                             type: RequestType.FETCH,
                             url: context.url,
                             response: context.response,
@@ -4155,33 +4228,30 @@
     }
     var alreadyMatchedEntries = new polyfills_WeakSet;
     function matchRequestResourceEntry(request) {
-        if (performance && "getEntriesByName" in performance) {
-            var sameNameEntries = performance.getEntriesByName(request.url, "resource");
-            if (sameNameEntries.length && "toJSON" in sameNameEntries[0]) {
-                var candidates = filter(sameNameEntries, (function(entry) {
-                    return !alreadyMatchedEntries.has(entry);
-                }));
-                candidates = filter(candidates, (function(entry) {
-                    return hasValidResourceEntryDuration(entry) && hasValidResourceEntryTimings(entry);
-                })), candidates = filter(candidates, (function(entry) {
-                    return timing = entry, start = request.startClocks.relative, end = endTime({
-                        startTime: request.startClocks.relative,
-                        duration: request.duration
-                    }), errorMargin = 1, timing.startTime >= start - errorMargin && endTime(timing) <= addDuration(end, errorMargin);
-                    var timing, start, end, errorMargin;
-                }));
-                var lastEntry = void 0;
-                if (candidates.length > 1) {
-                    var startTimeDuration = Number.MAX_SAFE_INTEGER;
-                    candidates.forEach((function(entry) {
-                        var _startTimeDuration = Math.abs(entry.startTime - request.startClocks.relative);
-                        _startTimeDuration < startTimeDuration && (startTimeDuration = _startTimeDuration, 
-                        lastEntry = entry);
-                    }));
-                } else 1 === candidates.length && (lastEntry = candidates[0]);
-                return lastEntry ? (alreadyMatchedEntries.add(lastEntry), lastEntry.toJSON()) : void 0;
-            }
-        }
+        if (!performance || !("getEntriesByName" in performance)) return;
+        var sameNameEntries = performance.getEntriesByName(request.url, "resource");
+        if (!sameNameEntries.length || !("toJSON" in sameNameEntries[0])) return;
+        var candidates = filter(sameNameEntries, (function(entry) {
+            return !alreadyMatchedEntries.has(entry);
+        }));
+        let lastEntry;
+        if (candidates = filter(candidates, (function(entry) {
+            return hasValidResourceEntryDuration(entry) && hasValidResourceEntryTimings(entry);
+        })), (candidates = filter(candidates, (function(entry) {
+            return timing = entry, start = request.startClocks.relative, end = endTime({
+                startTime: request.startClocks.relative,
+                duration: request.duration
+            }), errorMargin = 1, timing.startTime >= start - errorMargin && endTime(timing) <= addDuration(end, errorMargin);
+            var timing, start, end, errorMargin;
+        }))).length > 1) {
+            let startTimeDuration = Number.MAX_SAFE_INTEGER;
+            candidates.forEach((entry => {
+                const _startTimeDuration = Math.abs(entry.startTime - request.startClocks.relative);
+                _startTimeDuration < startTimeDuration && (startTimeDuration = _startTimeDuration, 
+                lastEntry = entry);
+            }));
+        } else 1 === candidates.length && (lastEntry = candidates[0]);
+        return lastEntry ? (alreadyMatchedEntries.add(lastEntry), lastEntry.toJSON()) : void 0;
     }
     function endTime(timing) {
         return addDuration(timing.startTime, timing.duration);
@@ -4202,11 +4272,11 @@
     }
     function startResourceCollection(lifeCycle, configuration, pageStateHistory, taskQueue, retrieveInitialDocumentResourceTimingImpl) {
         void 0 === taskQueue && (taskQueue = function() {
-            var pendingTasks = [];
+            const pendingTasks = [];
             function run(deadline) {
-                var executionTimeRemaining;
+                let executionTimeRemaining;
                 if (deadline.didTimeout) {
-                    var start = performance.now();
+                    const start = performance.now();
                     executionTimeRemaining = function() {
                         return 30 - (performance.now() - start);
                     };
@@ -4266,6 +4336,7 @@
                         domainContext: {
                             performanceEntry: matchingTiming,
                             xhr: request.xhr,
+                            requestHeaderContexts: request.requestHeaderContexts,
                             response: request.response,
                             requestInput: request.input,
                             requestInit: request.init,
@@ -4293,7 +4364,7 @@
         }));
         function handleResource(computeRawEvent) {
             taskQueue.push((function() {
-                var rawEvent = computeRawEvent();
+                const rawEvent = computeRawEvent();
                 rawEvent && lifeCycle.notify(LifeCycleEventType_RAW_RUM_EVENT_COLLECTED, rawEvent);
             }));
         }
@@ -4304,6 +4375,30 @@
         })), {
             stop: function() {
                 performanceResourceSubscription.unsubscribe();
+            },
+            addResource: (resource, savedCommonContext) => {
+                handleResource((function() {
+                    return extend({
+                        savedCommonContext: savedCommonContext
+                    }, function(resource) {
+                        var resourceEvent = {
+                            date: resource.startClocks.timeStamp,
+                            resource: {
+                                id: UUID(),
+                                type: resource.type
+                            },
+                            type: RumEventType.RESOURCE
+                        };
+                        return {
+                            customerContext: resource.context,
+                            startTime: resource.startClocks.relative,
+                            rawRumEvent: resourceEvent,
+                            domainContext: {
+                                resource: resource
+                            }
+                        };
+                    }(resource));
+                }));
             }
         };
     }
@@ -4348,7 +4443,7 @@
         };
     }
     var buildEnv = {
-        sdkVersion: "3.2.24",
+        sdkVersion: "3.2.42",
         sdkName: "df_web_rum_sdk"
     };
     function validateAndBuildRumConfiguration(initConfiguration) {
@@ -4431,7 +4526,7 @@
         }
         return {
             init: function(initConfiguration) {
-                initConfiguration ? (cachedInitConfiguration = initConfiguration, ignoreInitIfSyntheticsWillInjectRum && Boolean(window._GUANCE_SYNTHETICS_INJECTS_RUM || cookie_getCookie("guance-synthetics-injects-rum")) || initConfiguration.remoteConfiguration || function(initConfiguration) {
+                initConfiguration ? (cachedInitConfiguration = initConfiguration, ignoreInitIfSyntheticsWillInjectRum && Boolean(window._GUANCE_SYNTHETICS_INJECTS_RUM || cookie_getCookie("guance-synthetics-injects-rum")) || initConfiguration.remoteConfiguration || function(initConfiguration, remoteConfiguration) {
                     if (cachedInitConfiguration = initConfiguration, cachedConfiguration) displayAlreadyInitializedError("DATAFLUX_RUM", initConfiguration); else {
                         var configuration = validateAndBuildRumConfiguration(initConfiguration);
                         configuration && (cachedConfiguration = configuration, initFetchObservable().subscribe(tools_noop), 
@@ -4444,6 +4539,7 @@
             },
             getInternalContext: tools_noop,
             stopSession: tools_noop,
+            setForcedSession: tools_noop,
             addTiming: function(name, time) {
                 void 0 === time && (time = timeStampNow()), bufferApiCalls.add((function(startRumResult) {
                     startRumResult.addTiming(name, time);
@@ -4451,7 +4547,7 @@
             },
             startView: function(options, startClocks) {
                 void 0 === startClocks && (startClocks = clocksNow());
-                var callback = function(startRumResult) {
+                const callback = function(startRumResult) {
                     startRumResult.startView(options, startClocks);
                 };
                 bufferApiCalls.add(callback), firstStartViewCall || (firstStartViewCall = {
@@ -4459,25 +4555,29 @@
                     callback: callback
                 }, tryStartRum());
             },
-            setViewName: function(name) {
-                bufferApiCalls.add((function(startRumResult) {
-                    return startRumResult.setViewName(name);
+            setViewName(name) {
+                bufferApiCalls.add((startRumResult => startRumResult.setViewName(name)));
+            },
+            setViewContext(context) {
+                bufferApiCalls.add((startRumResult => startRumResult.setViewContext(context)));
+            },
+            setViewContextProperty(key, value) {
+                bufferApiCalls.add((startRumResult => startRumResult.setViewContextProperty(key, value)));
+            },
+            getViewContext: () => {},
+            addTypeAction: function(action, type, commonContext) {
+                void 0 === commonContext && (commonContext = getCommonContext()), bufferApiCalls.add((function(startRumResult) {
+                    startRumResult.addTypeAction(action, type, commonContext);
                 }));
             },
-            setViewContext: function(context) {
-                bufferApiCalls.add((function(startRumResult) {
-                    return startRumResult.setViewContext(context);
-                }));
-            },
-            setViewContextProperty: function(key, value) {
-                bufferApiCalls.add((function(startRumResult) {
-                    return startRumResult.setViewContextProperty(key, value);
-                }));
-            },
-            getViewContext: function() {},
             addAction: function(action, commonContext) {
                 void 0 === commonContext && (commonContext = getCommonContext()), bufferApiCalls.add((function(startRumResult) {
                     startRumResult.addAction(action, commonContext);
+                }));
+            },
+            addResource: function(resource, commonContext) {
+                void 0 === commonContext && (commonContext = getCommonContext()), bufferApiCalls.add((function(startRumResult) {
+                    startRumResult.addResource(resource, commonContext);
                 }));
             },
             addError: function(providedError, commonContext) {
@@ -4489,39 +4589,33 @@
     }
     var global, name, api, existingGlobalVariable, datafluxRum = function(startRumImpl, recorderApi, options) {
         void 0 === options && (options = {});
-        var customerDataTrackerManager = function() {
-            var compressionStatus = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : CustomerDataCompressionStatus_Disabled, customerDataTrackers = new Map, alreadyWarned = !1;
+        const customerDataTrackerManager = function() {
+            let compressionStatus = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : CustomerDataCompressionStatus_Disabled;
+            const customerDataTrackers = new Map;
+            let alreadyWarned = !1;
             function checkCustomerDataLimit() {
-                if (!alreadyWarned && compressionStatus !== CustomerDataCompressionStatus_Unknown) {
-                    var bytesCountLimit = compressionStatus === CustomerDataCompressionStatus_Disabled ? 3072 : 16384, bytesCount = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : 0;
-                    customerDataTrackers.forEach((function(tracker) {
-                        bytesCount += tracker.getBytesCount();
-                    })), bytesCount > bytesCountLimit && (displayCustomerDataLimitReachedWarning(bytesCountLimit), 
-                    alreadyWarned = !0);
-                }
+                if (alreadyWarned || compressionStatus === CustomerDataCompressionStatus_Unknown) return;
+                const bytesCountLimit = compressionStatus === CustomerDataCompressionStatus_Disabled ? 3072 : 16384;
+                let bytesCount = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : 0;
+                customerDataTrackers.forEach((tracker => {
+                    bytesCount += tracker.getBytesCount();
+                })), bytesCount > bytesCountLimit && (displayCustomerDataLimitReachedWarning(bytesCountLimit), 
+                alreadyWarned = !0);
             }
             return {
-                createDetachedTracker: function() {
-                    var tracker = createCustomerDataTracker((function() {
-                        return checkCustomerDataLimit(tracker.getBytesCount());
-                    }));
+                createDetachedTracker: () => {
+                    const tracker = createCustomerDataTracker((() => checkCustomerDataLimit(tracker.getBytesCount())));
                     return tracker;
                 },
-                getOrCreateTracker: function(type) {
-                    return customerDataTrackers.has(type) || customerDataTrackers.set(type, createCustomerDataTracker(checkCustomerDataLimit)), 
-                    customerDataTrackers.get(type);
-                },
-                setCompressionStatus: function(newCompressionStatus) {
+                getOrCreateTracker: type => (customerDataTrackers.has(type) || customerDataTrackers.set(type, createCustomerDataTracker(checkCustomerDataLimit)), 
+                customerDataTrackers.get(type)),
+                setCompressionStatus: newCompressionStatus => {
                     compressionStatus === CustomerDataCompressionStatus_Unknown && (compressionStatus = newCompressionStatus, 
                     checkCustomerDataLimit());
                 },
-                getCompressionStatus: function() {
-                    return compressionStatus;
-                },
-                stop: function() {
-                    customerDataTrackers.forEach((function(tracker) {
-                        return tracker.stop();
-                    })), customerDataTrackers.clear();
+                getCompressionStatus: () => compressionStatus,
+                stop: () => {
+                    customerDataTrackers.forEach((tracker => tracker.stop())), customerDataTrackers.clear();
                 }
             };
         }(CustomerDataCompressionStatus_Unknown), globalContextManager = createContextManager("global", {
@@ -4549,7 +4643,7 @@
                 };
             }(globalContextManager, userContextManager);
         }
-        var stub, publicApi, strategy = createPreStartStrategy(options, getCommonContext, (function(configuration, deflateWorker, initialViewOptions) {
+        let strategy = createPreStartStrategy(options, getCommonContext, (function(configuration, deflateWorker, initialViewOptions) {
             configuration.storeContextsToLocal && (storeContextManager(configuration, globalContextManager, "rum", CustomerDataType_GlobalContext), 
             storeContextManager(configuration, userContextManager, "rum", CustomerDataType_User)), 
             customerDataTrackerManager.setCompressionStatus(deflateWorker ? CustomerDataCompressionStatus_Enabled : CustomerDataCompressionStatus_Disabled);
@@ -4564,28 +4658,28 @@
                     initConfiguration: preStartStrategy.getInitConfiguration()
                 }, startRumResult);
             }(strategy, startRumResult), startRumResult;
-        })), startView = monitor((function(options) {
-            var sanitizedOptions = "object" === typeof_typeof(options) ? options : {
+        }));
+        const startView = monitor((function(options) {
+            const sanitizedOptions = "object" == typeof options ? options : {
                 name: options
             };
             strategy.startView(sanitizedOptions), sanitizedOptions.context && customerDataTrackerManager.getOrCreateTracker(CustomerDataType_View).updateCustomerData(sanitizedOptions.context);
         }));
+        var stub, publicApi;
         return stub = {
             init: monitor((function(initConfiguration) {
                 strategy.init(initConfiguration);
             })),
-            setViewName: monitor((function(name) {
+            setViewName: monitor((name => {
                 strategy.setViewName(name);
             })),
-            setViewContext: monitor((function(context) {
+            setViewContext: monitor((context => {
                 strategy.setViewContext(context);
             })),
-            setViewContextProperty: monitor((function(key, value) {
+            setViewContextProperty: monitor(((key, value) => {
                 strategy.setViewContextProperty(key, value);
             })),
-            getViewContext: monitor((function() {
-                return strategy.getViewContext();
-            })),
+            getViewContext: monitor((() => strategy.getViewContext())),
             setGlobalContextProperty: monitor((function(key, value) {
                 globalContextManager.setContextProperty(key, value);
             })),
@@ -4607,11 +4701,32 @@
             getInternalContext: monitor((function(startTime) {
                 return strategy.getInternalContext(startTime);
             })),
-            addDebugSession: monitor((function(id) {})),
-            clearDebugSession: monitor((function() {})),
-            getDebugSession: monitor((function() {})),
+            addResource: monitor((function(context) {
+                const handlingStack = createHandlingStack();
+                callMonitored((function() {
+                    strategy.addResource({
+                        context: sanitize(context),
+                        startClocks: clocksNow(),
+                        type: ResourceType_CUSTOM,
+                        handlingStack: handlingStack
+                    });
+                }));
+            })),
+            addTypeAction: monitor((function(name, type, context) {
+                const handlingStack = createHandlingStack();
+                callMonitored((function() {
+                    const sourceType = sanitize(type);
+                    strategy.addAction({
+                        name: sanitize(name),
+                        context: sanitize(context),
+                        startClocks: clocksNow(),
+                        type: "string" === getType(sourceType) ? sourceType : ActionType_CUSTOM,
+                        handlingStack: handlingStack
+                    });
+                }));
+            })),
             addAction: monitor((function(name, context) {
-                var handlingStack = createHandlingStack();
+                const handlingStack = createHandlingStack();
                 callMonitored((function() {
                     strategy.addAction({
                         name: sanitize(name),
@@ -4660,6 +4775,11 @@
             startView: startView,
             stopSession: monitor((function() {
                 strategy.stopSession();
+            })),
+            setForcedSession: monitor((function() {
+                strategy.setForcedSession(), addTelemetryUsage({
+                    feature: "set-forced-session"
+                });
             }))
         }, publicApi = tools_assign({
             onReady: function(callback) {
@@ -4693,10 +4813,10 @@
             return function() {
                 visibilityChangeListener.stop(), beforeUnloadListener.stop();
             };
-        }));
-        pageExitObservable.subscribe((function(event) {
+        })), pageExitSubscription = pageExitObservable.subscribe((function(event) {
             lifeCycle.notify(LifeCycleEventType_PAGE_EXITED, event);
-        })), cleanupTasks.push((function() {
+        }));
+        cleanupTasks.push((function() {
             pageExitSubscription.unsubscribe();
         }));
         var session = canUseEventBridge() ? void 0 : startRumSessionManager(configuration, lifeCycle);
@@ -4724,8 +4844,8 @@
                     }(view), view.startClocks.relative);
                 })), lifeCycle.subscribe(LifeCycleEventType_AFTER_VIEW_ENDED, (function(data) {
                     viewContextHistory.closeActive(data.endClocks.relative);
-                })), lifeCycle.subscribe(LifeCycleEventType_BEFORE_VIEW_UPDATED, (function(viewUpdate) {
-                    var currentView = viewContextHistory.find(viewUpdate.startClocks.relative);
+                })), lifeCycle.subscribe(LifeCycleEventType_BEFORE_VIEW_UPDATED, (viewUpdate => {
+                    const currentView = viewContextHistory.find(viewUpdate.startClocks.relative);
                     currentView && viewUpdate.name && (currentView.name = viewUpdate.name), currentView && viewUpdate.context && (currentView.context = viewUpdate.context);
                 })), lifeCycle.subscribe(LifeCycleEventType_SESSION_RENEWED, (function() {
                     viewContextHistory.reset();
@@ -4759,18 +4879,20 @@
                             url: data.newLocation.href,
                             location: data.newLocation,
                             referrer: current.referrer
-                        }), changeTime);
+                        }, !0), changeTime);
                     }
                 }));
                 function buildUrlContext(data) {
-                    var path = data.location.pathname, hash = data.location.hash;
-                    return hash && !isHashAnAnchor(hash) && (path = "/" + getPathFromHash(hash)), {
+                    var pathname = data.location.pathname, path = pathname, hash = data.location.hash;
+                    return hash && 0 === hash.indexOf("#/") && (path = "/" + getPathFromHash(hash)), 
+                    {
                         url: data.url,
                         referrer: data.referrer,
                         host: data.location.host,
                         path: path,
                         pathGroup: replaceNumberCharByPath(path),
-                        urlQuery: getQueryParamsFromUrl(data.location.href)
+                        urlQuery: getQueryParamsFromUrl(data.location.href),
+                        pathname: pathname
                     };
                 }
                 return {
@@ -4820,9 +4942,10 @@
             };
         }(lifeCycle, configuration, location, session, userSession, pageStateHistory, locationChangeObservable, 0, getCommonContext, reportError), viewContexts = _startRumEventCollection.viewContexts, urlContexts = _startRumEventCollection.urlContexts, actionContexts = _startRumEventCollection.actionContexts, stopRumEventCollection = _startRumEventCollection.stop, addAction = _startRumEventCollection.addAction;
         cleanupTasks.push(stopRumEventCollection);
-        var _startViewCollection = startViewCollection(lifeCycle, configuration, location, domMutationObservable, locationChangeObservable, pageStateHistory, 0, initialViewOptions), addTiming = _startViewCollection.addTiming, startView = _startViewCollection.startView, setViewName = _startViewCollection.setViewName, setViewContext = _startViewCollection.setViewContext, setViewContextProperty = _startViewCollection.setViewContextProperty, getViewContext = _startViewCollection.getViewContext, stopViewCollection = _startViewCollection.stop;
+        const {addTiming: addTiming, startView: startView, setViewName: setViewName, setViewContext: setViewContext, setViewContextProperty: setViewContextProperty, getViewContext: getViewContext, stop: stopViewCollection} = startViewCollection(lifeCycle, configuration, location, domMutationObservable, locationChangeObservable, pageStateHistory, 0, initialViewOptions);
         cleanupTasks.push(stopViewCollection);
-        var _startResourceCollection = startResourceCollection(lifeCycle, configuration, pageStateHistory);
+        const _startResourceCollection = startResourceCollection(lifeCycle, configuration, pageStateHistory);
+        var addResource = _startResourceCollection.addResource;
         cleanupTasks.push(_startResourceCollection.stop);
         var addError = startErrorCollection(lifeCycle, 0, session, pageStateHistory).addError;
         startRequestCollection(lifeCycle, configuration);
@@ -4851,6 +4974,7 @@
                                 host: urlContext.host,
                                 path: urlContext.path,
                                 pathGroup: urlContext.pathGroup,
+                                pathname: urlContext.pathname,
                                 urlQuery: urlContext.urlQuery
                             }
                         };
@@ -4859,6 +4983,7 @@
             };
         }(configuration.applicationId, session, viewContexts, actionContexts, urlContexts);
         return {
+            addResource: addResource,
             addAction: addAction,
             addError: addError,
             addTiming: addTiming,
@@ -4871,6 +4996,9 @@
             lifeCycle: lifeCycle,
             viewContexts: viewContexts,
             session: session,
+            setForcedSession: function() {
+                session.setForcedSession();
+            },
             stopSession: function() {
                 session.expire();
             },

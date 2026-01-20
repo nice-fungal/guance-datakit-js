@@ -4,18 +4,8 @@ var __webpack_exports__ = {};
 
 // UNUSED EXPORTS: datafluxRum
 
-;// CONCATENATED MODULE: ../../node_modules/@babel/runtime/helpers/esm/typeof.js
-function typeof_typeof(o) {
-  "@babel/helpers - typeof";
-
-  return typeof_typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) {
-    return typeof o;
-  } : function (o) {
-    return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o;
-  }, typeof_typeof(o);
-}
-
 ;// CONCATENATED MODULE: ../core/esm/helper/display.js
+
 var ConsoleApiName = {
   log: 'log',
   debug: 'debug',
@@ -26,7 +16,7 @@ var ConsoleApiName = {
 var globalConsole = console;
 var originalConsoleMethods = {};
 Object.keys(ConsoleApiName).forEach(function (name) {
-  originalConsoleMethods[name] = globalConsole[name];
+  originalConsoleMethods[name] = globalConsole[name] || tools_noop;
 });
 var PREFIX = 'GUANCE Browser SDK:';
 var display = {
@@ -92,11 +82,10 @@ function catchUserErrors(fn, errorMsg) {
 
 
 
-
 function makePublicApi(stub) {
   var publicApi = tools_assign({
     // 把 snippet 定义的 onReady 覆盖掉，但保留了 q
-    onReady: function onReady(callback) {
+    onReady: function (callback) {
       callback();
     }
   }, stub);
@@ -104,7 +93,7 @@ function makePublicApi(stub) {
   // Add an "hidden" property to set debug mode. We define it that way to hide it
   // as much as possible but of course it's not a real protection.
   Object.defineProperty(publicApi, '_setDebug', {
-    get: function get() {
+    get: function () {
       return setDebugMode;
     },
     enumerable: false
@@ -121,11 +110,11 @@ function defineGlobal(global, name, api) {
   }
 }
 function getGlobalObject() {
-  if ((typeof globalThis === "undefined" ? "undefined" : typeof_typeof(globalThis)) === 'object') {
+  if (typeof globalThis === 'object') {
     return globalThis;
   }
   Object.defineProperty(Object.prototype, '_gc_temp_', {
-    get: function get() {
+    get: function () {
       return this;
     },
     configurable: true
@@ -134,12 +123,12 @@ function getGlobalObject() {
   var globalObject = _gc_temp_;
   // @ts-ignore
   delete Object.prototype._gc_temp_;
-  if (typeof_typeof(globalObject) !== 'object') {
+  if (typeof globalObject !== 'object') {
     // on safari _gc_temp_ is available on window but not globally
     // fallback on other browser globals check
-    if ((typeof self === "undefined" ? "undefined" : typeof_typeof(self)) === 'object') {
+    if (typeof self === 'object') {
       globalObject = self;
-    } else if ((typeof window === "undefined" ? "undefined" : typeof_typeof(window)) === 'object') {
+    } else if (typeof window === 'object') {
       globalObject = window;
     } else {
       globalObject = {};
@@ -192,9 +181,8 @@ function timer_clearInterval(timeoutId) {
 ;// CONCATENATED MODULE: ../core/esm/helper/tools.js
 
 
-
 var ArrayProto = Array.prototype;
-var FuncProto = Function.prototype;
+// var FuncProto = Function.prototype
 var ObjProto = Object.prototype;
 var slice = ArrayProto.slice;
 var tools_toString = ObjProto.toString;
@@ -202,7 +190,7 @@ var tools_hasOwnProperty = ObjProto.hasOwnProperty;
 var nativeForEach = ArrayProto.forEach;
 var nativeIsArray = Array.isArray;
 var breaker = false;
-var each = function each(obj, iterator, context) {
+var each = function (obj, iterator, context) {
   if (obj === null) return false;
   if (nativeForEach && obj.forEach === nativeForEach) {
     obj.forEach(iterator, context);
@@ -235,7 +223,7 @@ function tools_assign(target) {
 function shallowClone(object) {
   return tools_assign({}, object);
 }
-var extend = function extend(obj) {
+var extend = function (obj) {
   each(slice.call(arguments, 1), function (source) {
     for (var prop in source) {
       if (source[prop] !== void 0) {
@@ -245,7 +233,7 @@ var extend = function extend(obj) {
   });
   return obj;
 };
-var extend2Lev = function extend2Lev(obj) {
+var extend2Lev = function (obj) {
   each(slice.call(arguments, 1), function (source) {
     for (var prop in source) {
       if (source[prop] !== void 0) {
@@ -259,7 +247,7 @@ var extend2Lev = function extend2Lev(obj) {
   });
   return obj;
 };
-var coverExtend = function coverExtend(obj) {
+var coverExtend = function (obj) {
   each(slice.call(arguments, 1), function (source) {
     for (var prop in source) {
       if (source[prop] !== void 0 && obj[prop] === void 0) {
@@ -272,7 +260,7 @@ var coverExtend = function coverExtend(obj) {
 var isArray = nativeIsArray || function (obj) {
   return tools_toString.call(obj) === '[object Array]';
 };
-var isFunction = function isFunction(f) {
+var isFunction = function (f) {
   if (!f) {
     return false;
   }
@@ -282,10 +270,10 @@ var isFunction = function isFunction(f) {
     return false;
   }
 };
-var isArguments = function isArguments(obj) {
+var isArguments = function (obj) {
   return !!(obj && tools_hasOwnProperty.call(obj, 'callee'));
 };
-var toArray = function toArray(iterable) {
+var toArray = function (iterable) {
   if (!iterable) return [];
   if (iterable.toArray) {
     return iterable.toArray();
@@ -298,7 +286,7 @@ var toArray = function toArray(iterable) {
   }
   return values(iterable);
 };
-var values = function values(obj) {
+var values = function (obj) {
   var results = [];
   if (obj === null) {
     return results;
@@ -308,7 +296,7 @@ var values = function values(obj) {
   });
   return results;
 };
-var keys = function keys(obj) {
+var keys = function (obj) {
   var results = [];
   if (obj === null) {
     return results;
@@ -318,7 +306,7 @@ var keys = function keys(obj) {
   });
   return results;
 };
-var indexOf = function indexOf(arr, target) {
+var indexOf = function (arr, target) {
   var indexOf = arr.indexOf;
   if (indexOf) {
     return indexOf.call(arr, target);
@@ -331,14 +319,14 @@ var indexOf = function indexOf(arr, target) {
     return -1;
   }
 };
-var hasAttribute = function hasAttribute(ele, attr) {
+var hasAttribute = function (ele, attr) {
   if (ele.hasAttribute) {
     return ele.hasAttribute(attr);
   } else {
     return !!(ele.attributes[attr] && ele.attributes[attr].specified);
   }
 };
-var filter = function filter(arr, fn, self) {
+var filter = function (arr, fn, self) {
   if (arr.filter) {
     return arr.filter(fn);
   }
@@ -354,7 +342,7 @@ var filter = function filter(arr, fn, self) {
   }
   return ret;
 };
-var tools_map = function map(arr, fn, self) {
+var tools_map = function (arr, fn, self) {
   if (arr.map) {
     return arr.map(fn);
   }
@@ -368,7 +356,7 @@ var tools_map = function map(arr, fn, self) {
   }
   return ret;
 };
-var some = function some(arr, fn, self) {
+var some = function (arr, fn, self) {
   if (arr.some) {
     return arr.some(fn);
   }
@@ -385,7 +373,7 @@ var some = function some(arr, fn, self) {
   }
   return flag;
 };
-var every = function every(arr, fn, self) {
+var every = function (arr, fn, self) {
   if (arr.every) {
     return arr.every(fn);
   }
@@ -402,7 +390,7 @@ var every = function every(arr, fn, self) {
   }
   return flag;
 };
-var matchList = function matchList(list, value, useStartsWith) {
+var matchList = function (list, value, useStartsWith) {
   if (useStartsWith === undefined) {
     useStartsWith = false;
   }
@@ -422,7 +410,7 @@ var matchList = function matchList(list, value, useStartsWith) {
   });
 };
 // https://github.com/jquery/jquery/blob/a684e6ba836f7c553968d7d026ed7941e1a612d8/src/selector/escapeSelector.js
-var cssEscape = function cssEscape(str) {
+var cssEscape = function (str) {
   str = str + '';
   if (window.CSS && window.CSS.escape) {
     return window.CSS.escape(str);
@@ -433,7 +421,7 @@ var cssEscape = function cssEscape(str) {
     if (asCodePoint) {
       // U+0000 NULL becomes U+FFFD REPLACEMENT CHARACTER
       if (ch === '\0') {
-        return "\uFFFD";
+        return '\uFFFD';
       }
       // Control characters and (dependent upon position) numbers get escaped as code points
       return ch.slice(0, -1) + '\\' + ch.charCodeAt(ch.length - 1).toString(16) + ' ';
@@ -442,22 +430,22 @@ var cssEscape = function cssEscape(str) {
     return '\\' + ch;
   });
 };
-var inherit = function inherit(subclass, superclass) {
-  var F = function F() {};
+var inherit = function (subclass, superclass) {
+  var F = function () {};
   F.prototype = superclass.prototype;
   subclass.prototype = new F();
   subclass.prototype.constructor = subclass;
   subclass.superclass = superclass.prototype;
   return subclass;
 };
-var tirm = function tirm(str) {
+var tirm = function (str) {
   return str.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, '');
 };
-var isObject = function isObject(obj) {
+var isObject = function (obj) {
   if (obj === null) return false;
   return tools_toString.call(obj) === '[object Object]';
 };
-var isEmptyObject = function isEmptyObject(obj) {
+var isEmptyObject = function (obj) {
   if (isObject(obj)) {
     for (var key in obj) {
       if (tools_hasOwnProperty.call(obj, key)) {
@@ -469,32 +457,32 @@ var isEmptyObject = function isEmptyObject(obj) {
     return false;
   }
 };
-var objectEntries = function objectEntries(object) {
+var objectEntries = function (object) {
   var res = [];
   each(object, function (value, key) {
     res.push([key, value]);
   });
   return res;
 };
-var isUndefined = function isUndefined(obj) {
+var isUndefined = function (obj) {
   return obj === void 0;
 };
-var isString = function isString(obj) {
+var isString = function (obj) {
   return tools_toString.call(obj) === '[object String]';
 };
-var isDate = function isDate(obj) {
+var isDate = function (obj) {
   return tools_toString.call(obj) === '[object Date]';
 };
-var isBoolean = function isBoolean(obj) {
+var isBoolean = function (obj) {
   return tools_toString.call(obj) === '[object Boolean]';
 };
-var isNumber = function isNumber(obj) {
+var isNumber = function (obj) {
   return tools_toString.call(obj) === '[object Number]' && /[\d\.]+/.test(String(obj));
 };
-var isElement = function isElement(obj) {
+var isElement = function (obj) {
   return !!(obj && obj.nodeType === 1);
 };
-var isJSONString = function isJSONString(str) {
+var isJSONString = function (str) {
   try {
     JSON.parse(str);
   } catch (e) {
@@ -502,7 +490,7 @@ var isJSONString = function isJSONString(str) {
   }
   return true;
 };
-var safeJSONParse = function safeJSONParse(str) {
+var safeJSONParse = function (str) {
   var val = null;
   try {
     val = JSON.parse(str);
@@ -511,23 +499,23 @@ var safeJSONParse = function safeJSONParse(str) {
   }
   return val;
 };
-var _encodeDates = function encodeDates(obj) {
-  each(obj, function (v, k) {
-    if (isDate(v)) {
-      obj[k] = formatDate(v);
-    } else if (isObject(v)) {
-      obj[k] = _encodeDates(v);
-    }
-  });
-  return obj;
-};
 
-var mediaQueriesSupported = function mediaQueriesSupported() {
+// export var encodeDates = function (obj) {
+//   each(obj, function (v, k) {
+//     if (isDate(v)) {
+//       obj[k] = formatDate(v)
+//     } else if (isObject(v)) {
+//       obj[k] = encodeDates(v)
+//     }
+//   })
+//   return obj
+// }
+var mediaQueriesSupported = function () {
   return typeof window.matchMedia !== 'undefined' || typeof window.msMatchMedia !== 'undefined';
 };
-var getScreenOrientation = function getScreenOrientation() {
+var getScreenOrientation = function () {
   var screenOrientationAPI = screen.msOrientation || screen.mozOrientation || (screen.orientation || {}).type;
-  var screenOrientation = '未取到值';
+  var screenOrientation = 'unknown';
   if (screenOrientationAPI) {
     screenOrientation = screenOrientationAPI.indexOf('landscape') > -1 ? 'landscape' : 'portrait';
   } else if (mediaQueriesSupported()) {
@@ -543,15 +531,15 @@ var getScreenOrientation = function getScreenOrientation() {
 var now = Date.now || function () {
   return new Date().getTime();
 };
-var throttle = function throttle(fn, wait, options) {
+var throttle = function (fn, wait, options) {
   var needLeadingExecution = options && options.leading !== undefined ? options.leading : true;
   var needTrailingExecution = options && options.trailing !== undefined ? options.trailing : true;
-  var inWaitPeriod = false;
-  var pendingExecutionWithParameters;
-  var pendingTimeoutId;
+  let inWaitPeriod = false;
+  let pendingExecutionWithParameters;
+  let pendingTimeoutId;
   var context = this;
   return {
-    throttled: function throttled() {
+    throttled: function () {
       if (inWaitPeriod) {
         pendingExecutionWithParameters = arguments;
         return;
@@ -570,79 +558,85 @@ var throttle = function throttle(fn, wait, options) {
         pendingExecutionWithParameters = undefined;
       }, wait);
     },
-    cancel: function cancel() {
+    cancel: function () {
       timer_clearTimeout(pendingTimeoutId);
       inWaitPeriod = false;
       pendingExecutionWithParameters = undefined;
     }
   };
 };
-var hashCode = function hashCode(str) {
+var hashCode = function (str) {
   if (typeof str !== 'string') {
     return 0;
   }
   var hash = 0;
-  var _char = null;
+  var char = null;
   if (str.length == 0) {
     return hash;
   }
   for (var i = 0; i < str.length; i++) {
-    _char = str.charCodeAt(i);
-    hash = (hash << 5) - hash + _char;
+    char = str.charCodeAt(i);
+    hash = (hash << 5) - hash + char;
     hash = hash & hash;
   }
   return hash;
 };
-var formatDate = function formatDate(d) {
-  function pad(n) {
-    return n < 10 ? '0' + n : n;
-  }
-  return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds()) + '.' + pad(d.getMilliseconds());
-};
-var _searchObjDate = function searchObjDate(o) {
-  if (isObject(o)) {
-    each(o, function (a, b) {
-      if (isObject(a)) {
-        _searchObjDate(o[b]);
-      } else {
-        if (isDate(a)) {
-          o[b] = formatDate(a);
-        }
-      }
-    });
-  }
-};
+// export var formatDate = function (d) {
+//   function pad(n) {
+//     return n < 10 ? '0' + n : n
+//   }
 
-var formatJsonString = function formatJsonString(obj) {
-  try {
-    return JSON.stringify(obj, null, '  ');
-  } catch (e) {
-    return JSON.stringify(obj);
-  }
-};
-// export var formatString = function (str) {
-//   if (str.length > MAX_STRING_LENGTH) {
-//     sd.log('字符串长度超过限制，已经做截取--' + str)
-//     return str.slice(0, MAX_STRING_LENGTH)
-//   } else {
-//     return str
+//   return (
+//     d.getFullYear() +
+//     '-' +
+//     pad(d.getMonth() + 1) +
+//     '-' +
+//     pad(d.getDate()) +
+//     ' ' +
+//     pad(d.getHours()) +
+//     ':' +
+//     pad(d.getMinutes()) +
+//     ':' +
+//     pad(d.getSeconds()) +
+//     '.' +
+//     pad(d.getMilliseconds())
+//   )
+// }
+// export var searchObjDate = function (o) {
+//   if (isObject(o)) {
+//     each(o, function (a, b) {
+//       if (isObject(a)) {
+//         searchObjDate(o[b])
+//       } else {
+//         if (isDate(a)) {
+//           o[b] = formatDate(a)
+//         }
+//       }
+//     })
 //   }
 // }
-var _searchObjString = function searchObjString(o) {
-  if (isObject(o)) {
-    each(o, function (a, b) {
-      if (isObject(a)) {
-        _searchObjString(o[b]);
-      } else {
-        if (isString(a)) {
-          o[b] = formatString(a);
-        }
-      }
-    });
-  }
-};
+// export var formatJsonString = function (obj) {
+//   try {
+//     return JSON.stringify(obj, null, '  ')
+//   } catch (e) {
+//     return JSON.stringify(obj)
+//   }
+// }
 
-var unique = function unique(ar) {
+// export var searchObjString = function (o) {
+//   if (isObject(o)) {
+//     each(o, function (a, b) {
+//       if (isObject(a)) {
+//         searchObjString(o[b])
+//       } else {
+//         if (isString(a)) {
+//           o[b] = formatString(a)
+//         }
+//       }
+//     })
+//   }
+// }
+var unique = function (ar) {
   var temp,
     n = [],
     o = {};
@@ -655,7 +649,7 @@ var unique = function unique(ar) {
   }
   return n;
 };
-var strip_empty_properties = function strip_empty_properties(p) {
+var strip_empty_properties = function (p) {
   var ret = {};
   each(p, function (v, k) {
     if (v != null) {
@@ -664,7 +658,7 @@ var strip_empty_properties = function strip_empty_properties(p) {
   });
   return ret;
 };
-var utf8Encode = function utf8Encode(string) {
+var utf8Encode = function (string) {
   string = (string + '').replace(/\r\n/g, '\n').replace(/\r/g, '\n');
   var utftext = '',
     start,
@@ -696,7 +690,7 @@ var utf8Encode = function utf8Encode(string) {
   }
   return utftext;
 };
-var base64Encode = function base64Encode(data) {
+var base64Encode = function (data) {
   if (typeof btoa === 'function') {
     return btoa(encodeURIComponent(data).replace(/%([0-9A-F]{2})/g, function (match, p1) {
       return String.fromCharCode('0x' + p1);
@@ -769,8 +763,8 @@ function replaceNumberCharByPath(path) {
   }
   return pathGroup || '/';
 }
-var urlParse = function urlParse(para) {
-  var URLParser = function URLParser(a) {
+var urlParse = function (para) {
+  var URLParser = function (a) {
     this._fields = {
       Username: 4,
       Password: 5,
@@ -798,7 +792,7 @@ var urlParse = function urlParse(para) {
     }
   };
   URLParser.prototype.addQueryString = function (queryObj) {
-    if (typeof_typeof(queryObj) !== 'object') {
+    if (typeof queryObj !== 'object') {
       return false;
     }
     var query = this._values.QueryString || '';
@@ -860,73 +854,79 @@ function elementMatches(element, selector) {
   }
   return false;
 }
-var tools_localStorage = {
-  get: function get(name) {
-    return window.localStorage.getItem(name);
-  },
-  parse: function parse(name) {
-    var storedValue;
-    try {
-      storedValue = JSON.parse(tools_localStorage.get(name)) || null;
-    } catch (err) {
-      sd.log(err);
-    }
-    return storedValue;
-  },
-  set: function set(name, value) {
-    window.localStorage.setItem(name, value);
-  },
-  remove: function remove(name) {
-    window.localStorage.removeItem(name);
-  },
-  isSupport: function isSupport() {
-    var supported = true;
-    try {
-      var key = '__sensorsdatasupport__';
-      var val = 'testIsSupportStorage';
-      tools_localStorage.set(key, val);
-      if (tools_localStorage.get(key) !== val) {
-        supported = false;
-      }
-      tools_localStorage.remove(key);
-    } catch (err) {
-      supported = false;
-    }
-    return supported;
-  }
-};
-var sessionStorage = {
-  isSupport: function isSupport() {
-    var supported = true;
-    var key = '__sensorsdatasupport__';
-    var val = 'testIsSupportStorage';
-    try {
-      if (sessionStorage && sessionStorage.setItem) {
-        sessionStorage.setItem(key, val);
-        sessionStorage.removeItem(key, val);
-        supported = true;
-      } else {
-        supported = false;
-      }
-    } catch (e) {
-      supported = false;
-    }
-    return supported;
-  }
-};
-var isSupportCors = function isSupportCors() {
-  if (typeof window.XMLHttpRequest === 'undefined') {
-    return false;
-  }
-  if ('withCredentials' in new XMLHttpRequest()) {
-    return true;
-  } else if (typeof XDomainRequest !== 'undefined') {
-    return true;
-  } else {
-    return false;
-  }
-};
-var xhr = function xhr(cors) {
+
+// export var localStorage = {
+//   get: function (name) {
+//     return window.localStorage.getItem(name)
+//   },
+
+//   parse: function (name) {
+//     var storedValue
+//     try {
+//       storedValue = JSON.parse(localStorage.get(name)) || null
+//     } catch (err) {
+//       sd.log(err)
+//     }
+//     return storedValue
+//   },
+
+//   set: function (name, value) {
+//     window.localStorage.setItem(name, value)
+//   },
+
+//   remove: function (name) {
+//     window.localStorage.removeItem(name)
+//   },
+
+//   isSupport: function () {
+//     var supported = true
+//     try {
+//       var key = '__sensorsdatasupport__'
+//       var val = 'testIsSupportStorage'
+//       localStorage.set(key, val)
+//       if (localStorage.get(key) !== val) {
+//         supported = false
+//       }
+//       localStorage.remove(key)
+//     } catch (err) {
+//       supported = false
+//     }
+//     return supported
+//   }
+// }
+// export var sessionStorage = {
+//   isSupport: function () {
+//     var supported = true
+
+//     var key = '__sensorsdatasupport__'
+//     var val = 'testIsSupportStorage'
+//     try {
+//       if (sessionStorage && sessionStorage.setItem) {
+//         sessionStorage.setItem(key, val)
+//         sessionStorage.removeItem(key, val)
+//         supported = true
+//       } else {
+//         supported = false
+//       }
+//     } catch (e) {
+//       supported = false
+//     }
+//     return supported
+//   }
+// }
+// export var isSupportCors = function () {
+//   if (typeof window.XMLHttpRequest === 'undefined') {
+//     return false
+//   }
+//   if ('withCredentials' in new XMLHttpRequest()) {
+//     return true
+//   } else if (typeof XDomainRequest !== 'undefined') {
+//     return true
+//   } else {
+//     return false
+//   }
+// }
+var xhr = function (cors) {
   if (cors) {
     if (typeof window.XMLHttpRequest !== 'undefined' && 'withCredentials' in new XMLHttpRequest()) {
       return new XMLHttpRequest();
@@ -952,7 +952,7 @@ var xhr = function xhr(cors) {
     }
   }
 };
-var ajax = function ajax(para) {
+var ajax = function (para) {
   para.timeout = para.timeout || 20000;
   para.credentials = typeof para.credentials === 'undefined' ? true : para.credentials;
   function getJSON(data) {
@@ -973,11 +973,11 @@ var ajax = function ajax(para) {
     para.type = para.data ? 'POST' : 'GET';
   }
   para = extend({
-    success: function success() {},
-    error: function error() {}
+    success: function () {},
+    error: function () {}
   }, para);
   try {
-    if (_typeof(g) === 'object' && 'timeout' in g) {
+    if (typeof g === 'object' && 'timeout' in g) {
       g.timeout = para.timeout;
     } else {
       setTimeout(function () {
@@ -1030,11 +1030,11 @@ var ajax = function ajax(para) {
   } catch (e) {}
   g.send(para.data || null);
 };
-var loadScript = function loadScript(para) {
+var loadScript = function (para) {
   para = extend({
-    success: function success() {},
-    error: function error() {},
-    appendCall: function appendCall(g) {
+    success: function () {},
+    error: function () {},
+    appendCall: function (g) {
       document.getElementsByTagName('head')[0].appendChild(g);
     }
   }, para);
@@ -1063,9 +1063,9 @@ var loadScript = function loadScript(para) {
   };
   para.appendCall(g);
 };
-var getHostname = function getHostname(url, defaultValue) {
+var getHostname = function (url, defaultValue) {
   if (!defaultValue || typeof defaultValue !== 'string') {
-    defaultValue = 'hostname解析异常';
+    defaultValue = 'hostname expception!';
   }
   var hostname = null;
   try {
@@ -1073,7 +1073,7 @@ var getHostname = function getHostname(url, defaultValue) {
   } catch (e) {}
   return hostname || defaultValue;
 };
-var getQueryParamsFromUrl = function getQueryParamsFromUrl(url) {
+var getQueryParamsFromUrl = function (url) {
   var result = {};
   var arr = url.split('?');
   var queryString = arr[1] || '';
@@ -1082,9 +1082,9 @@ var getQueryParamsFromUrl = function getQueryParamsFromUrl(url) {
   }
   return result;
 };
-var getURLSearchParams = function getURLSearchParams(queryString) {
+var getURLSearchParams = function (queryString) {
   queryString = queryString || '';
-  var decodeParam = function decodeParam(str) {
+  var decodeParam = function (str) {
     return decodeURIComponent(str);
   };
   var args = {};
@@ -1105,7 +1105,7 @@ function createCircularReferenceChecker() {
   if (typeof WeakSet !== 'undefined') {
     var set = new WeakSet();
     return {
-      hasAlreadyBeenSeen: function hasAlreadyBeenSeen(value) {
+      hasAlreadyBeenSeen: function (value) {
         var has = set.has(value);
         if (!has) {
           set.add(value);
@@ -1116,7 +1116,7 @@ function createCircularReferenceChecker() {
   }
   var array = [];
   return {
-    hasAlreadyBeenSeen: function hasAlreadyBeenSeen(value) {
+    hasAlreadyBeenSeen: function (value) {
       var has = array.indexOf(value) >= 0;
       if (!has) {
         array.push(value);
@@ -1135,7 +1135,7 @@ function getType(value) {
   if (Array.isArray(value)) {
     return 'array';
   }
-  return typeof_typeof(value);
+  return typeof value;
 }
 /**
  * Iterate over source and affect its sub values into destination, recursively.
@@ -1149,7 +1149,7 @@ function mergeInto(destination, source, circularReferenceChecker) {
   if (source === undefined) {
     return destination;
   }
-  if (typeof_typeof(source) !== 'object' || source === null) {
+  if (typeof source !== 'object' || source === null) {
     // primitive values - just return source
     return source;
   } else if (source instanceof Date) {
@@ -1188,17 +1188,17 @@ function mergeInto(destination, source, circularReferenceChecker) {
 function deepClone(value) {
   return mergeInto(undefined, value);
 }
-var getCurrentDomain = function getCurrentDomain(url) {
+var getCurrentDomain = function (url) {
   var cookieTopLevelDomain = getCookieTopLevelDomain();
   if (url === '') {
-    return 'url解析失败';
+    return 'URL parsing failed';
   } else if (cookieTopLevelDomain === '') {
-    return 'url解析失败';
+    return 'URL parsing failed';
   } else {
     return cookieTopLevelDomain;
   }
 };
-var getCookieTopLevelDomain = function getCookieTopLevelDomain(hostname) {
+var getCookieTopLevelDomain = function (hostname) {
   hostname = hostname || window.location.hostname;
   var splitResult = hostname.split('.');
   if (isArray(splitResult) && splitResult.length >= 2 && !/^(\d+\.)+\d+$/.test(hostname)) {
@@ -1216,7 +1216,7 @@ var getCookieTopLevelDomain = function getCookieTopLevelDomain(hostname) {
   }
   return '';
 };
-var strToUnicode = function strToUnicode(str) {
+var strToUnicode = function (str) {
   if (typeof str !== 'string') {
     return str;
   }
@@ -1226,27 +1226,27 @@ var strToUnicode = function strToUnicode(str) {
   }
   return nstr;
 };
-var autoExeQueue = function autoExeQueue() {
+var autoExeQueue = function () {
   var queue = {
     items: [],
-    enqueue: function enqueue(val) {
+    enqueue: function (val) {
       this.items.push(val);
       this.start();
     },
-    dequeue: function dequeue() {
+    dequeue: function () {
       return this.items.shift();
     },
-    getCurrentItem: function getCurrentItem() {
+    getCurrentItem: function () {
       return this.items[0];
     },
     isRun: false,
-    start: function start() {
+    start: function () {
       if (this.items.length > 0 && !this.isRun) {
         this.isRun = true;
         this.getCurrentItem().start();
       }
     },
-    close: function close() {
+    close: function () {
       this.dequeue();
       this.isRun = false;
       this.start();
@@ -1254,7 +1254,7 @@ var autoExeQueue = function autoExeQueue() {
   };
   return queue;
 };
-var strip_sa_properties = function strip_sa_properties(p) {
+var strip_sa_properties = function (p) {
   if (!isObject(p)) {
     return p;
   }
@@ -1264,26 +1264,22 @@ var strip_sa_properties = function strip_sa_properties(p) {
       each(v, function (arrv) {
         if (isString(arrv)) {
           temp.push(arrv);
-        } else {
-          console.log('您的数据-', k, v, '的数组里的值必须是字符串,已经将其删除');
-        }
+        } else {}
       });
       if (temp.length !== 0) {
         p[k] = temp;
       } else {
         delete p[k];
-        console.log('已经删除空的数组');
       }
     }
     if (!(isString(v) || isNumber(v) || isDate(v) || isBoolean(v) || isArray(v) || isFunction(v) || k === '$option')) {
-      console.log('您的数据-', k, v, '-格式不满足要求，我们已经将其删除');
       delete p[k];
     }
   });
   return p;
 };
-var searchConfigData = function searchConfigData(data) {
-  if (_typeof(data) === 'object' && data.$option) {
+var searchConfigData = function (data) {
+  if (typeof data === 'object' && data.$option) {
     var data_config = data.$option;
     delete data.$option;
     return data_config;
@@ -1291,10 +1287,10 @@ var searchConfigData = function searchConfigData(data) {
     return {};
   }
 };
-// 从字符串 src 中查找 k+sp 和  e 之间的字符串，如果 k==e 且 k 只有一个，或者 e 不存在，从 k+sp 截取到字符串结束
+
 // abcd=1&b=1&c=3;
 // abdc=1;b=1;a=3;
-var stringSplice = function stringSplice(src, k, e, sp) {
+var stringSplice = function (src, k, e, sp) {
   if (src === '') {
     return '';
   }
@@ -1312,10 +1308,9 @@ function getStatusGroup(status) {
   if (!status) return status === 0 ? undefined : status;
   return String(status).substr(0, 1) + String(status).substr(1).replace(/\d*/g, 'x');
 }
-var getReferrer = function getReferrer() {
+var getReferrer = function () {
   var ref = document.referrer.toLowerCase();
   var re = /^[^\?&#]*.swf([\?#])?/;
-  // 如果页面 Referer 为空，从 URL 中获取
   if (ref === '' || ref.match(re)) {
     ref = stringSplice(window.location.href, 'ref', '&', '');
     if (ref !== '') {
@@ -1324,7 +1319,7 @@ var getReferrer = function getReferrer() {
   }
   return encodeURIComponent(ref);
 };
-var typeDecide = function typeDecide(o, type) {
+var typeDecide = function (o, type) {
   return tools_toString.call(o) === '[object ' + type + ']';
 };
 function tools_noop() {}
@@ -1491,7 +1486,7 @@ function safeTruncate(candidate, length) {
   return candidate.slice(0, length);
 }
 function isMatchOption(item) {
-  var itemType = getType(item);
+  const itemType = getType(item);
   return itemType === 'string' || itemType === 'function' || item instanceof RegExp;
 }
 function includes(candidate, search) {
@@ -1558,11 +1553,11 @@ function detectBrowserCached() {
   return isNullUndefinedDefaultValue(browserCache, browserCache = detectBrowser());
 }
 function detectBrowser(browserWindow) {
-  var _browserWindow$naviga;
+  var _browserWindow, _browserWindow$naviga;
   if (typeof browserWindow === 'undefined') {
-    browserWindow = window;
+    browserWindow = window || {};
   }
-  var userAgent = browserWindow.navigator.userAgent;
+  var userAgent = ((_browserWindow = browserWindow) === null || _browserWindow === void 0 || (_browserWindow = _browserWindow.navigator) === null || _browserWindow === void 0 ? void 0 : _browserWindow.userAgent) || '';
   if (browserWindow.chrome || /HeadlessChrome/.test(userAgent)) {
     return Browser.CHROMIUM;
   }
@@ -1603,7 +1598,7 @@ function deepSnakeCase(candidate) {
       return deepSnakeCase(value);
     });
   }
-  if (typeof_typeof(candidate) === 'object' && candidate !== null) {
+  if (typeof candidate === 'object' && candidate !== null) {
     return withSnakeCaseKeys(candidate);
   }
   return candidate;
@@ -1669,16 +1664,16 @@ function discardNegativeDuration(duration) {
 var BUFFER_LIMIT = 500;
 function createBoundedBuffer() {
   var buffer = [];
-  var add = function add(callback) {
+  var add = function (callback) {
     var length = buffer.push(callback);
     if (length > BUFFER_LIMIT) {
       buffer.splice(0, 1);
     }
   };
-  var remove = function remove(callback) {
+  var remove = function (callback) {
     removeItem(buffer, callback);
   };
-  var drain = function drain(arg) {
+  const drain = function (arg) {
     buffer.forEach(function (callback) {
       callback(arg);
     });
@@ -1695,12 +1690,10 @@ function createBoundedBuffer() {
 
 var END_OF_TIMES = Infinity;
 var CLEAR_OLD_VALUES_INTERVAL = ONE_MINUTE;
-var cleanupHistoriesInterval = null;
-var cleanupTasks = new Set();
+let cleanupHistoriesInterval = null;
+const cleanupTasks = new Set();
 function cleanupHistories() {
-  cleanupTasks.forEach(function (task) {
-    return task();
-  });
+  cleanupTasks.forEach(task => task());
 }
 /**
  *
@@ -1728,10 +1721,10 @@ function createValueHistory(params) {
       value: value,
       startTime: startTime,
       endTime: END_OF_TIMES,
-      remove: function remove() {
+      remove: function () {
         removeItem(entries, entry);
       },
-      close: function close(endTime) {
+      close: function (endTime) {
         entry.endTime = endTime;
       }
     };
@@ -1792,7 +1785,7 @@ function createValueHistory(params) {
    * Stop internal garbage collection of past entries.
    */
   function stop() {
-    cleanupTasks["delete"](clearExpiredValues);
+    cleanupTasks.delete(clearExpiredValues);
     if (cleanupTasks.size === 0 && cleanupHistoriesInterval) {
       timer_clearInterval(cleanupHistoriesInterval);
       cleanupHistoriesInterval = null;
@@ -1812,23 +1805,7 @@ function createValueHistory(params) {
 var VariableLibrary = {
   navigator: typeof window !== 'undefined' && typeof window.navigator != 'undefined' ? window.navigator : {}
 };
-
-// 方法库
 var MethodLibrary = {
-  // 获取当前语言
-  getLanguage: monitor(function () {
-    var _this = this;
-    _this.language = function () {
-      var language = VariableLibrary.navigator.browserLanguage || VariableLibrary.navigator.language || '';
-      var arr = language.split('-');
-      if (arr[1]) {
-        arr[1] = arr[1].toUpperCase();
-      }
-      return arr.join('_');
-    }();
-    return _this.language;
-  }),
-  // 获取网络状态
   getNetwork: monitor(function () {
     var connection = window.navigator.connection || window.navigator.mozConnection || window.navigator.webkitConnection;
     var result = 'unknown';
@@ -1867,9 +1844,25 @@ var MethodLibrary = {
     }
     return result;
   }),
+  getLanguage: monitor(function () {
+    var _this = this;
+    _this.language = function () {
+      var language = VariableLibrary.navigator.browserLanguage || VariableLibrary.navigator.language || '';
+      var arr = language.split('-');
+      if (arr[1]) {
+        arr[1] = arr[1].toUpperCase();
+      }
+      return arr.join('_');
+    }();
+    return _this.language;
+  }),
   getTimeZone: monitor(function () {
-    var timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    return timeZone;
+    try {
+      const intl = new Intl.DateTimeFormat();
+      return intl.resolvedOptions().timeZone;
+    } catch (_unused) {
+      return undefined;
+    }
   })
 };
 var _deviceInfo = {};
@@ -1877,6 +1870,7 @@ if (typeof window !== 'undefined') {
   _deviceInfo = {
     screenSize: window.screen.width + '*' + window.screen.height,
     networkType: MethodLibrary.getNetwork(),
+    userAgent: VariableLibrary.navigator.userAgent || '',
     timeZone: MethodLibrary.getTimeZone()
   };
 }
@@ -1928,7 +1922,8 @@ var ResourceType = {
   IMAGE: 'image',
   FONT: 'font',
   MEDIA: 'media',
-  OTHER: 'other'
+  OTHER: 'other',
+  CUSTOM: 'custom'
 };
 var ActionType = {
   CLICK: 'click',
@@ -1979,7 +1974,6 @@ var NonErrorPrefix = {
 ;// CONCATENATED MODULE: ../core/esm/helper/serialisation/jsonStringify.js
 
 
-
 /**
  * Custom implementation of JSON.stringify that ignores some toJSON methods. We need to do that
  * because some sites badly override toJSON on certain objects. Removing all toJSON methods from
@@ -1989,7 +1983,7 @@ var NonErrorPrefix = {
  * Note: this still assumes that JSON.stringify is correct.
  */
 function jsonStringify_jsonStringify(value, replacer, space) {
-  if (typeof_typeof(value) !== 'object' || value === null) {
+  if (typeof value !== 'object' || value === null) {
     return JSON.stringify(value);
   }
 
@@ -2011,8 +2005,8 @@ function jsonStringify_jsonStringify(value, replacer, space) {
   }
 }
 function detachToJsonMethod(value) {
-  var object = value;
-  var objectToJson = object.toJSON;
+  const object = value;
+  const objectToJson = object.toJSON;
   if (objectToJson) {
     delete object.toJSON;
     return function () {
@@ -2022,7 +2016,6 @@ function detachToJsonMethod(value) {
   return tools_noop;
 }
 ;// CONCATENATED MODULE: ../core/esm/tracekit/computeStackTrace.js
-
 
 var UNKNOWN_FUNCTION = '?';
 
@@ -2131,7 +2124,7 @@ function parseGeckoLine(line) {
   };
 }
 function tryToGetString(candidate, property) {
-  if (typeof_typeof(candidate) !== 'object' || !candidate || !(property in candidate)) {
+  if (typeof candidate !== 'object' || !candidate || !(property in candidate)) {
     return undefined;
   }
   var value = candidate[property];
@@ -2180,7 +2173,7 @@ function startUnhandledErrorCollection(callback) {
   var _instrumentOnError = instrumentOnError(callback);
   var _instrumentUnhandledRejection = instrumentUnhandledRejection(callback);
   return {
-    stop: function stop() {
+    stop: function () {
       _instrumentOnError.stop();
       _instrumentUnhandledRejection.stop();
     }
@@ -2218,8 +2211,8 @@ function instrumentOnError(callback) {
   });
 }
 function tryToParseMessage(messageObj) {
-  var name;
-  var message;
+  let name;
+  let message;
   if ({}.toString.call(messageObj) === '[object String]') {
     var groups = ERROR_TYPES_RE.exec(messageObj);
     if (groups) {
@@ -2276,7 +2269,6 @@ function concatBuffers(buffers) {
   return result;
 }
 ;// CONCATENATED MODULE: ../core/esm/helper/sanitize.js
-
 
 
 
@@ -2382,7 +2374,7 @@ function sanitize(source, maxCharacterCount) {
 function sanitizeProcessor(source, parentPath, key, queue, visitedObjectsWithPath) {
   // Start by handling toJSON, as we want to sanitize its output
   var sourceToSanitize = tryToApplyToJSON(source);
-  if (!sourceToSanitize || typeof_typeof(sourceToSanitize) !== 'object') {
+  if (!sourceToSanitize || typeof sourceToSanitize !== 'object') {
     return sanitizePrimitivesAndFunctions(sourceToSanitize);
   }
   var sanitizedSource = sanitizeObjects(sourceToSanitize);
@@ -2404,7 +2396,7 @@ function sanitizeProcessor(source, parentPath, key, queue, visitedObjectsWithPat
   visitedObjectsWithPath.set(sourceAsObject, currentPath);
   queue.push({
     source: sourceToSanitize,
-    target: target,
+    target,
     path: currentPath
   });
   return target;
@@ -2425,7 +2417,7 @@ function sanitizePrimitivesAndFunctions(value) {
     return '[Function] ' + value.name || 0;
   }
   // JSON.stringify() does not serialize symbols.
-  if (typeof_typeof(value) === 'symbol') {
+  if (typeof value === 'symbol') {
     // symbol.description is part of ES2019+
     return '[Symbol] ' + value.description || 0;
   }
@@ -2506,7 +2498,8 @@ var errorTools_ErrorSource = {
   NETWORK: 'network',
   SOURCE: 'source',
   LOGGER: 'logger',
-  CUSTOM: 'custom'
+  CUSTOM: 'custom',
+  REPORT: 'report'
 };
 function computeRawError(data) {
   var stackTrace = data.stackTrace;
@@ -2649,7 +2642,7 @@ function instrumentMethod(targetPrototype, method, onPreCall, opts) {
     }
   }
   var stopped = false;
-  var instrumentation = function instrumentation() {
+  var instrumentation = function () {
     if (stopped) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
       return original.apply(this, arguments);
@@ -2659,7 +2652,7 @@ function instrumentMethod(targetPrototype, method, onPreCall, opts) {
     callMonitored(onPreCall, null, [{
       target: this,
       parameters: parameters,
-      onPostCall: function onPostCall(callback) {
+      onPostCall: function (callback) {
         postCallCallback = callback;
       },
       handlingStack: computeHandlingStack ? createHandlingStack() : undefined
@@ -2674,7 +2667,7 @@ function instrumentMethod(targetPrototype, method, onPreCall, opts) {
   };
   targetPrototype[method] = instrumentation;
   return {
-    stop: function stop() {
+    stop: function () {
       stopped = true;
       // If the instrumentation has been removed by a third party, keep the last one
       if (targetPrototype[method] === instrumentation) {
@@ -2691,27 +2684,27 @@ function instrumentSetter(targetPrototype, property, after) {
     };
   }
   var stoppedInstrumentation = noop;
-  var _instrumentation = function instrumentation(target, value) {
+  var instrumentation = function (target, value) {
     // put hooked setter into event loop to avoid of set latency
     setTimeout(function () {
-      if (_instrumentation !== stoppedInstrumentation) {
+      if (instrumentation !== stoppedInstrumentation) {
         after(target, value);
       }
     }, 0);
   };
-  var instrumentationWrapper = function instrumentationWrapper(value) {
+  var instrumentationWrapper = function (value) {
     originalDescriptor.set.call(this, value);
-    _instrumentation(this, value);
+    instrumentation(this, value);
   };
   Object.defineProperty(targetPrototype, property, {
     set: instrumentationWrapper
   });
   return {
-    stop: function stop() {
+    stop: function () {
       if (Object.getOwnPropertyDescriptor(targetPrototype, property) && Object.getOwnPropertyDescriptor(targetPrototype, property).set === instrumentationWrapper) {
         Object.defineProperty(targetPrototype, property, originalDescriptor);
       }
-      _instrumentation = stoppedInstrumentation;
+      instrumentation = stoppedInstrumentation;
     }
   };
 }
@@ -2734,20 +2727,20 @@ function trackRuntimeError(errorObservable) {
 }
 ;// CONCATENATED MODULE: ../core/esm/helper/observable.js
 
-var _Observable = function _Observable(onFirstSubscribe) {
+var _Observable = function (onFirstSubscribe) {
   this.observers = [];
   this.onLastUnsubscribe = undefined;
   this.onFirstSubscribe = onFirstSubscribe;
 };
 _Observable.prototype = {
-  subscribe: function subscribe(f) {
+  subscribe: function (f) {
     this.observers.push(f);
     if (this.observers.length === 1 && this.onFirstSubscribe) {
       this.onLastUnsubscribe = this.onFirstSubscribe(this) || undefined;
     }
     var _this = this;
     return {
-      unsubscribe: function unsubscribe() {
+      unsubscribe: function () {
         _this.observers = filter(_this.observers, function (other) {
           return f !== other;
         });
@@ -2757,7 +2750,7 @@ _Observable.prototype = {
       }
     };
   },
-  notify: function notify(data) {
+  notify: function (data) {
     each(this.observers, function (observer) {
       observer(data);
     });
@@ -2888,20 +2881,56 @@ function addEventListeners(eventTarget, eventNames, listener, options) {
     passive: options.passive
   } : options && options.capture;
   // Use the window.EventTarget.prototype when possible to avoid wrong overrides (e.g: https://github.com/salesforce/lwc/issues/1824)
-  var listenerTarget = window.EventTarget && eventTarget instanceof EventTarget ? window.EventTarget.prototype : eventTarget;
-  var add = getZoneJsOriginalValue(listenerTarget, 'addEventListener');
+  //   const istarget = Object.prototype.toString.call(window)
+  //   const listenerTarget =
+  //     window.EventTarget && eventTarget instanceof EventTarget
+  //       ? window.EventTarget.prototype
+  //       : eventTarget
+  //   var add = getZoneJsOriginalValue(listenerTarget, 'addEventListener')
+
+  //   eventNames.forEach((eventName) => {
+  //     add.call(eventTarget, eventName, wrappedListener, options)
+  //   })
   each(eventNames, function (eventName) {
-    add.call(eventTarget, eventName, wrappedListener, options);
+    withOriginalOrZoneJsPatchedMethod(eventTarget, 'addEventListener', method => method.call(eventTarget, eventName, wrappedListener, options));
+    // add.call(eventTarget, eventName, wrappedListener, options)
   });
-  var stop = function stop() {
-    var remove = getZoneJsOriginalValue(listenerTarget, 'removeEventListener');
+  var stop = function () {
+    // var remove = getZoneJsOriginalValue(listenerTarget, 'removeEventListener')
     each(eventNames, function (eventName) {
-      remove.call(eventTarget, eventName, wrappedListener, options);
+      withOriginalOrZoneJsPatchedMethod(eventTarget, 'removeEventListener', method => method.call(eventTarget, eventName, wrappedListener, options));
+      //   remove.call(eventTarget, eventName, wrappedListener, options)
     });
   };
   return {
     stop: stop
   };
+}
+function isIllegalInvocationError(error, methodName) {
+  if (!(error instanceof Error)) {
+    return false;
+  }
+  return error.message.includes('Illegal invocation') ||
+  // chrome
+  error.message.includes("'".concat(methodName, "' called on an object that does not implement interface EventTarget.")) ||
+  // firefox
+  error.message.includes("Can only call EventTarget.".concat(methodName, " on instances of EventTarget")) // safari
+  ;
+}
+function withOriginalOrZoneJsPatchedMethod(eventTarget, methodName, cb) {
+  // Use the window.EventTarget.prototype when possible to avoid wrong overrides (e.g: https://github.com/salesforce/lwc/issues/1824)
+  const listenerTarget = window.EventTarget && eventTarget instanceof EventTarget ? window.EventTarget.prototype : eventTarget;
+  const originalMethod = getZoneJsOriginalValue(listenerTarget, methodName);
+  try {
+    // In some cases this call fails with an Illegal invocation error, we then catch the error and use the zone.js
+    // patched method
+    cb(originalMethod);
+  } catch (error) {
+    if (isIllegalInvocationError(error, methodName)) {
+      return cb(eventTarget[methodName]);
+    }
+    throw error;
+  }
 }
 ;// CONCATENATED MODULE: ../core/esm/report/reportObservable.js
 
@@ -3022,7 +3051,7 @@ function LifeCycle() {
   this.callbacks = {};
 }
 LifeCycle.prototype = {
-  notify: function notify(eventType, data) {
+  notify: function (eventType, data) {
     var eventCallbacks = this.callbacks[eventType];
     if (eventCallbacks) {
       each(eventCallbacks, function (callback) {
@@ -3030,14 +3059,14 @@ LifeCycle.prototype = {
       });
     }
   },
-  subscribe: function subscribe(eventType, callback) {
+  subscribe: function (eventType, callback) {
     if (!this.callbacks[eventType]) {
       this.callbacks[eventType] = [];
     }
     this.callbacks[eventType].push(callback);
     var _this = this;
     return {
-      unsubscribe: function unsubscribe() {
+      unsubscribe: function () {
         _this.callbacks[eventType] = filter(_this.callbacks[eventType], function (other) {
           return other !== callback;
         });
@@ -3045,102 +3074,14 @@ LifeCycle.prototype = {
     };
   }
 };
-;// CONCATENATED MODULE: ../../node_modules/@babel/runtime/helpers/esm/arrayWithHoles.js
-function _arrayWithHoles(r) {
-  if (Array.isArray(r)) return r;
-}
-
-;// CONCATENATED MODULE: ../../node_modules/@babel/runtime/helpers/esm/iterableToArray.js
-function _iterableToArray(r) {
-  if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r);
-}
-
-;// CONCATENATED MODULE: ../../node_modules/@babel/runtime/helpers/esm/arrayLikeToArray.js
-function _arrayLikeToArray(r, a) {
-  (null == a || a > r.length) && (a = r.length);
-  for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e];
-  return n;
-}
-
-;// CONCATENATED MODULE: ../../node_modules/@babel/runtime/helpers/esm/unsupportedIterableToArray.js
-
-function _unsupportedIterableToArray(r, a) {
-  if (r) {
-    if ("string" == typeof r) return _arrayLikeToArray(r, a);
-    var t = {}.toString.call(r).slice(8, -1);
-    return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0;
-  }
-}
-
-;// CONCATENATED MODULE: ../../node_modules/@babel/runtime/helpers/esm/nonIterableRest.js
-function _nonIterableRest() {
-  throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
-}
-
-;// CONCATENATED MODULE: ../../node_modules/@babel/runtime/helpers/esm/toArray.js
-
-
-
-
-function _toArray(r) {
-  return _arrayWithHoles(r) || _iterableToArray(r) || _unsupportedIterableToArray(r) || _nonIterableRest();
-}
-
-;// CONCATENATED MODULE: ../../node_modules/@babel/runtime/helpers/esm/iterableToArrayLimit.js
-function _iterableToArrayLimit(r, l) {
-  var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"];
-  if (null != t) {
-    var e,
-      n,
-      i,
-      u,
-      a = [],
-      f = !0,
-      o = !1;
-    try {
-      if (i = (t = t.call(r)).next, 0 === l) {
-        if (Object(t) !== t) return;
-        f = !1;
-      } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0);
-    } catch (r) {
-      o = !0, n = r;
-    } finally {
-      try {
-        if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return;
-      } finally {
-        if (o) throw n;
-      }
-    }
-    return a;
-  }
-}
-
-;// CONCATENATED MODULE: ../../node_modules/@babel/runtime/helpers/esm/slicedToArray.js
-
-
-
-
-function _slicedToArray(r, e) {
-  return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest();
-}
-
 ;// CONCATENATED MODULE: ../core/esm/helper/limitModification.js
 
 
-function limitModification_arrayLikeToArray(r, a) {
-  (null == a || a > r.length) && (a = r.length);
-  for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e];
-  return n;
-}
-
-
 function limitModification(object, modifiableFieldPaths, modifier) {
-  var clone = deepClone(object);
-  var result = modifier(clone);
-  objectEntries(modifiableFieldPaths).forEach(function (_ref) {
-    var _ref2 = _slicedToArray(_ref, 2),
-      fieldPath = _ref2[0],
-      fieldType = _ref2[1];
+  const clone = deepClone(object);
+  const result = modifier(clone);
+  objectEntries(modifiableFieldPaths).forEach(_ref => {
+    let [fieldPath, fieldType] = _ref;
     return (
       // Traverse both object and clone simultaneously up to the path and apply the modification from the clone to the original object when the type is valid
       setValueAtPath(object, clone, fieldPath.split(/\.|(?=\[\])/), fieldType)
@@ -3149,14 +3090,10 @@ function limitModification(object, modifiableFieldPaths, modifier) {
   return result;
 }
 function setValueAtPath(object, clone, pathSegments, fieldType) {
-  var _pathSegments = _toArray(pathSegments),
-    field = _pathSegments[0],
-    restPathSegments = limitModification_arrayLikeToArray(_pathSegments).slice(1);
+  const [field, ...restPathSegments] = pathSegments;
   if (field === '[]') {
     if (Array.isArray(object) && Array.isArray(clone)) {
-      object.forEach(function (item, i) {
-        return setValueAtPath(item, clone[i], restPathSegments, fieldType);
-      });
+      object.forEach((item, i) => setValueAtPath(item, clone[i], restPathSegments, fieldType));
     }
     return;
   }
@@ -3169,7 +3106,7 @@ function setValueAtPath(object, clone, pathSegments, fieldType) {
   setNestedValue(object, field, clone[field], fieldType);
 }
 function setNestedValue(object, field, value, fieldType) {
-  var newType = getType(value);
+  const newType = getType(value);
   if (newType === fieldType) {
     object[field] = sanitize(value);
   } else if (fieldType === 'object' && (newType === 'undefined' || newType === 'null')) {
@@ -3187,7 +3124,7 @@ function createEventRateLimiter(eventType, limit, onLimitReached) {
   var eventCount = 0;
   var allowNextEvent = false;
   return {
-    isLimitReached: function isLimitReached() {
+    isLimitReached: function () {
       if (eventCount === 0) {
         timer_setTimeout(function () {
           eventCount = 0;
@@ -3310,7 +3247,7 @@ function readBytesFromStream(stream, callback, options) {
     }));
   }
   function onDone() {
-    reader.cancel()["catch"](
+    reader.cancel().catch(
     // we don't care if cancel fails, but we still need to catch the error to avoid reporting it
     // as an unhandled rejection
     tools_noop);
@@ -3348,25 +3285,25 @@ function readBytesFromStream(stream, callback, options) {
 function requestIdleCallback(callback, opts) {
   // Note: check both 'requestIdleCallback' and 'cancelIdleCallback' existence because some polyfills only implement 'requestIdleCallback'.
   if (window.requestIdleCallback && window.cancelIdleCallback) {
-    var id = window.requestIdleCallback(monitor(callback), opts);
+    const id = window.requestIdleCallback(monitor(callback), opts);
     return function () {
       return window.cancelIdleCallback(id);
     };
   }
   return requestIdleCallbackShim(callback);
 }
-var MAX_TASK_TIME = 50;
+const MAX_TASK_TIME = 50;
 
 /*
  * Shim from https://developer.chrome.com/blog/using-requestidlecallback#checking_for_requestidlecallback
  * Note: there is no simple way to support the "timeout" option, so we ignore it.
  */
 function requestIdleCallbackShim(callback) {
-  var start = dateNow();
-  var timeoutId = timer_setTimeout(function () {
+  const start = dateNow();
+  const timeoutId = timer_setTimeout(function () {
     callback({
       didTimeout: false,
-      timeRemaining: function timeRemaining() {
+      timeRemaining: function () {
         return Math.max(0, MAX_TASK_TIME - (dateNow() - start));
       }
     });
@@ -3385,7 +3322,7 @@ function requestIdleCallbackShim(callback) {
  * the opportunity to send some data). We also don't want to run tasks too often, as it might hurt
  * performance.
  */
-var IDLE_CALLBACK_TIMEOUT = ONE_SECOND;
+const IDLE_CALLBACK_TIMEOUT = ONE_SECOND;
 
 /**
  * Maximum amount of time allocated to running tasks when a timeout (`IDLE_CALLBACK_TIMEOUT`) is
@@ -3394,14 +3331,14 @@ var IDLE_CALLBACK_TIMEOUT = ONE_SECOND;
  *
  * Rational: Running tasks for 30ms every second (IDLE_CALLBACK_TIMEOUT) should be acceptable.
  */
-var MAX_EXECUTION_TIME_ON_TIMEOUT = 30;
+const MAX_EXECUTION_TIME_ON_TIMEOUT = 30;
 function createTaskQueue() {
-  var pendingTasks = [];
+  const pendingTasks = [];
   function run(deadline) {
-    var executionTimeRemaining;
+    let executionTimeRemaining;
     if (deadline.didTimeout) {
-      var start = performance.now();
-      executionTimeRemaining = function executionTimeRemaining() {
+      const start = performance.now();
+      executionTimeRemaining = function () {
         return MAX_EXECUTION_TIME_ON_TIMEOUT - (performance.now() - start);
       };
     } else {
@@ -3420,7 +3357,7 @@ function createTaskQueue() {
     });
   }
   return {
-    push: function push(task) {
+    push: function (task) {
       if (pendingTasks.push(task) === 1) {
         scheduleNextRun();
       }
@@ -3441,7 +3378,6 @@ function getEndPointUrl(configuration, type) {
   if (!subUrl) return '';
   var url = configuration.datakitOrigin || configuration.datakitUrl || configuration.site;
   if (url.indexOf('/') === 0) {
-    // 绝对路径这种 /xxx
     url = location.origin + trim(url);
   }
   var endpoint = url;
@@ -3459,13 +3395,19 @@ function trim(str) {
   return str.replace(TRIM_REGIX, '');
 }
 function computeTransportConfiguration(initConfiguration) {
-  var isIntakeUrl = function isIntakeUrl(url) {
+  var isIntakeUrl = function (url) {
     return false;
   };
-  if ('isIntakeUrl' in initConfiguration && isFunction(initConfiguration.isIntakeUrl) && isBoolean(initConfiguration.isIntakeUrl())) {
+  if ('isIntakeUrl' in initConfiguration && isArray(initConfiguration.isIntakeUrl)) {
+    isIntakeUrl = function (url) {
+      return some(initConfiguration.isIntakeUrl, function (takeUrl) {
+        return url.indexOf(takeUrl) === 0;
+      });
+    };
+  } else if ('isIntakeUrl' in initConfiguration && isFunction(initConfiguration.isIntakeUrl) && isBoolean(initConfiguration.isIntakeUrl())) {
     isIntakeUrl = initConfiguration.isIntakeUrl;
   }
-  var isServerError = function isServerError(request) {
+  var isServerError = function (request) {
     return false;
   };
   if ('isServerError' in initConfiguration && isFunction(initConfiguration.isServerError) && isBoolean(initConfiguration.isServerError())) {
@@ -3487,7 +3429,6 @@ function isIntakeRequest(url, configuration) {
   if (configuration.sessionReplayEndPoint) {
     notTakeRequest.push(configuration.sessionReplayEndPoint);
   }
-  // datakit 地址，log 地址，以及客户自定义过滤方法定义url
   return some(notTakeRequest, function (takeUrl) {
     return url.indexOf(takeUrl) === 0;
   }) || configuration.isIntakeUrl(url);
@@ -3537,7 +3478,7 @@ function areCookiesAuthorized(options) {
     var testCookieName = "gc_cookie_test_".concat(UUID());
     var testCookieValue = 'test';
     setCookie(testCookieName, testCookieValue, ONE_MINUTE, options);
-    var isCookieCorrectlySet = cookie_getCookie(testCookieName, options) === testCookieValue;
+    const isCookieCorrectlySet = cookie_getCookie(testCookieName, options) === testCookieValue;
     deleteCookie(testCookieName, options);
     return isCookieCorrectlySet;
   } catch (error) {
@@ -3555,10 +3496,10 @@ function getCurrentSite() {
   if (getCurrentSiteCache === undefined) {
     // Use a unique cookie name to avoid issues when the SDK is initialized multiple times during
     // the test cookie lifetime
-    var testCookieName = "gc_site_test_".concat(UUID());
-    var testCookieValue = 'test';
-    var domainLevels = window.location.hostname.split('.');
-    var candidateDomain = domainLevels.pop();
+    const testCookieName = "gc_site_test_".concat(UUID());
+    const testCookieValue = 'test';
+    const domainLevels = window.location.hostname.split('.');
+    let candidateDomain = domainLevels.pop();
     while (domainLevels.length && !cookie_getCookie(testCookieName, {
       domain: candidateDomain
     })) {
@@ -3579,13 +3520,17 @@ function getCurrentSite() {
 var SESSION_TIME_OUT_DELAY = 4 * ONE_HOUR;
 var SESSION_EXPIRATION_DELAY = 15 * ONE_MINUTE;
 var SESSION_STORE_KEY = '_gc_s';
+const SESSION_NOT_TRACKED = '0';
+const SessionPersistence = {
+  COOKIE: 'cookie',
+  LOCAL_STORAGE: 'local-storage'
+};
 ;// CONCATENATED MODULE: ../core/esm/session/sessionState.js
 
 
-
-var SESSION_ENTRY_REGEXP = /^([a-zA-Z]+)=([a-z0-9-]+)$/;
-var SESSION_ENTRY_SEPARATOR = '&';
-var EXPIRED = '1';
+const SESSION_ENTRY_REGEXP = /^([a-zA-Z]+)=([a-z0-9-]+)$/;
+const SESSION_ENTRY_SEPARATOR = '&';
+const EXPIRED = '1';
 function getExpiredSessionState() {
   return {
     isExpired: EXPIRED
@@ -3612,14 +3557,12 @@ function toSessionString(session) {
   }).join(SESSION_ENTRY_SEPARATOR);
 }
 function toSessionState(sessionString) {
-  var session = {};
+  const session = {};
   if (isValidSessionString(sessionString)) {
     sessionString.split(SESSION_ENTRY_SEPARATOR).forEach(function (entry) {
-      var matches = SESSION_ENTRY_REGEXP.exec(entry);
+      const matches = SESSION_ENTRY_REGEXP.exec(entry);
       if (matches !== null) {
-        var _matches = _slicedToArray(matches, 3),
-          key = _matches[1],
-          value = _matches[2];
+        const [, key, value] = matches;
         session[key] = value;
       }
     });
@@ -3635,14 +3578,14 @@ function isValidSessionString(sessionString) {
 
 
 function selectCookieStrategy(initConfiguration) {
-  var cookieOptions = buildCookieOptions(initConfiguration);
+  const cookieOptions = buildCookieOptions(initConfiguration);
   return areCookiesAuthorized(cookieOptions) ? {
-    type: 'Cookie',
-    cookieOptions: cookieOptions
+    type: SessionPersistence.COOKIE,
+    cookieOptions
   } : undefined;
 }
 function initCookieStrategy(cookieOptions) {
-  var cookieStore = {
+  const cookieStore = {
     /**
      * Lock strategy allows mitigating issues due to concurrent access to cookie.
      * This issue concerns only chromium browsers and enabling this on firefox increases cookie write failures.
@@ -3650,7 +3593,7 @@ function initCookieStrategy(cookieOptions) {
     isLockEnabled: isChromium(),
     persistSession: persistSessionCookie(cookieOptions),
     retrieveSession: retrieveSessionCookie(cookieOptions),
-    expireSession: function expireSession() {
+    expireSession: function () {
       return expireSessionCookie(cookieOptions);
     }
   };
@@ -3671,7 +3614,7 @@ function retrieveSessionCookie(options) {
   };
 }
 function buildCookieOptions(initConfiguration) {
-  var cookieOptions = {};
+  const cookieOptions = {};
   cookieOptions.secure = !!initConfiguration.useSecureSessionCookie || !!initConfiguration.usePartitionedCrossSiteSessionCookie || !!initConfiguration.useCrossSiteSessionCookie;
   cookieOptions.crossSite = !!initConfiguration.usePartitionedCrossSiteSessionCookie || !!initConfiguration.useCrossSiteSessionCookie;
   cookieOptions.partitioned = !!initConfiguration.usePartitionedCrossSiteSessionCookie;
@@ -3684,16 +3627,16 @@ function buildCookieOptions(initConfiguration) {
 
 
 
-var LOCAL_STORAGE_TEST_KEY = '_gc_test_';
+const LOCAL_STORAGE_TEST_KEY = '_gc_test_';
 function selectLocalStorageStrategy() {
   try {
-    var id = UUID();
-    var testKey = "".concat(LOCAL_STORAGE_TEST_KEY).concat(id);
+    const id = UUID();
+    const testKey = "".concat(LOCAL_STORAGE_TEST_KEY).concat(id);
     localStorage.setItem(testKey, id);
-    var retrievedId = localStorage.getItem(testKey);
+    const retrievedId = localStorage.getItem(testKey);
     localStorage.removeItem(testKey);
     return id === retrievedId ? {
-      type: 'LocalStorage'
+      type: SessionPersistence.LOCAL_STORAGE
     } : undefined;
   } catch (e) {
     return undefined;
@@ -3711,39 +3654,74 @@ function persistInLocalStorage(sessionState) {
   localStorage.setItem(SESSION_STORE_KEY, toSessionString(sessionState));
 }
 function retrieveSessionFromLocalStorage() {
-  var sessionString = localStorage.getItem(SESSION_STORE_KEY);
+  const sessionString = localStorage.getItem(SESSION_STORE_KEY);
   return toSessionState(sessionString);
 }
 function expireSessionFromLocalStorage() {
   persistInLocalStorage(getExpiredSessionState());
 }
+;// CONCATENATED MODULE: ../../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js
+function _objectWithoutPropertiesLoose(r, e) {
+  if (null == r) return {};
+  var t = {};
+  for (var n in r) if ({}.hasOwnProperty.call(r, n)) {
+    if (-1 !== e.indexOf(n)) continue;
+    t[n] = r[n];
+  }
+  return t;
+}
+
+;// CONCATENATED MODULE: ../../node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js
+
+function _objectWithoutProperties(e, t) {
+  if (null == e) return {};
+  var o,
+    r,
+    i = _objectWithoutPropertiesLoose(e, t);
+  if (Object.getOwnPropertySymbols) {
+    var n = Object.getOwnPropertySymbols(e);
+    for (r = 0; r < n.length; r++) o = n[r], -1 === t.indexOf(o) && {}.propertyIsEnumerable.call(e, o) && (i[o] = e[o]);
+  }
+  return i;
+}
+
 ;// CONCATENATED MODULE: ../core/esm/session/sessionStoreOperations.js
 
+const _excluded = ["lock"];
 
 
-var LOCK_RETRY_DELAY = 10;
-var LOCK_MAX_TRIES = 100;
-var bufferedOperations = [];
-var ongoingOperations;
+
+// import { addTelemetryDebug } from '../telemetry/telemetry'
+const LOCK_RETRY_DELAY = 10;
+const LOCK_MAX_TRIES = 100;
+
+// Locks should be hold for a few milliseconds top, just the time it takes to read and write a
+// cookie. Using one second should be enough in most situations.
+const LOCK_EXPIRATION_DELAY = ONE_SECOND;
+const LOCK_SEPARATOR = '--';
+const bufferedOperations = [];
+let ongoingOperations;
 function processSessionStoreOperations(operations, sessionStoreStrategy) {
-  var numberOfRetries = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
-  var isLockEnabled = sessionStoreStrategy.isLockEnabled,
-    persistSession = sessionStoreStrategy.persistSession,
-    expireSession = sessionStoreStrategy.expireSession;
-  var persistWithLock = function persistWithLock(session) {
+  let numberOfRetries = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+  const {
+    isLockEnabled,
+    persistSession,
+    expireSession
+  } = sessionStoreStrategy;
+  const persistWithLock = function (session) {
     return persistSession(tools_assign({}, session, {
       lock: currentLock
     }));
   };
-  var retrieveStore = function retrieveStore() {
-    var session = sessionStoreStrategy.retrieveSession();
-    var lock = session.lock;
-    if (session.lock) {
-      delete session.lock;
-    }
+  const retrieveStore = function () {
+    const _sessionStoreStrategy = sessionStoreStrategy.retrieveSession(),
+      {
+        lock
+      } = _sessionStoreStrategy,
+      session = _objectWithoutProperties(_sessionStoreStrategy, _excluded);
     return {
-      session: session,
-      lock: lock
+      session,
+      lock: lock && !isLockExpired(lock) ? lock : undefined
     };
   };
   if (!ongoingOperations) {
@@ -3754,11 +3732,14 @@ function processSessionStoreOperations(operations, sessionStoreStrategy) {
     return;
   }
   if (isLockEnabled && numberOfRetries >= LOCK_MAX_TRIES) {
+    // addTelemetryDebug('Aborted session operation after max lock retries', {
+    //   currentStore: retrieveStore()
+    // })
     next(sessionStoreStrategy);
     return;
   }
-  var currentLock;
-  var currentStore = retrieveStore();
+  let currentLock;
+  let currentStore = retrieveStore();
   if (isLockEnabled) {
     // if someone has lock, retry later
     if (currentStore.lock) {
@@ -3766,7 +3747,7 @@ function processSessionStoreOperations(operations, sessionStoreStrategy) {
       return;
     }
     // acquire lock
-    currentLock = UUID();
+    currentLock = createLock();
     persistWithLock(currentStore.session);
     // if lock is not acquired, retry later
     currentStore = retrieveStore();
@@ -3775,7 +3756,7 @@ function processSessionStoreOperations(operations, sessionStoreStrategy) {
       return;
     }
   }
-  var processedSession = operations.process(currentStore.session);
+  let processedSession = operations.process(currentStore.session);
   if (isLockEnabled) {
     // if lock corrupted after process, retry later
     currentStore = retrieveStore();
@@ -3820,12 +3801,21 @@ function retryLater(operations, sessionStore, currentNumberOfRetries) {
 }
 function next(sessionStore) {
   ongoingOperations = undefined;
-  var nextOperations = bufferedOperations.shift();
+  const nextOperations = bufferedOperations.shift();
   if (nextOperations) {
     processSessionStoreOperations(nextOperations, sessionStore);
   }
 }
+function createLock() {
+  return UUID() + LOCK_SEPARATOR + timeStampNow();
+}
+function isLockExpired(lock) {
+  const [, timeStamp] = lock.split(LOCK_SEPARATOR);
+  return !timeStamp || tools_elapsed(Number(timeStamp), timeStampNow()) > LOCK_EXPIRATION_DELAY;
+}
 ;// CONCATENATED MODULE: ../core/esm/session/sessionStore.js
+
+
 
 
 
@@ -3839,18 +3829,29 @@ function next(sessionStore) {
  * to the session state in another browser tab, or another window.
  * This value has been determined from our previous cookie-only implementation.
  */
-var STORAGE_POLL_DELAY = ONE_SECOND;
+const STORAGE_POLL_DELAY = ONE_SECOND;
 
 /**
  * Checks if cookies are available as the preferred storage
  * Else, checks if LocalStorage is allowed and available
  */
 function selectSessionStoreStrategyType(initConfiguration) {
-  var sessionStoreStrategyType = selectCookieStrategy(initConfiguration);
-  if (!sessionStoreStrategyType && initConfiguration.allowFallbackToLocalStorage) {
-    sessionStoreStrategyType = selectLocalStorageStrategy();
+  switch (initConfiguration.sessionPersistence) {
+    case SessionPersistence.COOKIE:
+      return selectCookieStrategy(initConfiguration);
+    case SessionPersistence.LOCAL_STORAGE:
+      return selectLocalStorageStrategy();
+    case undefined:
+      {
+        let sessionStoreStrategyType = selectCookieStrategy(initConfiguration);
+        if (!sessionStoreStrategyType && initConfiguration.allowFallbackToLocalStorage) {
+          sessionStoreStrategyType = selectLocalStorageStrategy();
+        }
+        return sessionStoreStrategyType;
+      }
+    default:
+      display.error("Invalid session persistence '".concat(String(initConfiguration.sessionPersistence), "'"));
   }
-  return sessionStoreStrategyType;
 }
 
 /**
@@ -3860,37 +3861,40 @@ function selectSessionStoreStrategyType(initConfiguration) {
  * - inactive, no session in store or session expired, waiting for a renew session
  */
 function startSessionStore(sessionStoreStrategyType, productKey, computeSessionState) {
-  var renewObservable = new Observable();
-  var expireObservable = new Observable();
-  var sessionStateUpdateObservable = new Observable();
-  var sessionStoreStrategy = sessionStoreStrategyType.type === 'Cookie' ? initCookieStrategy(sessionStoreStrategyType.cookieOptions) : initLocalStorageStrategy();
-  var expireSession = sessionStoreStrategy.expireSession;
-  var watchSessionTimeoutId = timer_setInterval(watchSession, STORAGE_POLL_DELAY);
-  var sessionCache;
+  const renewObservable = new Observable();
+  const expireObservable = new Observable();
+  const sessionStateUpdateObservable = new Observable();
+  const sessionStoreStrategy = sessionStoreStrategyType.type === SessionPersistence.COOKIE ? initCookieStrategy(sessionStoreStrategyType.cookieOptions) : initLocalStorageStrategy();
+  const {
+    expireSession
+  } = sessionStoreStrategy;
+  const watchSessionTimeoutId = timer_setInterval(watchSession, STORAGE_POLL_DELAY);
+  let sessionCache;
   startSession();
-  var _throttle = throttle(function () {
-      processSessionStoreOperations({
-        process: function process(sessionState) {
-          if (isSessionInNotStartedState(sessionState)) {
-            return;
-          }
-          var synchronizedSession = synchronizeSession(sessionState);
-          expandOrRenewSessionState(synchronizedSession);
-          return synchronizedSession;
-        },
-        after: function after(sessionState) {
-          if (isSessionStarted(sessionState) && !hasSessionInCache()) {
-            renewSessionInCache(sessionState);
-          }
-          sessionCache = sessionState;
+  const {
+    throttled: throttledExpandOrRenewSession,
+    cancel: cancelExpandOrRenewSession
+  } = throttle(function () {
+    processSessionStoreOperations({
+      process: function (sessionState) {
+        if (isSessionInNotStartedState(sessionState)) {
+          return;
         }
-      }, sessionStoreStrategy);
-    }, STORAGE_POLL_DELAY),
-    throttledExpandOrRenewSession = _throttle.throttled,
-    cancelExpandOrRenewSession = _throttle.cancel;
+        const synchronizedSession = synchronizeSession(sessionState);
+        expandOrRenewSessionState(synchronizedSession);
+        return synchronizedSession;
+      },
+      after: function (sessionState) {
+        if (isSessionStarted(sessionState) && !hasSessionInCache()) {
+          renewSessionInCache(sessionState);
+        }
+        sessionCache = sessionState;
+      }
+    }, sessionStoreStrategy);
+  }, STORAGE_POLL_DELAY);
   function expandSession() {
     processSessionStoreOperations({
-      process: function process(sessionState) {
+      process: function (sessionState) {
         return hasSessionInCache() ? synchronizeSession(sessionState) : undefined;
       }
     }, sessionStoreStrategy);
@@ -3903,7 +3907,7 @@ function startSessionStore(sessionStoreStrategyType, productKey, computeSessionS
    */
   function watchSession() {
     processSessionStoreOperations({
-      process: function process(sessionState) {
+      process: function (sessionState) {
         return isSessionInExpiredState(sessionState) ? getExpiredSessionState() : undefined;
       },
       after: synchronizeSession
@@ -3928,12 +3932,12 @@ function startSessionStore(sessionStoreStrategyType, productKey, computeSessionS
   }
   function startSession() {
     processSessionStoreOperations({
-      process: function process(sessionState) {
+      process: function (sessionState) {
         if (isSessionInNotStartedState(sessionState)) {
           return getExpiredSessionState();
         }
       },
-      after: function after(sessionState) {
+      after: function (sessionState) {
         sessionCache = sessionState;
       }
     }, sessionStoreStrategy);
@@ -3942,9 +3946,10 @@ function startSessionStore(sessionStoreStrategyType, productKey, computeSessionS
     if (isSessionInNotStartedState(sessionState)) {
       return false;
     }
-    var _computeSessionState = computeSessionState(sessionState[productKey]),
-      trackingType = _computeSessionState.trackingType,
-      isTracked = _computeSessionState.isTracked;
+    const {
+      trackingType,
+      isTracked
+    } = computeSessionState(sessionState[productKey]);
     sessionState[productKey] = trackingType;
     delete sessionState.isExpired;
     if (isTracked && !sessionState.id) {
@@ -3968,7 +3973,7 @@ function startSessionStore(sessionStoreStrategyType, productKey, computeSessionS
   }
   function updateSessionState(partialSessionState) {
     processSessionStoreOperations({
-      process: function process(sessionState) {
+      process: function (sessionState) {
         return tools_assign({}, sessionState, partialSessionState);
       },
       after: synchronizeSession
@@ -3976,23 +3981,23 @@ function startSessionStore(sessionStoreStrategyType, productKey, computeSessionS
   }
   return {
     expandOrRenewSession: throttledExpandOrRenewSession,
-    expandSession: expandSession,
-    getSession: function getSession() {
+    expandSession,
+    getSession: function () {
       return sessionCache;
     },
-    renewObservable: renewObservable,
-    expireObservable: expireObservable,
-    sessionStateUpdateObservable: sessionStateUpdateObservable,
+    renewObservable,
+    expireObservable,
+    sessionStateUpdateObservable,
     restartSession: startSession,
-    expire: function expire() {
+    expire: function () {
       cancelExpandOrRenewSession();
       expireSession();
       synchronizeSession(getExpiredSessionState());
     },
-    stop: function stop() {
+    stop: function () {
       timer_clearInterval(watchSessionTimeoutId);
     },
-    updateSessionState: updateSessionState
+    updateSessionState
   };
 }
 ;// CONCATENATED MODULE: ../core/esm/configuration/configuration.js
@@ -4024,6 +4029,7 @@ function validateAndBuildConfiguration(initConfiguration) {
   return tools_assign({
     beforeSend: initConfiguration.beforeSend && catchUserErrors(initConfiguration.beforeSend, 'beforeSend threw an error:'),
     sessionStoreStrategyType: selectSessionStoreStrategyType(initConfiguration),
+    isOpenWay: initConfiguration.site && initConfiguration.clientToken,
     sessionSampleRate: isNullUndefinedDefaultValue(sessionSampleRate, 100),
     service: initConfiguration.service,
     version: initConfiguration.version,
@@ -4050,7 +4056,7 @@ function validateAndBuildConfiguration(initConfiguration) {
     messageBytesLimit: 256 * ONE_KIBI_BYTE,
     resourceUrlLimit: 5 * ONE_KIBI_BYTE,
     storeContextsToLocal: !!initConfiguration.storeContextsToLocal,
-    // 存储到localstorage key ，默认不填，自动生成
+    // localstorage key ，default auto gen
     storeContextsKey: initConfiguration.storeContextsKey,
     sendContentTypeByJson: !!initConfiguration.sendContentTypeByJson,
     retryMaxSize: isNullUndefinedDefaultValue(initConfiguration.retryMaxSize, -1)
@@ -4138,7 +4144,7 @@ function beforeSend(params, observable) {
 }
 function afterSend(observable, responsePromise, startContext) {
   var context = startContext;
-  var reportFetch = function reportFetch(partialContext) {
+  var reportFetch = function (partialContext) {
     context.state = 'resolve';
     tools_assign(context, partialContext);
     // context.duration = elapsed(context.startClocks.timeStamp, timeStampNow())
@@ -4205,11 +4211,13 @@ function createXhrObservable() {
     }, {
       computeHandlingStack: true
     });
+    var setRequestHeaderInstrumentMethod = instrumentMethod(XMLHttpRequest.prototype, 'setRequestHeader', setRequestHeaderXhr);
     var abortInstrumentMethod = instrumentMethod(XMLHttpRequest.prototype, 'abort', abortXhr);
     return function () {
       openInstrumentMethod.stop();
       sendInstrumentMethod.stop();
       abortInstrumentMethod.stop();
+      setRequestHeaderInstrumentMethod.stop();
     };
   });
 }
@@ -4222,6 +4230,17 @@ function openXhr(params) {
     method: String(method).toUpperCase(),
     url: normalizeUrl(String(url))
   });
+}
+function setRequestHeaderXhr(params) {
+  var xhr = params.target;
+  var headerKey = params.parameters[0];
+  var headerValue = params.parameters[1];
+  var context = xhrContexts.get(xhr);
+  if (context && headerKey) {
+    var requestHeaderContexts = context.requestHeaderContexts || {};
+    requestHeaderContexts[headerKey] = headerValue;
+    context.requestHeaderContexts = requestHeaderContexts;
+  }
 }
 function sendXhr(params, observable) {
   var xhr = params.target;
@@ -4246,7 +4265,7 @@ function sendXhr(params, observable) {
       onEnd();
     }
   }).stop;
-  var onEnd = function onEnd() {
+  var onEnd = function () {
     unsubscribeLoadEndListener();
     stopInstrumentingOnReadyStateChange();
     if (hasBeenReported) {
@@ -4424,6 +4443,7 @@ var commonTags = {
   user_name: 'user.name',
   session_id: 'session.id',
   session_type: 'session.type',
+  session_is_forced: 'session.is_forced_session',
   session_sampling: 'session.is_sampling',
   is_signin: 'user.is_signin',
   os: 'device.os',
@@ -4444,14 +4464,15 @@ var commonTags = {
   device: 'device.device',
   device_vendor: 'device.device_vendor',
   device_model: 'device.device_model',
+  user_agent: 'device.user_agent',
   view_id: 'view.id',
   view_referrer: 'view.referrer',
   view_url: 'view.url',
   view_host: 'view.host',
   view_path: 'view.path',
   view_name: 'view.name',
-  // 冗余一个字段
-  view_path_group: 'view.path_group'
+  view_path_group: 'view.path_group',
+  view_path_name: 'view.pathname'
 };
 var commonFields = {
   view_url_query: 'view.url_query',
@@ -4468,7 +4489,6 @@ var commonFields = {
   session_replay_on_error_sample_rate: '_gc.configuration.session_replay_on_error_sample_rate',
   drift: '_gc.drift'
 };
-// 需要用双引号将字符串类型的field value括起来， 这里有数组标示[string, path]
 var dataMap = {
   view: {
     type: RumEventType.VIEW,
@@ -4478,6 +4498,7 @@ var dataMap = {
       view_privacy_replay_level: 'privacy.replay_level'
     },
     fields: {
+      view_update_time: '_gc.view_update_time',
       sampled_for_replay: 'session.sampled_for_replay',
       sampled_for_error_replay: 'session.sampled_for_error_replay',
       sampled_for_error_session: 'session.sampled_for_error_session',
@@ -4657,17 +4678,17 @@ var dataMap = {
 
 
 
-var VISIBILITY_CHECK_DELAY = ONE_MINUTE;
-var SESSION_CONTEXT_TIMEOUT_DELAY = SESSION_TIME_OUT_DELAY;
-var stopCallbacks = [];
+const VISIBILITY_CHECK_DELAY = ONE_MINUTE;
+const SESSION_CONTEXT_TIMEOUT_DELAY = SESSION_TIME_OUT_DELAY;
+let stopCallbacks = [];
 function startSessionManager(configuration, productKey, computeSessionState) {
-  var renewObservable = new Observable();
-  var expireObservable = new Observable();
-  var sessionStore = startSessionStore(configuration.sessionStoreStrategyType, productKey, computeSessionState);
+  const renewObservable = new Observable();
+  const expireObservable = new Observable();
+  const sessionStore = startSessionStore(configuration.sessionStoreStrategyType, productKey, computeSessionState);
   stopCallbacks.push(function () {
     return sessionStore.stop();
   });
-  var sessionContextHistory = createValueHistory({
+  const sessionContextHistory = createValueHistory({
     expireDelay: SESSION_CONTEXT_TIMEOUT_DELAY
   });
   stopCallbacks.push(function () {
@@ -4695,18 +4716,28 @@ function startSessionManager(configuration, productKey, computeSessionState) {
     sessionStore.restartSession();
   });
   function buildSessionContext() {
+    const session = sessionStore.getSession();
+    if (!session) {
+      return {
+        id: 'invalid',
+        trackingType: SESSION_NOT_TRACKED,
+        isSessionForced: false,
+        hasError: false
+      };
+    }
     return {
-      id: sessionStore.getSession().id,
-      trackingType: sessionStore.getSession()[productKey],
-      hasError: !!sessionStore.getSession().hasError
+      id: session.id,
+      trackingType: session[productKey],
+      hasError: !!session.hasError,
+      isSessionForced: !!session.forcedSession
     };
   }
   return {
-    findSession: function findSession(startTime, options) {
+    findSession: function (startTime, options) {
       return sessionContextHistory.find(startTime, options);
     },
-    renewObservable: renewObservable,
-    expireObservable: expireObservable,
+    renewObservable,
+    expireObservable,
     sessionStateUpdateObservable: sessionStore.sessionStateUpdateObservable,
     expire: sessionStore.expire,
     updateSessionState: sessionStore.updateSessionState
@@ -4719,32 +4750,35 @@ function stopSessionManager() {
   stopCallbacks = [];
 }
 function trackActivity(expandOrRenewSession) {
-  var _addEventListeners = addEventListeners(window, [DOM_EVENT.CLICK, DOM_EVENT.TOUCH_START, DOM_EVENT.KEY_DOWN, DOM_EVENT.SCROLL], expandOrRenewSession, {
-      capture: true,
-      passive: true
-    }),
-    stop = _addEventListeners.stop;
+  const {
+    stop
+  } = addEventListeners(window, [DOM_EVENT.CLICK, DOM_EVENT.TOUCH_START, DOM_EVENT.KEY_DOWN, DOM_EVENT.SCROLL], expandOrRenewSession, {
+    capture: true,
+    passive: true
+  });
   stopCallbacks.push(stop);
 }
 function trackVisibility(expandSession) {
-  var expandSessionWhenVisible = function expandSessionWhenVisible() {
+  const expandSessionWhenVisible = function () {
     if (document.visibilityState === 'visible') {
       expandSession();
     }
   };
-  var _addEventListener = addEventListener(document, DOM_EVENT.VISIBILITY_CHANGE, expandSessionWhenVisible),
-    stop = _addEventListener.stop;
+  const {
+    stop
+  } = addEventListener(document, DOM_EVENT.VISIBILITY_CHANGE, expandSessionWhenVisible);
   stopCallbacks.push(stop);
-  var visibilityCheckInterval = timer_setInterval(expandSessionWhenVisible, VISIBILITY_CHECK_DELAY);
+  const visibilityCheckInterval = timer_setInterval(expandSessionWhenVisible, VISIBILITY_CHECK_DELAY);
   stopCallbacks.push(function () {
     timer_clearInterval(visibilityCheckInterval);
   });
 }
 function trackResume(cb) {
-  var _addEventListener2 = addEventListener(window, DOM_EVENT.RESUME, cb, {
-      capture: true
-    }),
-    stop = _addEventListener2.stop;
+  const {
+    stop
+  } = addEventListener(window, DOM_EVENT.RESUME, cb, {
+    capture: true
+  });
   stopCallbacks.push(stop);
 }
 ;// CONCATENATED MODULE: ../core/esm/transport/sendWithRetryStrategy.js
@@ -4754,7 +4788,7 @@ function trackResume(cb) {
 
 var MAX_ONGOING_BYTES_COUNT = 80 * ONE_KIBI_BYTE;
 var MAX_ONGOING_REQUESTS = 32;
-var MAX_QUEUE_BYTES_COUNT = 3 * ONE_MEBI_BYTE;
+var MAX_QUEUE_BYTES_COUNT = 20 * ONE_MEBI_BYTE;
 var MAX_BACKOFF_TIME = 256 * ONE_SECOND;
 var INITIAL_BACKOFF_TIME = ONE_SECOND;
 var TransportStatus = {
@@ -4769,10 +4803,10 @@ var RetryReason = {
 function sendWithRetryStrategy(payload, state, sendStrategy, endpointUrl, reportError) {
   if (state.transportStatus === TransportStatus.UP && state.queuedPayloads.size() === 0 && state.bandwidthMonitor.canHandle(payload)) {
     send(payload, state, sendStrategy, {
-      onSuccess: function onSuccess() {
+      onSuccess: function () {
         return retryQueuedPayloads(RetryReason.AFTER_SUCCESS, state, sendStrategy, endpointUrl, reportError);
       },
-      onFailure: function onFailure() {
+      onFailure: function () {
         state.queuedPayloads.enqueue(payload);
         scheduleRetry(state, sendStrategy, endpointUrl, reportError);
       }
@@ -4788,12 +4822,12 @@ function scheduleRetry(state, sendStrategy, endpointUrl, reportError) {
   timer_setTimeout(function () {
     var payload = state.queuedPayloads.first();
     send(payload, state, sendStrategy, {
-      onSuccess: function onSuccess() {
+      onSuccess: function () {
         state.queuedPayloads.dequeue();
         state.currentBackoffTime = INITIAL_BACKOFF_TIME;
         retryQueuedPayloads(RetryReason.AFTER_RESUME, state, sendStrategy, endpointUrl, reportError);
       },
-      onFailure: function onFailure() {
+      onFailure: function () {
         state.currentBackoffTime = Math.min(MAX_BACKOFF_TIME, state.currentBackoffTime * 2);
         scheduleRetry(state, sendStrategy, endpointUrl, reportError);
       }
@@ -4853,27 +4887,27 @@ function newPayloadQueue() {
   var queue = [];
   return {
     bytesCount: 0,
-    enqueue: function enqueue(payload) {
+    enqueue: function (payload) {
       if (this.isFull()) {
         return;
       }
       queue.push(payload);
       this.bytesCount += payload.bytesCount;
     },
-    first: function first() {
+    first: function () {
       return queue[0];
     },
-    dequeue: function dequeue() {
+    dequeue: function () {
       var payload = queue.shift();
       if (payload) {
         this.bytesCount -= payload.bytesCount;
       }
       return payload;
     },
-    size: function size() {
+    size: function () {
       return queue.length;
     },
-    isFull: function isFull() {
+    isFull: function () {
       return this.bytesCount >= MAX_QUEUE_BYTES_COUNT;
     }
   };
@@ -4882,14 +4916,14 @@ function newBandwidthMonitor() {
   return {
     ongoingRequestCount: 0,
     ongoingByteCount: 0,
-    canHandle: function canHandle(payload) {
+    canHandle: function (payload) {
       return this.ongoingRequestCount === 0 || this.ongoingByteCount + payload.bytesCount <= MAX_ONGOING_BYTES_COUNT && this.ongoingRequestCount < MAX_ONGOING_REQUESTS;
     },
-    add: function add(payload) {
+    add: function (payload) {
       this.ongoingRequestCount += 1;
       this.ongoingByteCount += payload.bytesCount;
     },
-    remove: function remove(payload) {
+    remove: function (payload) {
       this.ongoingRequestCount -= 1;
       this.ongoingByteCount -= payload.bytesCount;
     }
@@ -4921,18 +4955,18 @@ function createHttpRequest(endpointUrl, bytesLimit, retryMaxSize, reportError) {
     retryMaxSize = -1;
   }
   var retryState = newRetryState(retryMaxSize);
-  var sendStrategyForRetry = function sendStrategyForRetry(payload, onResponse) {
+  var sendStrategyForRetry = function (payload, onResponse) {
     return fetchKeepAliveStrategy(endpointUrl, bytesLimit, payload, onResponse);
   };
   return {
-    send: function send(payload) {
+    send: function (payload) {
       sendWithRetryStrategy(payload, retryState, sendStrategyForRetry, endpointUrl, reportError);
     },
     /**
      * Since fetch keepalive behaves like regular fetch on Firefox,
      * keep using sendBeaconStrategy on exit
      */
-    sendOnExit: function sendOnExit(payload) {
+    sendOnExit: function (payload) {
       sendBeaconStrategy(endpointUrl, bytesLimit, payload);
     }
   };
@@ -4981,11 +5015,13 @@ function fetchKeepAliveStrategy(endpointUrl, bytesLimit, payload, onResponse) {
       keepalive: true,
       mode: 'cors'
     };
+    const headers = {
+      'x-client-timestamp': Date.now().toString()
+    };
     if (payload.type) {
-      fetchOption.headers = {
-        'Content-Type': payload.type
-      };
+      headers['Content-Type'] = payload.type;
     }
+    fetchOption.headers = headers;
     fetch(url, fetchOption).then(monitor(function (response) {
       if (typeof onResponse === 'function') {
         onResponse({
@@ -4993,9 +5029,8 @@ function fetchKeepAliveStrategy(endpointUrl, bytesLimit, payload, onResponse) {
           type: response.type
         });
       }
-    }), monitor(function () {
-      // failed to queue the request
-      sendXHR(url, payload, onResponse);
+    })).catch(monitor(function () {
+      fetchStrategy(url, payload, onResponse);
     }));
   } else {
     sendXHR(url, payload, onResponse);
@@ -5010,14 +5045,15 @@ function isKeepAliveSupported() {
   }
 }
 function sendXHR(url, payload, onResponse) {
-  var data = payload.data;
-  var request = new XMLHttpRequest();
+  const data = payload.data;
+  const request = new XMLHttpRequest();
   request.open('POST', url, true);
   if (data instanceof Blob) {
     request.setRequestHeader('Content-Type', data.type);
   } else if (payload.type) {
     request.setRequestHeader('Content-Type', payload.type);
   }
+  request.setRequestHeader('x-client-timestamp', Date.now().toString());
   addEventListener(request, 'loadend', function () {
     if (typeof onResponse === 'function') {
       onResponse({
@@ -5029,12 +5065,40 @@ function sendXHR(url, payload, onResponse) {
   });
   request.send(data);
 }
+function fetchStrategy(url, payload, onResponse) {
+  const fetchOption = {
+    method: 'POST',
+    body: payload.data,
+    keepalive: true,
+    mode: 'cors'
+  };
+  const headers = {
+    'x-client-timestamp': Date.now().toString()
+  };
+  if (payload.type) {
+    headers['Content-Type'] = payload.type;
+  }
+  fetchOption.headers = headers;
+  fetch(url, fetchOption).then(monitor(function (response) {
+    if (typeof onResponse === 'function') {
+      onResponse({
+        status: response.status,
+        type: response.type
+      });
+    }
+  })).catch(monitor(function () {
+    if (typeof onResponse === 'function') {
+      onResponse({
+        status: 0
+      });
+    }
+  }));
+}
 ;// CONCATENATED MODULE: ../core/esm/helper/serialisation/rowData.js
 
 
-
 function escapeRowData(str) {
-  if (typeof_typeof(str) === 'object' && str) {
+  if (typeof str === 'object' && str) {
     str = jsonStringify_jsonStringify(str);
   } else if (!isString(str)) {
     return str;
@@ -5045,10 +5109,9 @@ function escapeRowData(str) {
   });
 }
 function escapeJsonValue(value, isTag) {
-  if (typeof_typeof(value) === 'object' && value) {
+  if (typeof value === 'object' && value) {
     value = jsonStringify_jsonStringify(value);
   } else if (isTag) {
-    // tag  json  只能是字符串
     value = '' + value;
   }
   return value;
@@ -5057,7 +5120,7 @@ function escapeFieldValueStr(str) {
   return '"' + str.replace(/\\/g, '\\\\').replace(/"/g, '\\"') + '"';
 }
 function escapeRowField(value) {
-  if (typeof_typeof(value) === 'object' && value) {
+  if (typeof value === 'object' && value) {
     return escapeFieldValueStr(jsonStringify_jsonStringify(value));
   } else if (isString(value)) {
     return escapeFieldValueStr(value);
@@ -5077,7 +5140,7 @@ function escapeRowField(value) {
 // https://en.wikipedia.org/wiki/UTF-8
 // eslint-disable-next-line no-control-regex
 var CUSTOM_KEYS = 'custom_keys';
-var processedMessageByDataMap = function processedMessageByDataMap(message) {
+var processedMessageByDataMap = function (message) {
   if (!message || !message.type) return {
     rowStr: '',
     rowData: undefined
@@ -5094,7 +5157,7 @@ var processedMessageByDataMap = function processedMessageByDataMap(message) {
       rowData.measurement = key;
       var tagsStr = [];
       var tags = extend({}, commonTags, value.tags);
-      var filterFileds = ['date', 'type', CUSTOM_KEYS]; // 已经在datamap中定义过的fields和tags
+      var filterFileds = ['date', 'type', CUSTOM_KEYS];
       each(tags, function (value_path, _key) {
         var _value = findByPath(message, value_path);
         filterFileds.push(_key);
@@ -5111,28 +5174,26 @@ var processedMessageByDataMap = function processedMessageByDataMap(message) {
           var _valueData = findByPath(message, value_path);
           filterFileds.push(_key);
           if (_valueData !== undefined && _valueData !== null) {
-            rowData.fields[_key] = escapeJsonValue(_valueData); // 这里不需要转译
+            rowData.fields[_key] = escapeJsonValue(_valueData);
             fieldsStr.push(escapeRowData(_key) + '=' + escapeRowField(_valueData));
           }
         } else if (isString(_value)) {
           var _valueData = findByPath(message, _value);
           filterFileds.push(_key);
           if (_valueData !== undefined && _valueData !== null) {
-            rowData.fields[_key] = escapeJsonValue(_valueData); // 这里不需要转译
+            rowData.fields[_key] = escapeJsonValue(_valueData);
             fieldsStr.push(escapeRowData(_key) + '=' + escapeRowField(_valueData));
           }
         }
       });
       if (message.context && isObject(message.context) && !isEmptyObject(message.context)) {
-        // 自定义tag， 存储成field
         var _tagKeys = [];
         each(message.context, function (_value, _key) {
-          // 如果和之前tag重名，则舍弃
           if (filterFileds.indexOf(_key) > -1) return;
           filterFileds.push(_key);
           if (_value !== undefined && _value !== null) {
             _tagKeys.push(_key);
-            rowData.fields[_key] = escapeJsonValue(_value); // 这里不需要转译
+            rowData.fields[_key] = escapeJsonValue(_value);
             fieldsStr.push(escapeRowData(_key) + '=' + escapeRowField(_value));
           }
         });
@@ -5142,10 +5203,9 @@ var processedMessageByDataMap = function processedMessageByDataMap(message) {
         }
       }
       if (message.type === RumEventType.LOGGER) {
-        // 这里处理日志类型数据自定义字段
         each(message, function (value, key) {
           if (filterFileds.indexOf(key) === -1 && value !== undefined && value !== null) {
-            rowData.fields[key] = escapeJsonValue(value); // 这里不需要转译
+            rowData.fields[key] = escapeJsonValue(value);
             fieldsStr.push(escapeRowData(key) + '=' + escapeRowField(value));
           }
         });
@@ -5159,7 +5219,7 @@ var processedMessageByDataMap = function processedMessageByDataMap(message) {
         hasFileds = true;
       }
       rowStr = rowStr + ' ' + message.date;
-      rowData.time = message.date; // 这里不需要转译
+      rowData.time = message.date;
     }
   });
   return {
@@ -5178,7 +5238,7 @@ function createBatch(options) {
     flush(event);
   });
   function getMessageText(messages) {
-    var isEmpty = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+    let isEmpty = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
     if (sendContentTypeByJson) {
       if (isEmpty) {
         return '[' + messages.join(',');
@@ -5223,8 +5283,8 @@ function createBatch(options) {
     return processedMessage;
   }
   function addOrUpdate(message, key) {
-    var serializedMessage = process(message);
-    var estimatedMessageBytesCount = encoder.estimateEncodedBytesCount(serializedMessage);
+    const serializedMessage = process(message);
+    const estimatedMessageBytesCount = encoder.estimateEncodedBytesCount(serializedMessage);
     if (estimatedMessageBytesCount >= messageBytesLimit) {
       display.warn("Discarded a message whose size was bigger than the maximum allowed size ".concat(messageBytesLimit, "KB."));
       return;
@@ -5245,16 +5305,14 @@ function createBatch(options) {
     // and the other for non-encoded data). But if it's not async, we don't have to worry about
     // it and always send a single request.
     encoder.isAsync) {
-      // 咱不支持json 模式
       var encoderResult = encoder.finishSync();
 
       // Send encoded messages
       if (encoderResult.outputBytesCount) {
         send(formatPayloadFromEncoder(encoderResult, sendContentTypeByJson));
       }
-
       // Send messages that are not yet encoded at this point
-      var pendingMessages = [encoderResult.pendingData, upsertMessages].filter(Boolean).join('\n');
+      var pendingMessages = [...encoderResult.pendingData, upsertMessages].filter(Boolean).join('\n');
       if (pendingMessages) {
         send({
           data: pendingMessages,
@@ -5319,15 +5377,17 @@ function formatPayloadFromEncoder(encoderResult, sendContentTypeByJson) {
  * but relies on invariants described in each method documentation to keep a coherent state.
  */
 function createFlushController(_ref) {
-  var messagesLimit = _ref.messagesLimit,
-    bytesLimit = _ref.bytesLimit,
-    durationLimit = _ref.durationLimit,
-    pageExitObservable = _ref.pageExitObservable,
-    sessionExpireObservable = _ref.sessionExpireObservable;
-  pageExitObservable.subscribe(function (event) {
+  let {
+    messagesLimit,
+    bytesLimit,
+    durationLimit,
+    pageExitObservable,
+    sessionExpireObservable
+  } = _ref;
+  var pageExitSubscription = pageExitObservable.subscribe(function (event) {
     return flush(event.reason);
   });
-  sessionExpireObservable.subscribe(function () {
+  var sessionExpireSubscription = sessionExpireObservable.subscribe(function () {
     return flush('session_expire');
   });
   var flushObservable = new Observable(function () {
@@ -5367,7 +5427,7 @@ function createFlushController(_ref) {
   }
   return {
     flushObservable: flushObservable,
-    getMessagesCount: function getMessagesCount() {
+    getMessagesCount: function () {
       return currentMessagesCount;
     },
     /**
@@ -5376,7 +5436,7 @@ function createFlushController(_ref) {
      * This function needs to be called synchronously, right before adding the message, so no flush
      * event can happen after `notifyBeforeAddMessage` and before adding the message.
      */
-    notifyBeforeAddMessage: function notifyBeforeAddMessage(estimatedMessageBytesCount) {
+    notifyBeforeAddMessage: function (estimatedMessageBytesCount) {
       if (currentBytesCount + estimatedMessageBytesCount >= bytesLimit) {
         flush('bytes_limit');
       }
@@ -5393,7 +5453,7 @@ function createFlushController(_ref) {
      * This function can be called asynchronously after the message was added, but in this case it
      * should not be called if a flush event occurred in between.
      */
-    notifyAfterAddMessage: function notifyAfterAddMessage(messageBytesCountDiff) {
+    notifyAfterAddMessage: function (messageBytesCountDiff) {
       if (messageBytesCountDiff === undefined) {
         messageBytesCountDiff = 0;
       }
@@ -5414,7 +5474,7 @@ function createFlushController(_ref) {
      * correspond to the sum of bytes counts passed to `notifyBeforeAddMessage` and
      * `notifyAfterAddMessage`.
      */
-    notifyAfterRemoveMessage: function notifyAfterRemoveMessage(messageBytesCount) {
+    notifyAfterRemoveMessage: function (messageBytesCount) {
       currentBytesCount -= messageBytesCount;
       currentMessagesCount -= 1;
       if (currentMessagesCount === 0) {
@@ -5449,13 +5509,13 @@ function startBatchWithReplica(configuration, primary, reportError, pageExitObse
   }
   return {
     flushObservable: primaryBatch.flushController.flushObservable,
-    add: function add(message) {
+    add: function (message) {
       primaryBatch.add(message);
     },
-    upsert: function upsert(message, key) {
+    upsert: function (message, key) {
       primaryBatch.upsert(message, key);
     },
-    stop: function stop() {
+    stop: function () {
       primaryBatch.stop();
     }
   };
@@ -5500,16 +5560,16 @@ function getEventBridge() {
   //   }
   // }
 }
-var BridgeCapability = {
+const BridgeCapability = {
   RECORDS: 'records'
 };
 function bridgeSupports(capability) {
-  var bridge = getEventBridge();
+  const bridge = getEventBridge();
   return !!bridge && bridge.getCapabilities().includes(capability);
 }
 function canUseEventBridge() {
   var _getGlobalObject$loca;
-  var currentHost = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : (_getGlobalObject$loca = getGlobalObject().location) === null || _getGlobalObject$loca === void 0 ? void 0 : _getGlobalObject$loca.hostname;
+  let currentHost = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : (_getGlobalObject$loca = getGlobalObject().location) === null || _getGlobalObject$loca === void 0 ? void 0 : _getGlobalObject$loca.hostname;
   return false;
   // const eventBridgeGlobal = getEventBridgeGlobal()
   // if (
@@ -5521,7 +5581,8 @@ function canUseEventBridge() {
   // if (
   //   eventBridgeGlobal &&
   //   eventBridgeGlobal.getAllowedWebViewHosts &&
-  //   eventBridgeGlobal.getAllowedWebViewHosts() === null
+  //   (eventBridgeGlobal.getAllowedWebViewHosts() === null ||
+  //     eventBridgeGlobal.getAllowedWebViewHosts() === undefined)
   // ) {
   //   return true
   // }
@@ -5558,14 +5619,25 @@ function getSyntheticsResultId() {
   var value = window._GUANCE_SYNTHETICS_RESULT_ID || getCookie(SYNTHETICS_RESULT_ID_COOKIE_NAME);
   return typeof value === 'string' ? value : undefined;
 }
+;// CONCATENATED MODULE: ../../node_modules/@babel/runtime/helpers/esm/typeof.js
+function _typeof(o) {
+  "@babel/helpers - typeof";
+
+  return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) {
+    return typeof o;
+  } : function (o) {
+    return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o;
+  }, _typeof(o);
+}
+
 ;// CONCATENATED MODULE: ../../node_modules/@babel/runtime/helpers/esm/toPrimitive.js
 
 function toPrimitive(t, r) {
-  if ("object" != typeof_typeof(t) || !t) return t;
+  if ("object" != _typeof(t) || !t) return t;
   var e = t[Symbol.toPrimitive];
   if (void 0 !== e) {
     var i = e.call(t, r || "default");
-    if ("object" != typeof_typeof(i)) return i;
+    if ("object" != _typeof(i)) return i;
     throw new TypeError("@@toPrimitive must return a primitive value.");
   }
   return ("string" === r ? String : Number)(t);
@@ -5576,7 +5648,7 @@ function toPrimitive(t, r) {
 
 function toPropertyKey(t) {
   var i = toPrimitive(t, "string");
-  return "symbol" == typeof_typeof(i) ? i : i + "";
+  return "symbol" == _typeof(i) ? i : i + "";
 }
 
 ;// CONCATENATED MODULE: ../../node_modules/@babel/runtime/helpers/esm/defineProperty.js
@@ -5591,7 +5663,6 @@ function _defineProperty(e, r, t) {
 }
 
 ;// CONCATENATED MODULE: ../core/esm/helper/serialisation/contextManager.js
-
 
 function ownKeys(e, r) {
   var t = Object.keys(e);
@@ -5619,13 +5690,11 @@ function _objectSpread(e) {
 
 
 function ensureProperties(context, propertiesConfig, name) {
-  var newContext = _objectSpread({}, context);
-  for (var _i = 0, _Object$entries = Object.entries(propertiesConfig); _i < _Object$entries.length; _i++) {
-    var _Object$entries$_i = _slicedToArray(_Object$entries[_i], 2),
-      key = _Object$entries$_i[0],
-      _Object$entries$_i$ = _Object$entries$_i[1],
-      required = _Object$entries$_i$.required,
-      type = _Object$entries$_i$.type;
+  const newContext = _objectSpread({}, context);
+  for (const [key, {
+    required,
+    type
+  }] of Object.entries(propertiesConfig)) {
     /**
      * Ensure specified properties are strings as defined here:
      */
@@ -5639,18 +5708,16 @@ function ensureProperties(context, propertiesConfig, name) {
   return newContext;
 }
 function createContextManager() {
-  var name = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
-  var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-    customerDataTracker = _ref.customerDataTracker,
-    _ref$propertiesConfig = _ref.propertiesConfig,
-    propertiesConfig = _ref$propertiesConfig === void 0 ? {} : _ref$propertiesConfig;
-  var context = {};
-  var changeObservable = new Observable();
-  var contextManager = {
-    getContext: function getContext() {
-      return deepClone(context);
-    },
-    setContext: function setContext(newContext) {
+  let name = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+  let {
+    customerDataTracker,
+    propertiesConfig = {}
+  } = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  let context = {};
+  const changeObservable = new Observable();
+  const contextManager = {
+    getContext: () => deepClone(context),
+    setContext: newContext => {
       if (getType(newContext) === 'object') {
         context = sanitize(ensureProperties(newContext, propertiesConfig, name));
         customerDataTracker === null || customerDataTracker === void 0 || customerDataTracker.updateCustomerData(context);
@@ -5659,23 +5726,25 @@ function createContextManager() {
       }
       changeObservable.notify();
     },
-    setContextProperty: function setContextProperty(key, property) {
-      context[key] = sanitize(ensureProperties(_defineProperty({}, key, property), propertiesConfig, name)[key]);
+    setContextProperty: (key, property) => {
+      context[key] = sanitize(ensureProperties({
+        [key]: property
+      }, propertiesConfig, name)[key]);
       customerDataTracker === null || customerDataTracker === void 0 || customerDataTracker.updateCustomerData(context);
       changeObservable.notify();
     },
-    removeContextProperty: function removeContextProperty(key) {
+    removeContextProperty: key => {
       delete context[key];
       customerDataTracker === null || customerDataTracker === void 0 || customerDataTracker.updateCustomerData(context);
       ensureProperties(context, propertiesConfig, name);
       changeObservable.notify();
     },
-    clearContext: function clearContext() {
+    clearContext: () => {
       context = {};
       customerDataTracker === null || customerDataTracker === void 0 || customerDataTracker.resetCustomerData();
       changeObservable.notify();
     },
-    changeObservable: changeObservable
+    changeObservable
   };
   return contextManager;
 }
@@ -5712,7 +5781,7 @@ function storeContextManager(configuration, contextManager, productKey, customer
     localStorage.setItem(storageKey, JSON.stringify(contextManager.getContext()));
   }
   function getFromStorage() {
-    var rawContext = localStorage.getItem(storageKey);
+    const rawContext = localStorage.getItem(storageKey);
     return rawContext !== null ? JSON.parse(rawContext) : {};
   }
   return contextManager;
@@ -5739,31 +5808,31 @@ function removeStorageListeners() {
 // RUM and logs batch bytes limit is 16KB
 // ensure that we leave room for other event attributes and maintain a decent amount of event per batch
 // (3KB (customer data) + 1KB (other attributes)) * 4 (events per batch) = 16KB
-var CUSTOMER_DATA_BYTES_LIMIT = 3 * ONE_KIBI_BYTE;
+const CUSTOMER_DATA_BYTES_LIMIT = 3 * ONE_KIBI_BYTE;
 
 // We observed that the compression ratio is around 8 in general, but we also want to keep a margin
 // because some data might not be compressed (ex: last view update on page exit). We chose 16KiB
 // because it is also the limit of the 'batchBytesCount' that we use for RUM and Logs data, but this
 // is a bit arbitrary.
-var CUSTOMER_COMPRESSED_DATA_BYTES_LIMIT = 16 * ONE_KIBI_BYTE;
-var BYTES_COMPUTATION_THROTTLING_DELAY = 200;
-var CustomerDataCompressionStatus = {
+const CUSTOMER_COMPRESSED_DATA_BYTES_LIMIT = 16 * ONE_KIBI_BYTE;
+const BYTES_COMPUTATION_THROTTLING_DELAY = 200;
+const CustomerDataCompressionStatus = {
   Unknown: 0,
   Enabled: 1,
   Disabled: 2
 };
 function createCustomerDataTrackerManager() {
-  var compressionStatus = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : CustomerDataCompressionStatus.Disabled;
-  var customerDataTrackers = new Map();
-  var alreadyWarned = false;
+  let compressionStatus = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : CustomerDataCompressionStatus.Disabled;
+  const customerDataTrackers = new Map();
+  let alreadyWarned = false;
   function checkCustomerDataLimit() {
-    var initialBytesCount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+    let initialBytesCount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
     if (alreadyWarned || compressionStatus === CustomerDataCompressionStatus.Unknown) {
       return;
     }
-    var bytesCountLimit = compressionStatus === CustomerDataCompressionStatus.Disabled ? CUSTOMER_DATA_BYTES_LIMIT : CUSTOMER_COMPRESSED_DATA_BYTES_LIMIT;
-    var bytesCount = initialBytesCount;
-    customerDataTrackers.forEach(function (tracker) {
+    const bytesCountLimit = compressionStatus === CustomerDataCompressionStatus.Disabled ? CUSTOMER_DATA_BYTES_LIMIT : CUSTOMER_COMPRESSED_DATA_BYTES_LIMIT;
+    let bytesCount = initialBytesCount;
+    customerDataTrackers.forEach(tracker => {
       bytesCount += tracker.getBytesCount();
     });
     if (bytesCount > bytesCountLimit) {
@@ -5779,55 +5848,50 @@ function createCustomerDataTrackerManager() {
      * This is particularly useful when we don't know when the tracker will be unused, so we don't
      * leak memory (ex: when used in Logger instances).
      */
-    createDetachedTracker: function createDetachedTracker() {
-      var tracker = createCustomerDataTracker(function () {
-        return checkCustomerDataLimit(tracker.getBytesCount());
-      });
+    createDetachedTracker: () => {
+      const tracker = createCustomerDataTracker(() => checkCustomerDataLimit(tracker.getBytesCount()));
       return tracker;
     },
     /**
      * Creates a tracker if it doesn't exist, and returns it.
      */
-    getOrCreateTracker: function getOrCreateTracker(type) {
+    getOrCreateTracker: type => {
       if (!customerDataTrackers.has(type)) {
         customerDataTrackers.set(type, createCustomerDataTracker(checkCustomerDataLimit));
       }
       return customerDataTrackers.get(type);
     },
-    setCompressionStatus: function setCompressionStatus(newCompressionStatus) {
+    setCompressionStatus: newCompressionStatus => {
       if (compressionStatus === CustomerDataCompressionStatus.Unknown) {
         compressionStatus = newCompressionStatus;
         checkCustomerDataLimit();
       }
     },
-    getCompressionStatus: function getCompressionStatus() {
-      return compressionStatus;
-    },
-    stop: function stop() {
-      customerDataTrackers.forEach(function (tracker) {
-        return tracker.stop();
-      });
+    getCompressionStatus: () => compressionStatus,
+    stop: () => {
+      customerDataTrackers.forEach(tracker => tracker.stop());
       customerDataTrackers.clear();
     }
   };
 }
 function createCustomerDataTracker(checkCustomerDataLimit) {
-  var bytesCountCache = 0;
+  let bytesCountCache = 0;
 
   // Throttle the bytes computation to minimize the impact on performance.
   // Especially useful if the user call context APIs synchronously multiple times in a row
-  var _throttle = throttle(function (context) {
-      bytesCountCache = computeBytesCount(jsonStringify_jsonStringify(context));
-      checkCustomerDataLimit();
-    }, BYTES_COMPUTATION_THROTTLING_DELAY),
-    computeBytesCountThrottled = _throttle.throttled,
-    cancelComputeBytesCount = _throttle.cancel;
-  var resetBytesCount = function resetBytesCount() {
+  const {
+    throttled: computeBytesCountThrottled,
+    cancel: cancelComputeBytesCount
+  } = throttle(context => {
+    bytesCountCache = computeBytesCount(jsonStringify_jsonStringify(context));
+    checkCustomerDataLimit();
+  }, BYTES_COMPUTATION_THROTTLING_DELAY);
+  const resetBytesCount = () => {
     cancelComputeBytesCount();
     bytesCountCache = 0;
   };
   return {
-    updateCustomerData: function updateCustomerData(context) {
+    updateCustomerData: context => {
       if (isEmptyObject(context)) {
         resetBytesCount();
       } else {
@@ -5835,10 +5899,8 @@ function createCustomerDataTracker(checkCustomerDataLimit) {
       }
     },
     resetCustomerData: resetBytesCount,
-    getBytesCount: function getBytesCount() {
-      return bytesCountCache;
-    },
-    stop: function stop() {
+    getBytesCount: () => bytesCountCache,
+    stop: () => {
       cancelComputeBytesCount();
     }
   };
@@ -5853,10 +5915,10 @@ function createIdentityEncoder() {
   var outputBytesCount = 0;
   return {
     isAsync: false,
-    isEmpty: function isEmpty() {
+    isEmpty: function () {
       return !output;
     },
-    write: function write(data, callback) {
+    write: function (data, callback) {
       var additionalEncodedBytesCount = computeBytesCount(data);
       outputBytesCount += additionalEncodedBytesCount;
       output += data;
@@ -5864,21 +5926,21 @@ function createIdentityEncoder() {
         callback(additionalEncodedBytesCount);
       }
     },
-    finish: function finish(callback) {
+    finish: function (callback) {
       callback(this.finishSync());
     },
-    finishSync: function finishSync() {
+    finishSync: function () {
       var result = {
         output: output,
         outputBytesCount: outputBytesCount,
         rawBytesCount: outputBytesCount,
-        pendingData: ''
+        pendingData: []
       };
       output = '';
       outputBytesCount = 0;
       return result;
     },
-    estimateEncodedBytesCount: function estimateEncodedBytesCount(data) {
+    estimateEncodedBytesCount: function (data) {
       return data.length;
     }
   };
@@ -5930,8 +5992,8 @@ polyfills_WeakSet.prototype.add = function (value) {
   this.map.set(value, PLACEHOLDER);
   return this;
 };
-polyfills_WeakSet.prototype["delete"] = function (value) {
-  return this.map["delete"](value);
+polyfills_WeakSet.prototype.delete = function (value) {
+  return this.map.delete(value);
 };
 polyfills_WeakSet.prototype.has = function (value) {
   return this.map.has(value);
@@ -6009,9 +6071,9 @@ var RumSessionPlan = {
   WITH_SESSION_REPLAY: 2,
   WITH_ERROR_SESSION_REPLAY: 3
 };
-var ERROR_SESSION = '1';
+const ERROR_SESSION = '1';
 var RumTrackingType = {
-  NOT_TRACKED: '0',
+  NOT_TRACKED: SESSION_NOT_TRACKED,
   // Note: the "tracking type" value (stored in the session cookie) does not match the "session
   // plan" value (sent in RUM events). This is expected, and was done to keep retrocompatibility
   // with active sessions when upgrading the SDK.
@@ -6033,25 +6095,36 @@ function startRumSessionManager(configuration, lifeCycle) {
   sessionManager.renewObservable.subscribe(function () {
     lifeCycle.notify(LifeCycleEventType.SESSION_RENEWED);
   });
-  sessionManager.sessionStateUpdateObservable.subscribe(function (_ref) {
-    var previousState = _ref.previousState,
-      newState = _ref.newState;
+  sessionManager.sessionStateUpdateObservable.subscribe(_ref => {
+    let {
+      previousState,
+      newState
+    } = _ref;
     if (!previousState.hasError && newState.hasError) {
-      var sessionEntity = sessionManager.findSession();
+      const sessionEntity = sessionManager.findSession();
       if (sessionEntity) {
         sessionEntity.hasError = true;
         sessionEntity.ets = newState.ets || timeStampNow();
       }
     }
+    if (!previousState.forcedSession && newState.forcedSession) {
+      const sessionEntity = sessionManager.findSession();
+      if (sessionEntity) {
+        sessionEntity.isSessionForced = true;
+      }
+    }
   });
   return {
-    findTrackedSession: function findTrackedSession(startTime) {
+    findTrackedSession: function (startTime) {
       var session = sessionManager.findSession(startTime);
-      if (!session || !isTypeTracked(session.trackingType)) {
+      if (!session) {
         return;
       }
-      var isErrorSession = session.trackingType === RumTrackingType.TRACKED_WITH_ERROR_SESSION_AND_WITHOUT_SESSION_REPLAY || session.trackingType === RumTrackingType.TRACKED_WITH_ERROR_SESSION_AND_WITH_SESSION_REPLAY || session.trackingType === RumTrackingType.TRACKED_WITH_ERROR_SESSION_AND_WITH_ERROR_SESSION_REPLAY;
-      var plan = RumSessionPlan.WITHOUT_SESSION_REPLAY;
+      if (!isTypeTracked(session.trackingType) && !session.isSessionForced) {
+        return;
+      }
+      const isErrorSession = session.trackingType === RumTrackingType.TRACKED_WITH_ERROR_SESSION_AND_WITHOUT_SESSION_REPLAY || session.trackingType === RumTrackingType.TRACKED_WITH_ERROR_SESSION_AND_WITH_SESSION_REPLAY || session.trackingType === RumTrackingType.TRACKED_WITH_ERROR_SESSION_AND_WITH_ERROR_SESSION_REPLAY;
+      let plan = RumSessionPlan.WITHOUT_SESSION_REPLAY;
       if (session.trackingType === RumTrackingType.TRACKED_WITH_SESSION_AND_WITH_SESSION_REPLAY || session.trackingType === RumTrackingType.TRACKED_WITH_ERROR_SESSION_AND_WITH_SESSION_REPLAY) {
         plan = RumSessionPlan.WITH_SESSION_REPLAY;
       } else if (session.trackingType === RumTrackingType.TRACKED_WITH_ERROR_SESSION_AND_WITH_ERROR_SESSION_REPLAY || session.trackingType === RumTrackingType.TRACKED_WITH_SESSION_AND_WITH_ERROR_SESSION_REPLAY) {
@@ -6064,16 +6137,20 @@ function startRumSessionManager(configuration, lifeCycle) {
         sessionHasError: session.hasError,
         isErrorSession: isErrorSession,
         sessionErrorTimestamp: session.ets,
-        sessionReplayAllowed: plan === RumSessionPlan.WITH_SESSION_REPLAY || plan === RumSessionPlan.WITH_ERROR_SESSION_REPLAY
+        isSessionForced: session.isSessionForced,
+        sessionReplayAllowed: plan === RumSessionPlan.WITH_SESSION_REPLAY || plan === RumSessionPlan.WITH_ERROR_SESSION_REPLAY || session.isSessionForced
       };
     },
     expire: sessionManager.expire,
     expireObservable: sessionManager.expireObservable,
     sessionStateUpdateObservable: sessionManager.sessionStateUpdateObservable,
-    setErrorForSession: function setErrorForSession() {
-      return sessionManager.updateSessionState({
-        hasError: '1',
-        ets: timeStampNow()
+    setErrorForSession: () => sessionManager.updateSessionState({
+      hasError: '1',
+      ets: timeStampNow()
+    }),
+    setForcedSession: () => {
+      sessionManager.updateSessionState({
+        forcedSession: '1'
       });
     }
   };
@@ -6086,14 +6163,14 @@ function startRumSessionManager(configuration, lifeCycle) {
 function startRumSessionManagerStub() {
   // var session = {
   //   id: '00000000-aaaa-0000-aaaa-000000000000',
-  //   plan: RumSessionPlan.WITHOUT_SESSION_REPLAY, // plan value should not be taken into account for mobile
   //   isErrorSession: false,
   //   sessionErrorTimestamp: 0,
   //   sessionReplayAllowed: bridgeSupports(BridgeCapability.RECORDS)
   //     ? true
   //     : false,
   //   errorSessionReplayAllowed: false,
-  //   sessionHasError: false
+  //   sessionHasError: false,
+  //   isSessionForced: false
   // }
   // return {
   //   findTrackedSession: function () {
@@ -6101,18 +6178,26 @@ function startRumSessionManagerStub() {
   //   },
   //   expire: noop,
   //   expireObservable: new Observable(),
-  //   setErrorForSession: function () {}
+  //   setErrorForSession: function () {
+  //     session.sessionErrorTimestamp = timeStampNow()
+  //     session.sessionHasError = true
+  //     session.isErrorSession = true
+  //     session.errorSessionReplayAllowed = true
+  //   },
+  //   setForcedSession: noop
   // }
 }
 function computeSessionState(configuration, rawTrackingType) {
-  var sessionSampleRate = configuration.sessionSampleRate,
-    sessionOnErrorSampleRate = configuration.sessionOnErrorSampleRate,
-    sessionReplaySampleRate = configuration.sessionReplaySampleRate,
-    sessionReplayOnErrorSampleRate = configuration.sessionReplayOnErrorSampleRate;
-  var isSession = performDraw(sessionSampleRate);
-  var isErrorSession = performDraw(sessionOnErrorSampleRate);
-  var isSessionReplay = performDraw(sessionReplaySampleRate);
-  var isErrorSessionReplay = performDraw(sessionReplayOnErrorSampleRate);
+  const {
+    sessionSampleRate,
+    sessionOnErrorSampleRate,
+    sessionReplaySampleRate,
+    sessionReplayOnErrorSampleRate
+  } = configuration;
+  const isSession = performDraw(sessionSampleRate);
+  const isErrorSession = performDraw(sessionOnErrorSampleRate);
+  const isSessionReplay = performDraw(sessionReplaySampleRate);
+  const isErrorSessionReplay = performDraw(sessionReplayOnErrorSampleRate);
   var trackingType;
   if (hasValidRumSession(rawTrackingType)) {
     trackingType = rawTrackingType;
@@ -6179,16 +6264,20 @@ function initUsrLocalStorage() {
   }
   return usrCacheId;
 }
-var startCacheUsrCache = function startCacheUsrCache(configuration) {
-  if (!configuration.sessionStoreStrategyType) return;
-  var usrCacheId;
-  if (configuration.sessionStoreStrategyType.type === 'Cookie') {
+var startCacheUsrCache = function (configuration) {
+  if (!configuration.sessionStoreStrategyType) {
+    return {
+      getId: tools_noop
+    };
+  }
+  let usrCacheId;
+  if (configuration.sessionStoreStrategyType.type === SessionPersistence.COOKIE) {
     usrCacheId = initUsrCookie(configuration.sessionStoreStrategyType.cookieOptions);
   } else {
     usrCacheId = initUsrLocalStorage();
   }
   return {
-    getId: function getId() {
+    getId: function () {
       return usrCacheId;
     }
   };
@@ -6279,17 +6368,17 @@ function createLocationChangeObservable(location) {
 }
 function trackHistory(onHistoryChange) {
   // eslint-disable-next-line @typescript-eslint/unbound-method
-  var pushState = instrumentMethod(History.prototype, 'pushState', function (params) {
+  var pushState = instrumentMethod(getHistoryInstrumentationTarget('pushState'), 'pushState', function (params) {
     var onPostCall = params.onPostCall;
     onPostCall(onHistoryChange);
   });
-  var replaceState = instrumentMethod(History.prototype, 'replaceState', function (params) {
+  var replaceState = instrumentMethod(getHistoryInstrumentationTarget('replaceState'), 'replaceState', function (params) {
     var onPostCall = params.onPostCall;
     onPostCall(onHistoryChange);
   });
   var popState = addEventListener(window, DOM_EVENT.POP_STATE, onHistoryChange);
   return {
-    stop: function stop() {
+    stop: function () {
       pushState.stop();
       replaceState.stop();
       popState.stop();
@@ -6299,693 +6388,10 @@ function trackHistory(onHistoryChange) {
 function trackHash(onHashChange) {
   return addEventListener(window, DOM_EVENT.HASH_CHANGE, onHashChange);
 }
-;// CONCATENATED MODULE: ./src/domain/contexts/pageStateHistory.js
-
-
-// Arbitrary value to cap number of element for memory consumption in the browser
-var MAX_PAGE_STATE_ENTRIES = 4000;
-// Arbitrary value to cap number of element for backend & to save bandwidth
-var MAX_PAGE_STATE_ENTRIES_SELECTABLE = 500;
-var PAGE_STATE_CONTEXT_TIME_OUT_DELAY = SESSION_TIME_OUT_DELAY;
-var PageState = {
-  ACTIVE: 'active',
-  PASSIVE: 'passive',
-  HIDDEN: 'hidden',
-  FROZEN: 'frozen',
-  TERMINATED: 'terminated'
-};
-function startPageStateHistory(maxPageStateEntriesSelectable) {
-  if (maxPageStateEntriesSelectable === undefined) {
-    maxPageStateEntriesSelectable = MAX_PAGE_STATE_ENTRIES_SELECTABLE;
-  }
-  var pageStateEntryHistory = createValueHistory({
-    expireDelay: PAGE_STATE_CONTEXT_TIME_OUT_DELAY,
-    maxEntries: MAX_PAGE_STATE_ENTRIES
-  });
-  var currentPageState;
-  addPageState(getPageState(), tools_relativeNow());
-  var _addEventListeners = addEventListeners(window, [DOM_EVENT.PAGE_SHOW, DOM_EVENT.FOCUS, DOM_EVENT.BLUR, DOM_EVENT.VISIBILITY_CHANGE, DOM_EVENT.RESUME, DOM_EVENT.FREEZE, DOM_EVENT.PAGE_HIDE], function (event) {
-    // Only get events fired by the browser to avoid false currentPageState changes done with custom events
-    addPageState(computePageState(event), event.timeStamp);
-  }, {
-    capture: true
-  });
-  var stopEventListeners = _addEventListeners.stop;
-  function addPageState(nextPageState, startTime) {
-    if (startTime === undefined) {
-      startTime = tools_relativeNow();
-    }
-    if (nextPageState === currentPageState) {
-      return;
-    }
-    currentPageState = nextPageState;
-    pageStateEntryHistory.closeActive(startTime);
-    pageStateEntryHistory.add({
-      state: currentPageState,
-      startTime: startTime
-    }, startTime);
-  }
-  var pageStateHistory = {
-    findAll: function findAll(eventStartTime, duration) {
-      var pageStateEntries = pageStateEntryHistory.findAll(eventStartTime, duration);
-      if (pageStateEntries.length === 0) {
-        return;
-      }
-      var pageStateServerEntries = [];
-      // limit the number of entries to return
-      var limit = Math.max(0, pageStateEntries.length - maxPageStateEntriesSelectable);
-
-      // loop page state entries backward to return the selected ones in desc order
-      for (var index = pageStateEntries.length - 1; index >= limit; index--) {
-        var pageState = pageStateEntries[index];
-        // compute the start time relative to the event start time (ex: to be relative to the view start time)
-        var relativeStartTime = tools_elapsed(eventStartTime, pageState.startTime);
-        pageStateServerEntries.push({
-          state: pageState.state,
-          start: toServerDuration(relativeStartTime)
-        });
-      }
-      return pageStateServerEntries;
-    },
-    wasInPageStateAt: function wasInPageStateAt(state, startTime) {
-      return pageStateHistory.wasInPageStateDuringPeriod(state, startTime, 0);
-    },
-    wasInPageStateDuringPeriod: function wasInPageStateDuringPeriod(state, startTime, duration) {
-      return pageStateEntryHistory.findAll(startTime, duration).some(function (pageState) {
-        return pageState.state === state;
-      });
-    },
-    addPageState: addPageState,
-    stop: function stop() {
-      stopEventListeners();
-      pageStateEntryHistory.stop();
-    }
-  };
-  return pageStateHistory;
-}
-function computePageState(event) {
-  if (event.type === DOM_EVENT.FREEZE) {
-    return PageState.FROZEN;
-  } else if (event.type === DOM_EVENT.PAGE_HIDE) {
-    return event.persisted ? PageState.FROZEN : PageState.TERMINATED;
-  }
-  return getPageState();
-}
-function getPageState() {
-  if (document.visibilityState === 'hidden') {
-    return PageState.HIDDEN;
-  }
-  if (document.hasFocus()) {
-    return PageState.ACTIVE;
-  }
-  return PageState.PASSIVE;
-}
-;// CONCATENATED MODULE: ./src/domain/rumEventsCollection/actions/actionCollection.js
-
-// import { trackClickActions } from './trackClickActions'
-
-function startActionCollection(lifeCycle, domMutationObservable, configuration, pageStateHistory) {
-  lifeCycle.subscribe(LifeCycleEventType.AUTO_ACTION_COMPLETED, function (action) {
-    lifeCycle.notify(LifeCycleEventType.RAW_RUM_EVENT_COLLECTED, processAction(action, pageStateHistory));
-  });
-  var actionContexts = {
-    findActionId: tools_noop,
-    findAllActionId: tools_noop
-  };
-  // if (configuration.trackUserInteractions) {
-  //   actionContexts = trackClickActions(
-  //     lifeCycle,
-  //     domMutationObservable,
-  //     configuration
-  //   ).actionContexts
-  // }
-  return {
-    actionContexts: actionContexts,
-    addAction: function addAction(action, savedCommonContext) {
-      lifeCycle.notify(LifeCycleEventType.RAW_RUM_EVENT_COLLECTED, extend({
-        savedCommonContext: savedCommonContext
-      }, processAction(action, pageStateHistory)));
-    }
-  };
-}
-function processAction(action, pageStateHistory) {
-  var autoActionProperties = isAutoAction(action) ? {
-    action: {
-      error: {
-        count: action.counts.errorCount
-      },
-      id: action.id,
-      loadingTime: discardNegativeDuration(toServerDuration(action.duration)),
-      frustration: {
-        type: action.frustrationTypes
-      },
-      long_task: {
-        count: action.counts.longTaskCount
-      },
-      resource: {
-        count: action.counts.resourceCount
-      }
-    },
-    _gc: {
-      action: {
-        target: action.target,
-        position: action.position
-      }
-    }
-  } : {
-    action: {
-      loadingTime: 0
-    }
-  };
-  var customerContext = !isAutoAction(action) ? action.context : undefined;
-  var actionEvent = extend2Lev({
-    action: {
-      id: UUID(),
-      target: {
-        name: action.name
-      },
-      type: action.type
-    },
-    date: action.startClocks.timeStamp,
-    type: RumEventType.ACTION,
-    view: {
-      in_foreground: pageStateHistory.wasInPageStateAt(PageState.ACTIVE, action.startClocks.relative)
-    }
-  }, autoActionProperties);
-  return {
-    customerContext: customerContext,
-    rawRumEvent: actionEvent,
-    startTime: action.startClocks.relative,
-    domainContext: isAutoAction(action) ? {
-      event: action.event,
-      events: action.events
-    } : {}
-  };
-}
-function isAutoAction(action) {
-  return action.type !== ActionType.CUSTOM;
-}
-;// CONCATENATED MODULE: ./src/transport/startRumBatch.js
-
-// import { DeflateEncoderStreamId } from '../domain/deflate'
-function startRumBatch(configuration, lifeCycle, telemetryEventObservable, reportError, pageExitObservable, sessionExpireObservable, createEncoder) {
-  var batch = startBatchWithReplica(configuration, {
-    endpoint: configuration.rumEndpoint,
-    encoder: createEncoder(2) // DeflateEncoderStreamId.RUM
-  }, reportError, pageExitObservable, sessionExpireObservable);
-  lifeCycle.subscribe(LifeCycleEventType.RUM_EVENT_COLLECTED, function (serverRumEvent) {
-    // NOTE: upsert 和 add 其实是同一个方法；只是 upsert 会根据 key 来覆盖之前的内容
-    if (serverRumEvent.type === RumEventType.VIEW) {
-      batch.upsert(serverRumEvent, serverRumEvent.view.id);
-    } else {
-      batch.add(serverRumEvent);
-    }
-  });
-  // telemetryEventObservable.subscribe(function (event) {
-  //   batch.add(event)
-  // })
-  return batch;
-}
-;// CONCATENATED MODULE: ./src/domain/assembly.js
-
-function assembly_ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
-function assembly_objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? assembly_ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : assembly_ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
-
-var SessionType = {
-  SYNTHETICS: 'synthetics',
-  USER: 'user'
-};
-var VIEW_MODIFIABLE_FIELD_PATHS = {
-  'view.url': 'string',
-  'view.referrer': 'string'
-};
-var USER_CUSTOMIZABLE_FIELD_PATHS = {
-  context: 'object'
-};
-var ROOT_MODIFIABLE_FIELD_PATHS = {
-  service: 'string',
-  version: 'string'
-};
-var modifiableFieldPathsByEvent = {};
-function startRumAssembly(configuration, lifeCycle, sessionManager, userSessionManager, viewContexts, urlContexts, actionContexts, displayContext, getCommonContext, reportError) {
-  modifiableFieldPathsByEvent[RumEventType.VIEW] = assembly_objectSpread(assembly_objectSpread({}, USER_CUSTOMIZABLE_FIELD_PATHS), VIEW_MODIFIABLE_FIELD_PATHS);
-  modifiableFieldPathsByEvent[RumEventType.ERROR] = tools_assign({
-    'error.message': 'string',
-    'error.stack': 'string',
-    'error.resource.url': 'string'
-  }, USER_CUSTOMIZABLE_FIELD_PATHS, VIEW_MODIFIABLE_FIELD_PATHS, ROOT_MODIFIABLE_FIELD_PATHS);
-  modifiableFieldPathsByEvent[RumEventType.RESOURCE] = tools_assign({
-    'resource.url': 'string'
-  }, USER_CUSTOMIZABLE_FIELD_PATHS, VIEW_MODIFIABLE_FIELD_PATHS, ROOT_MODIFIABLE_FIELD_PATHS);
-  modifiableFieldPathsByEvent[RumEventType.ACTION] = tools_assign({
-    'action.target.name': 'string'
-  }, USER_CUSTOMIZABLE_FIELD_PATHS, VIEW_MODIFIABLE_FIELD_PATHS, ROOT_MODIFIABLE_FIELD_PATHS);
-  modifiableFieldPathsByEvent[RumEventType.LONG_TASK] = tools_assign({}, USER_CUSTOMIZABLE_FIELD_PATHS, VIEW_MODIFIABLE_FIELD_PATHS);
-  var eventRateLimiters = {};
-  eventRateLimiters[RumEventType.ERROR] = createEventRateLimiter(RumEventType.ERROR, configuration.eventRateLimiterThreshold, reportError);
-  eventRateLimiters[RumEventType.ACTION] = createEventRateLimiter(RumEventType.ACTION, configuration.eventRateLimiterThreshold, reportError);
-  lifeCycle.subscribe(LifeCycleEventType.RAW_RUM_EVENT_COLLECTED, function (data) {
-    var startTime = data.startTime;
-    var rawRumEvent = data.rawRumEvent;
-    var savedCommonContext = data.savedCommonContext;
-    var customerContext = data.customerContext;
-    var domainContext = data.domainContext;
-    var viewContext = viewContexts.findView(startTime);
-    var urlContext = urlContexts.findUrl(startTime);
-    var session = sessionManager.findTrackedSession(startTime);
-    if (session && session.isErrorSession && !session.sessionHasError) return;
-    if (session && viewContext && urlContext) {
-      var actionId = actionContexts.findActionId(startTime);
-      var actionIds = actionContexts.findAllActionId(startTime);
-      var commonContext = savedCommonContext || getCommonContext();
-      var rumContext = {
-        _gc: {
-          sdkName: configuration.sdkName,
-          sdkVersion: configuration.sdkVersion,
-          drift: currentDrift(),
-          configuration: {
-            session_sample_rate: round(configuration.sessionSampleRate, 3),
-            session_replay_sample_rate: round(configuration.sessionReplaySampleRate, 3),
-            session_on_error_sample_rate: round(configuration.sessionOnErrorSampleRate, 3),
-            session_replay_on_error_sample_rate: round(configuration.sessionReplayOnErrorSampleRate, 3)
-          }
-        },
-        terminal: {
-          type: 'web'
-        },
-        application: {
-          id: configuration.applicationId
-        },
-        device: deviceInfo,
-        webview: {},
-        env: configuration.env || '',
-        service: viewContext.service || configuration.service || 'browser',
-        version: viewContext.version || configuration.version || '',
-        source: 'browser',
-        date: timeStampNow(),
-        user: {
-          id: userSessionManager.getId(),
-          is_signin: 'F',
-          is_login: false
-        },
-        session: {
-          // must be computed on each event because synthetics instrumentation can be done after sdk execution
-          // cf https://github.com/puppeteer/puppeteer/issues/3667
-          type: getSessionType(),
-          id: session.id
-        },
-        view: {
-          id: viewContext.id,
-          name: viewContext.name || urlContext.path,
-          url: urlContext.url,
-          referrer: urlContext.referrer,
-          host: urlContext.host,
-          path: urlContext.path,
-          pathGroup: urlContext.pathGroup,
-          urlQuery: urlContext.urlQuery
-        },
-        action: needToAssembleWithAction(rawRumEvent) && actionId ? {
-          id: actionId,
-          ids: actionIds
-        } : undefined,
-        display: displayContext.get()
-      };
-      var rumEvent = extend2Lev(rumContext, viewContext, rawRumEvent);
-      var serverRumEvent = withSnakeCaseKeys(rumEvent);
-      var context = extend2Lev({}, commonContext.context, viewContext.context, customerContext);
-      if (!isEmptyObject(context)) {
-        serverRumEvent.context = context;
-      }
-      if (!('has_replay' in serverRumEvent.session)) {
-        serverRumEvent.session.has_replay = commonContext.hasReplay;
-      }
-      if (session.errorSessionReplayAllowed) {
-        serverRumEvent.session.has_replay = serverRumEvent.session.has_replay && session.sessionHasError;
-      }
-      if (serverRumEvent.type === 'view') {
-        serverRumEvent.session.sampled_for_error_replay = session.errorSessionReplayAllowed;
-        serverRumEvent.session.sampled_for_error_session = session.isErrorSession;
-        serverRumEvent.session.error_timestamp_for_session = session.sessionErrorTimestamp;
-      }
-      if (!isEmptyObject(commonContext.context.device)) {
-        serverRumEvent.device = extend2Lev(serverRumEvent.device, commonContext.context.device);
-      }
-      if (!isEmptyObject(commonContext.context.webview)) {
-        serverRumEvent.webview = extend2Lev(serverRumEvent.webview, commonContext.context.webview);
-      }
-      if (!isEmptyObject(commonContext.user)) {
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-        serverRumEvent.user = extend2Lev(serverRumEvent.user, {
-          is_signin: 'T',
-          is_login: true
-        }, commonContext.user);
-      }
-      if (shouldSend(serverRumEvent, configuration.beforeSend, domainContext, eventRateLimiters)) {
-        if (isEmptyObject(serverRumEvent.context)) {
-          delete serverRumEvent.context;
-        }
-        lifeCycle.notify(LifeCycleEventType.RUM_EVENT_COLLECTED, serverRumEvent);
-      }
-    }
-  });
-}
-function shouldSend(event, beforeSend, domainContext, eventRateLimiters) {
-  if (beforeSend) {
-    var result = limitModification(event, modifiableFieldPathsByEvent[event.type], function (event) {
-      return beforeSend(event, domainContext);
-    });
-    if (result === false && event.type !== RumEventType.VIEW) {
-      return false;
-    }
-    if (result === false) {
-      display.warn("Can't dismiss view events using beforeSend!");
-    }
-  }
-  var rateLimitReached = false;
-  if (eventRateLimiters[event.type]) {
-    rateLimitReached = eventRateLimiters[event.type].isLimitReached();
-  }
-  return !rateLimitReached;
-}
-function needToAssembleWithAction(event) {
-  return [RumEventType.ERROR, RumEventType.RESOURCE, RumEventType.LONG_TASK].indexOf(event.type) !== -1;
-}
-function getSessionType() {
-  return window._DATAFLUX_SYNTHETICS_BROWSER === undefined ? SessionType.USER : SessionType.SYNTHETICS;
-}
-;// CONCATENATED MODULE: ./src/domain/initViewportObservable.js
-
-var viewportObservable;
-function initViewportObservable() {
-  if (!viewportObservable) {
-    viewportObservable = createViewportObservable();
-  }
-  return viewportObservable;
-}
-function createViewportObservable() {
-  return new Observable(function (observable) {
-    var _throttledUpdateDimension = throttle(function () {
-      observable.notify(getViewportDimension());
-    }, 200);
-    var updateDimension = _throttledUpdateDimension.throttled;
-    return addEventListener(window, DOM_EVENT.RESIZE, updateDimension, {
-      capture: true,
-      passive: true
-    }).stop;
-  });
-}
-
-// excludes the width and height of any rendered classic scrollbar that is fixed to the visual viewport
-function getViewportDimension() {
-  var visual = window.visualViewport;
-  if (visual) {
-    return {
-      width: Number(visual.width * visual.scale),
-      height: Number(visual.height * visual.scale)
-    };
-  }
-  return {
-    width: Number(window.innerWidth || 0),
-    height: Number(window.innerHeight || 0)
-  };
-}
-;// CONCATENATED MODULE: ./src/domain/contexts/displayContext.js
-
-function startDisplayContext() {
-  var viewport = getViewportDimension();
-  var unsubscribeViewport = initViewportObservable().subscribe(function (viewportDimension) {
-    viewport = viewportDimension;
-  }).unsubscribe;
-  return {
-    get: function get() {
-      return {
-        viewport: viewport
-      };
-    },
-    stop: unsubscribeViewport
-  };
-}
-;// CONCATENATED MODULE: ./src/domain/contexts/internalContext.js
-/**
- * Internal context keep returning v1 format
- * to not break compatibility with logs data format
- */
-function startInternalContext(applicationId, sessionManager, viewContexts, actionContexts, urlContexts) {
-  return {
-    get: function get(startTime) {
-      var viewContext = viewContexts.findView(startTime);
-      var urlContext = urlContexts.findUrl(startTime);
-      var session = sessionManager.findTrackedSession(startTime);
-      if (session && viewContext && urlContext) {
-        var actionId = actionContexts.findActionId(startTime);
-        var actionIds = actionContexts.findAllActionId(startTime);
-        return {
-          application: {
-            id: applicationId
-          },
-          session: {
-            id: session.id
-          },
-          userAction: actionId ? {
-            id: actionId,
-            ids: actionIds
-          } : undefined,
-          view: {
-            id: viewContext.id,
-            name: viewContext.name || urlContext.path,
-            url: urlContext.url,
-            referrer: urlContext.referrer,
-            host: urlContext.host,
-            path: urlContext.path,
-            pathGroup: urlContext.pathGroup,
-            urlQuery: urlContext.urlQuery
-          }
-        };
-      }
-    }
-  };
-}
-;// CONCATENATED MODULE: ./src/domain/contexts/urlContexts.js
-
-
-/**
- * We want to attach to an event:
- * - the url corresponding to its start
- * - the referrer corresponding to the previous view url (or document referrer for initial view)
- */
-
-var URL_CONTEXT_TIME_OUT_DELAY = SESSION_TIME_OUT_DELAY;
-function startUrlContexts(lifeCycle, locationChangeObservable, location) {
-  var urlContextHistory = createValueHistory({
-    expireDelay: URL_CONTEXT_TIME_OUT_DELAY
-  });
-  var previousViewUrl;
-  lifeCycle.subscribe(LifeCycleEventType.BEFORE_VIEW_CREATED, function (data) {
-    var viewUrl = location.href;
-    urlContextHistory.add(buildUrlContext({
-      url: viewUrl,
-      location: location,
-      referrer: !previousViewUrl ? document.referrer : previousViewUrl
-    }), data.startClocks.relative);
-    previousViewUrl = viewUrl;
-  });
-  lifeCycle.subscribe(LifeCycleEventType.AFTER_VIEW_ENDED, function (data) {
-    urlContextHistory.closeActive(data.endClocks.relative);
-  });
-  var locationChangeSubscription = locationChangeObservable.subscribe(function (data) {
-    var current = urlContextHistory.find();
-    if (current) {
-      var changeTime = tools_relativeNow();
-      urlContextHistory.closeActive(changeTime);
-      urlContextHistory.add(buildUrlContext({
-        url: data.newLocation.href,
-        location: data.newLocation,
-        referrer: current.referrer
-      }), changeTime);
-    }
-  });
-  function buildUrlContext(data) {
-    var path = data.location.pathname;
-    var hash = data.location.hash;
-    if (hash && !isHashAnAnchor(hash)) {
-      path = '/' + getPathFromHash(hash);
-    }
-    return {
-      url: data.url,
-      referrer: data.referrer,
-      host: data.location.host,
-      path: path,
-      pathGroup: replaceNumberCharByPath(path),
-      urlQuery: getQueryParamsFromUrl(data.location.href)
-    };
-  }
-  return {
-    findUrl: function findUrl(startTime) {
-      return urlContextHistory.find(startTime);
-    },
-    stop: function stop() {
-      locationChangeSubscription.unsubscribe();
-      urlContextHistory.stop();
-    }
-  };
-}
-;// CONCATENATED MODULE: ./src/domain/contexts/viewContexts.js
-
-var VIEW_CONTEXT_TIME_OUT_DELAY = SESSION_TIME_OUT_DELAY;
-function startViewContexts(lifeCycle) {
-  var viewContextHistory = createValueHistory({
-    expireDelay: VIEW_CONTEXT_TIME_OUT_DELAY
-  });
-  lifeCycle.subscribe(LifeCycleEventType.BEFORE_VIEW_CREATED, function (view) {
-    viewContextHistory.add(buildViewContext(view), view.startClocks.relative);
-  });
-  lifeCycle.subscribe(LifeCycleEventType.AFTER_VIEW_ENDED, function (data) {
-    viewContextHistory.closeActive(data.endClocks.relative);
-  });
-  lifeCycle.subscribe(LifeCycleEventType.BEFORE_VIEW_UPDATED, function (viewUpdate) {
-    var currentView = viewContextHistory.find(viewUpdate.startClocks.relative);
-    if (currentView && viewUpdate.name) {
-      currentView.name = viewUpdate.name;
-    }
-    if (currentView && viewUpdate.context) {
-      currentView.context = viewUpdate.context;
-    }
-  });
-  lifeCycle.subscribe(LifeCycleEventType.SESSION_RENEWED, function () {
-    viewContextHistory.reset();
-  });
-  function buildViewContext(view) {
-    return {
-      service: view.service,
-      version: view.version,
-      context: view.context,
-      id: view.id,
-      name: view.name,
-      startClocks: view.startClocks
-    };
-  }
-  return {
-    findView: function findView(startTime) {
-      return viewContextHistory.find(startTime);
-    },
-    stop: function stop() {
-      viewContextHistory.stop();
-    }
-  };
-}
-;// CONCATENATED MODULE: ./src/domain/rumEventsCollection/error/trackConsoleError.js
-
-function trackConsoleError(errorObservable) {
-  var subscription = initConsoleObservable([ConsoleApiName.error]).subscribe(function (consoleLog) {
-    errorObservable.notify(consoleLog.error);
-  });
-  return {
-    stop: function stop() {
-      subscription.unsubscribe();
-    }
-  };
-}
-;// CONCATENATED MODULE: ./src/domain/rumEventsCollection/error/trackReportError.js
-
-function trackReportError(configuration, errorObservable) {
-  var subscription = initReportObservable(configuration, [(RawReportType.cspViolation, RawReportType.intervention)]).subscribe(function (reportError) {
-    errorObservable.notify({
-      startClocks: clocksNow(),
-      message: reportError.message,
-      stack: reportError.stack,
-      type: reportError.subtype,
-      source: errorTools_ErrorSource.REPORT,
-      handling: enums_ErrorHandling.UNHANDLED
-    });
-  });
-  return {
-    stop: function stop() {
-      subscription.unsubscribe();
-    }
-  };
-}
-;// CONCATENATED MODULE: ./src/domain/rumEventsCollection/error/errorCollection.js
-
-
-
-
-function startErrorCollection(lifeCycle, configuration, sessionManager, pageStateHistory) {
-  var errorObservable = new Observable();
-  trackConsoleError(errorObservable);
-  trackRuntimeError(errorObservable);
-  trackReportError(configuration, errorObservable);
-  var session = sessionManager.findTrackedSession();
-  var hasError = session.isErrorSession && session.sessionHasError;
-  if (session.isErrorSession) {
-    lifeCycle.subscribe(LifeCycleEventType.SESSION_RENEWED, function () {
-      hasError = false;
-    });
-  }
-  errorObservable.subscribe(function (error) {
-    if (session.isErrorSession && !hasError) {
-      sessionManager.setErrorForSession();
-      hasError = true;
-    }
-    lifeCycle.notify(LifeCycleEventType.RAW_ERROR_COLLECTED, {
-      error: error
-    });
-  });
-  return doStartErrorCollection(lifeCycle, pageStateHistory);
-}
-function doStartErrorCollection(lifeCycle, pageStateHistory) {
-  lifeCycle.subscribe(LifeCycleEventType.RAW_ERROR_COLLECTED, function (error) {
-    lifeCycle.notify(LifeCycleEventType.RAW_RUM_EVENT_COLLECTED, tools_assign({
-      customerContext: error.customerContext,
-      savedCommonContext: error.savedCommonContext
-    }, processError(error.error, pageStateHistory)));
-  });
-  return {
-    addError: function addError(providedError, savedCommonContext) {
-      var error = providedError.error;
-      var stackTrace = error instanceof Error ? computeStackTrace(error) : undefined;
-      var rawError = computeRawError({
-        stackTrace: stackTrace,
-        originalError: error,
-        handlingStack: providedError.handlingStack,
-        startClocks: providedError.startClocks,
-        nonErrorPrefix: NonErrorPrefix.PROVIDED,
-        source: errorTools_ErrorSource.CUSTOM,
-        handling: enums_ErrorHandling.HANDLED
-      });
-      lifeCycle.notify(LifeCycleEventType.RAW_ERROR_COLLECTED, {
-        customerContext: providedError.context,
-        savedCommonContext: savedCommonContext,
-        error: rawError
-      });
-    }
-  };
-}
-function processError(error, pageStateHistory) {
-  var rawRumEvent = {
-    date: error.startClocks.timeStamp,
-    error: {
-      id: UUID(),
-      message: error.message,
-      source: error.source,
-      stack: error.stack,
-      handling_stack: error.handlingStack,
-      type: error.type,
-      handling: error.handling,
-      causes: error.causes,
-      source_type: 'browser'
-    },
-    type: RumEventType.ERROR,
-    view: {
-      in_foreground: pageStateHistory.wasInPageStateAt(PageState.ACTIVE, error.startClocks.relative)
-    }
-  };
-  return {
-    rawRumEvent: rawRumEvent,
-    startTime: error.startClocks.relative,
-    domainContext: {
-      error: error.originalError
-    }
-  };
+function getHistoryInstrumentationTarget(methodName) {
+  // Ideally we should always instument the method on the prototype, however some frameworks (e.g [Next.js](https://github.com/vercel/next.js/blob/d3f5532065f3e3bb84fb54bd2dfd1a16d0f03a21/packages/next/src/client/components/app-router.tsx#L429))
+  // are wrapping the instance method. In that case we should also wrap the instance method.
+  return Object.prototype.hasOwnProperty.call(history, methodName) ? history : History.prototype;
 }
 ;// CONCATENATED MODULE: ./src/domain/rumEventsCollection/resource/resourceUtils.js
 
@@ -7095,70 +6501,6 @@ function isCacheHit(entry) {
   // fall back to duration checking (non-RT2 or cross-origin)
   return entry.duration < 30;
 }
-//  interface PerformanceResourceDetails {
-//   redirect?: PerformanceResourceDetailsElement
-//   dns?: PerformanceResourceDetailsElement
-//   connect?: PerformanceResourceDetailsElement
-//   ssl?: PerformanceResourceDetailsElement
-//   firstByte: PerformanceResourceDetailsElement
-//   download: PerformanceResourceDetailsElement
-//   fmp:
-// }
-// page_fmp	float		首屏时间(用于衡量用户什么时候看到页面的主要内容)，跟FCP的时长非常接近，这里我们就用FCP的时间作为首屏时间	firstPaintContentEnd - firstPaintContentStart
-// page_fpt	float		首次渲染时间，即白屏时间(从请求开始到浏览器开始解析第一批HTML文档字节的时间差。)	responseEnd - fetchStart
-// page_tti	float		首次可交互时间(浏览器完成所有HTML解析并且完成DOM构建，此时浏览器开始加载资源。)	domInteractive - fetchStart
-// page_firstbyte	float		首包时间	responseStart - domainLookupStart
-// page_dom_ready	float		DOM Ready时间(如果页面有同步执行的JS，则同步JS执行时间=ready-tti。)	domContentLoadEventEnd - fetchStart
-// page_load	float		页面完全加载时间(load=首次渲染时间+DOM解析耗时+同步JS执行+资源加载耗时。)	loadEventStart - fetchStart
-// page_dns	float		dns解析时间	domainLookupEnd - domainLookupStart
-// page_tcp	float		tcp连接时间	connectEnd - connectStart
-// page_ssl	float		ssl安全连接时间(仅适用于https)	connectEnd - secureConnectionStart
-// page_ttfb	float		请求响应耗时	responseStart - requestStart
-// page_trans	float		内容传输时间	responseEnd - responseStart
-// page_dom	float		DOM解析耗时	domInteractive - responseEnd
-// page_resource_load_time	float		资源加载时间	loadEventStart - domContentLoadedEventEnd
-
-//  navigationStart：当前浏览器窗口的前一个网页关闭，发生unload事件时的Unix毫秒时间戳。如果没有前一个网页，则等于fetchStart属性。
-
-// ·   unloadEventStart：如果前一个网页与当前网页属于同一个域名，则返回前一个网页的unload事件发生时的Unix毫秒时间戳。如果没有前一个网页，或者之前的网页跳转不是在同一个域名内，则返回值为0。
-
-// ·   unloadEventEnd：如果前一个网页与当前网页属于同一个域名，则返回前一个网页unload事件的回调函数结束时的Unix毫秒时间戳。如果没有前一个网页，或者之前的网页跳转不是在同一个域名内，则返回值为0。
-
-// ·   redirectStart：返回第一个HTTP跳转开始时的Unix毫秒时间戳。如果没有跳转，或者不是同一个域名内部的跳转，则返回值为0。
-
-// ·   redirectEnd：返回最后一个HTTP跳转结束时（即跳转回应的最后一个字节接受完成时）的Unix毫秒时间戳。如果没有跳转，或者不是同一个域名内部的跳转，则返回值为0。
-
-// ·   fetchStart：返回浏览器准备使用HTTP请求读取文档时的Unix毫秒时间戳。该事件在网页查询本地缓存之前发生。
-
-// ·   domainLookupStart：返回域名查询开始时的Unix毫秒时间戳。如果使用持久连接，或者信息是从本地缓存获取的，则返回值等同于fetchStart属性的值。
-
-// ·   domainLookupEnd：返回域名查询结束时的Unix毫秒时间戳。如果使用持久连接，或者信息是从本地缓存获取的，则返回值等同于fetchStart属性的值。
-
-// ·   connectStart：返回HTTP请求开始向服务器发送时的Unix毫秒时间戳。如果使用持久连接（persistent connection），则返回值等同于fetchStart属性的值。
-
-// ·   connectEnd：返回浏览器与服务器之间的连接建立时的Unix毫秒时间戳。如果建立的是持久连接，则返回值等同于fetchStart属性的值。连接建立指的是所有握手和认证过程全部结束。
-
-// ·   secureConnectionStart：返回浏览器与服务器开始安全链接的握手时的Unix毫秒时间戳。如果当前网页不要求安全连接，则返回0。
-
-// ·   requestStart：返回浏览器向服务器发出HTTP请求时（或开始读取本地缓存时）的Unix毫秒时间戳。
-
-// ·   responseStart：返回浏览器从服务器收到（或从本地缓存读取）第一个字节时的Unix毫秒时间戳。
-
-// ·   responseEnd：返回浏览器从服务器收到（或从本地缓存读取）最后一个字节时（如果在此之前HTTP连接已经关闭，则返回关闭时）的Unix毫秒时间戳。
-
-// ·   domLoading：返回当前网页DOM结构开始解析时（即Document.readyState属性变为“loading”、相应的readystatechange事件触发时）的Unix毫秒时间戳。
-
-// ·   domInteractive：返回当前网页DOM结构结束解析、开始加载内嵌资源时（即Document.readyState属性变为“interactive”、相应的readystatechange事件触发时）的Unix毫秒时间戳。
-
-// ·   domContentLoadedEventStart：返回当前网页DOMContentLoaded事件发生时（即DOM结构解析完毕、所有脚本开始运行时）的Unix毫秒时间戳。
-
-// ·   domContentLoadedEventEnd：返回当前网页所有需要执行的脚本执行完成时的Unix毫秒时间戳。
-
-// ·   domComplete：返回当前网页DOM结构生成时（即Document.readyState属性变为“complete”，以及相应的readystatechange事件发生时）的Unix毫秒时间戳。
-
-// ·   loadEventStart：返回当前网页load事件的回调函数开始时的Unix毫秒时间戳。如果该事件还没有发生，返回0。
-
-// ·   loadEventEnd：返回当前网页load事件的回调函数运行结束时的Unix毫秒时间戳。如果该事件还没有发生，返回0
 function computePerformanceResourceDetails(entry) {
   if (!hasValidResourceEntryTimings(entry)) {
     return undefined;
@@ -7297,7 +6639,7 @@ function retrieveFirstInputTiming(configuration, callback) {
       name: '',
       cancelable: false,
       target: null,
-      toJSON: function toJSON() {
+      toJSON: function () {
         return {};
       }
     };
@@ -7370,7 +6712,7 @@ function createPerformanceObservable(configuration, options) {
     if (!window.PerformanceObserver) {
       return;
     }
-    var handlePerformanceEntries = function handlePerformanceEntries(entries) {
+    var handlePerformanceEntries = function (entries) {
       var rumPerformanceEntries = filterRumPerformanceEntries(configuration, entries);
       if (rumPerformanceEntries.length > 0) {
         observable.notify(rumPerformanceEntries);
@@ -7378,7 +6720,7 @@ function createPerformanceObservable(configuration, options) {
     };
     var timeoutId;
     var isObserverInitializing = true;
-    var observer = new PerformanceObserver(monitor(function (entries) {
+    const observer = new PerformanceObserver(monitor(function (entries) {
       // In Safari the performance observer callback is synchronous.
       // Because the buffered performance entry list can be quite large we delay the computation to prevent the SDK from blocking the main thread on init
       if (isObserverInitializing) {
@@ -7462,6 +6804,707 @@ function filterRumPerformanceEntries(configuration, entries) {
 function isForbiddenResource(configuration, entry) {
   return entry.entryType === RumPerformanceEntryType.RESOURCE && (!isAllowedRequestUrl(configuration, entry.name) || !hasValidResourceEntryDuration(entry));
 }
+;// CONCATENATED MODULE: ./src/domain/contexts/pageStateHistory.js
+
+
+// Arbitrary value to cap number of element for memory consumption in the browser
+var MAX_PAGE_STATE_ENTRIES = 4000;
+// Arbitrary value to cap number of element for backend & to save bandwidth
+var MAX_PAGE_STATE_ENTRIES_SELECTABLE = 500;
+var PAGE_STATE_CONTEXT_TIME_OUT_DELAY = SESSION_TIME_OUT_DELAY;
+var PageState = {
+  ACTIVE: 'active',
+  PASSIVE: 'passive',
+  HIDDEN: 'hidden',
+  FROZEN: 'frozen',
+  TERMINATED: 'terminated'
+};
+function startPageStateHistory(maxPageStateEntriesSelectable) {
+  if (maxPageStateEntriesSelectable === undefined) {
+    maxPageStateEntriesSelectable = MAX_PAGE_STATE_ENTRIES_SELECTABLE;
+  }
+  var pageStateEntryHistory = createValueHistory({
+    expireDelay: PAGE_STATE_CONTEXT_TIME_OUT_DELAY,
+    maxEntries: MAX_PAGE_STATE_ENTRIES
+  });
+  var currentPageState;
+  if (supportPerformanceTimingEvent(RumPerformanceEntryType.VISIBILITY_STATE)) {
+    const visibilityEntries = performance.getEntriesByType(RumPerformanceEntryType.VISIBILITY_STATE);
+    visibilityEntries.forEach(entry => {
+      const state = entry.name === 'hidden' ? PageState.HIDDEN : PageState.ACTIVE;
+      addPageState(state, entry.startTime);
+    });
+  }
+  addPageState(getPageState(), tools_relativeNow());
+  var _addEventListeners = addEventListeners(window, [DOM_EVENT.PAGE_SHOW, DOM_EVENT.FOCUS, DOM_EVENT.BLUR, DOM_EVENT.VISIBILITY_CHANGE, DOM_EVENT.RESUME, DOM_EVENT.FREEZE, DOM_EVENT.PAGE_HIDE], function (event) {
+    // Only get events fired by the browser to avoid false currentPageState changes done with custom events
+    addPageState(computePageState(event), event.timeStamp);
+  }, {
+    capture: true
+  });
+  var stopEventListeners = _addEventListeners.stop;
+  function addPageState(nextPageState, startTime) {
+    if (startTime === undefined) {
+      startTime = tools_relativeNow();
+    }
+    if (nextPageState === currentPageState) {
+      return;
+    }
+    currentPageState = nextPageState;
+    pageStateEntryHistory.closeActive(startTime);
+    pageStateEntryHistory.add({
+      state: currentPageState,
+      startTime: startTime
+    }, startTime);
+  }
+  const pageStateHistory = {
+    findAll: function (startTime, duration) {
+      var pageStateEntries = pageStateEntryHistory.findAll(startTime, duration);
+      return processPageStates(pageStateEntries, startTime, maxPageStateEntriesSelectable);
+    },
+    wasInPageStateAt: function (state, startTime) {
+      return pageStateHistory.wasInPageStateDuringPeriod(state, startTime, 0);
+    },
+    wasInPageStateDuringPeriod: function (state, startTime, duration) {
+      return pageStateEntryHistory.findAll(startTime, duration).some(function (pageState) {
+        return pageState.state === state;
+      });
+    },
+    addPageState: addPageState,
+    stop: function () {
+      stopEventListeners();
+      pageStateEntryHistory.stop();
+    }
+  };
+  return pageStateHistory;
+}
+function processPageStates(pageStateEntries, eventStartTime, maxPageStateEntriesSelectable) {
+  if (pageStateEntries.length === 0) {
+    return;
+  }
+  return pageStateEntries.slice(-maxPageStateEntriesSelectable).reverse().map(_ref => {
+    let {
+      state,
+      startTime
+    } = _ref;
+    return {
+      state,
+      start: toServerDuration(tools_elapsed(eventStartTime, startTime))
+    };
+  });
+}
+function computePageState(event) {
+  if (event.type === DOM_EVENT.FREEZE) {
+    return PageState.FROZEN;
+  } else if (event.type === DOM_EVENT.PAGE_HIDE) {
+    return event.persisted ? PageState.FROZEN : PageState.TERMINATED;
+  }
+  return getPageState();
+}
+function getPageState() {
+  if (document.visibilityState === 'hidden') {
+    return PageState.HIDDEN;
+  }
+  if (document.hasFocus()) {
+    return PageState.ACTIVE;
+  }
+  return PageState.PASSIVE;
+}
+;// CONCATENATED MODULE: ./src/domain/rumEventsCollection/actions/actionCollection.js
+
+// import { trackClickActions } from './trackClickActions'
+
+function startActionCollection(lifeCycle, domMutationObservable, configuration, pageStateHistory) {
+  lifeCycle.subscribe(LifeCycleEventType.AUTO_ACTION_COMPLETED, function (action) {
+    lifeCycle.notify(LifeCycleEventType.RAW_RUM_EVENT_COLLECTED, processAction(action, pageStateHistory));
+  });
+  var actionContexts = {
+    findActionId: tools_noop,
+    findAllActionId: tools_noop
+  };
+  // if (configuration.trackUserInteractions) {
+  //   actionContexts = trackClickActions(
+  //     lifeCycle,
+  //     domMutationObservable,
+  //     configuration
+  //   ).actionContexts
+  // }
+  return {
+    actionContexts: actionContexts,
+    addAction: function (action, savedCommonContext) {
+      lifeCycle.notify(LifeCycleEventType.RAW_RUM_EVENT_COLLECTED, extend({
+        savedCommonContext: savedCommonContext
+      }, processAction(action, pageStateHistory)));
+    }
+  };
+}
+function processAction(action, pageStateHistory) {
+  var _action$context;
+  var autoActionProperties = isAutoAction(action) ? {
+    action: {
+      error: {
+        count: action.counts.errorCount
+      },
+      id: action.id,
+      loadingTime: discardNegativeDuration(toServerDuration(action.duration)),
+      frustration: {
+        type: action.frustrationTypes
+      },
+      long_task: {
+        count: action.counts.longTaskCount
+      },
+      resource: {
+        count: action.counts.resourceCount
+      }
+    },
+    _gc: {
+      action: {
+        target: action.target,
+        position: action.position
+      }
+    }
+  } : {
+    action: {
+      loadingTime: ((_action$context = action.context) === null || _action$context === void 0 ? void 0 : _action$context.duration) || 0
+    }
+  };
+  var customerContext = !isAutoAction(action) ? action.context : undefined;
+  var actionEvent = extend2Lev({
+    action: {
+      id: UUID(),
+      target: {
+        name: action.name
+      },
+      type: action.type
+    },
+    date: action.startClocks.timeStamp,
+    type: RumEventType.ACTION,
+    view: {
+      in_foreground: pageStateHistory.wasInPageStateAt(PageState.ACTIVE, action.startClocks.relative)
+    }
+  }, autoActionProperties);
+  return {
+    customerContext: customerContext,
+    rawRumEvent: actionEvent,
+    startTime: action.startClocks.relative,
+    domainContext: isAutoAction(action) ? {
+      event: action.event,
+      events: action.events
+    } : {}
+  };
+}
+function isAutoAction(action) {
+  return action.type === ActionType.CLICK;
+  //   return action.type !== ActionType.CUSTOM
+}
+;// CONCATENATED MODULE: ./src/transport/startRumBatch.js
+
+// import { DeflateEncoderStreamId } from '../domain/deflate'
+function startRumBatch(configuration, lifeCycle, telemetryEventObservable, reportError, pageExitObservable, sessionExpireObservable, createEncoder) {
+  const batch = startBatchWithReplica(configuration, {
+    endpoint: configuration.rumEndpoint,
+    encoder: createEncoder(2) // DeflateEncoderStreamId.RUM
+  }, reportError, pageExitObservable, sessionExpireObservable);
+  lifeCycle.subscribe(LifeCycleEventType.RUM_EVENT_COLLECTED, function (serverRumEvent) {
+    // NOTE: upsert 和 add 其实是同一个方法；只是 upsert 会根据 key 来覆盖之前的内容
+    if (serverRumEvent.type === RumEventType.VIEW) {
+      batch.upsert(serverRumEvent, serverRumEvent.view.id);
+    } else {
+      batch.add(serverRumEvent);
+    }
+  });
+  // telemetryEventObservable.subscribe(function (event) {
+  //   batch.add(event)
+  // })
+  return batch;
+}
+;// CONCATENATED MODULE: ./src/domain/assembly.js
+
+function assembly_ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function assembly_objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? assembly_ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : assembly_ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+
+var SessionType = {
+  SYNTHETICS: 'synthetics',
+  USER: 'user'
+};
+var VIEW_MODIFIABLE_FIELD_PATHS = {
+  'view.url': 'string',
+  'view.referrer': 'string'
+};
+var USER_CUSTOMIZABLE_FIELD_PATHS = {
+  context: 'object'
+};
+const ROOT_MODIFIABLE_FIELD_PATHS = {
+  service: 'string',
+  version: 'string'
+};
+var modifiableFieldPathsByEvent = {};
+function startRumAssembly(configuration, lifeCycle, sessionManager, userSessionManager, viewContexts, urlContexts, actionContexts, displayContext, getCommonContext, reportError) {
+  modifiableFieldPathsByEvent[RumEventType.VIEW] = assembly_objectSpread(assembly_objectSpread({}, USER_CUSTOMIZABLE_FIELD_PATHS), VIEW_MODIFIABLE_FIELD_PATHS);
+  modifiableFieldPathsByEvent[RumEventType.ERROR] = tools_assign({
+    'error.message': 'string',
+    'error.stack': 'string',
+    'error.resource.url': 'string'
+  }, USER_CUSTOMIZABLE_FIELD_PATHS, VIEW_MODIFIABLE_FIELD_PATHS, ROOT_MODIFIABLE_FIELD_PATHS);
+  modifiableFieldPathsByEvent[RumEventType.RESOURCE] = tools_assign({
+    'resource.url': 'string'
+  }, USER_CUSTOMIZABLE_FIELD_PATHS, VIEW_MODIFIABLE_FIELD_PATHS, ROOT_MODIFIABLE_FIELD_PATHS);
+  modifiableFieldPathsByEvent[RumEventType.ACTION] = tools_assign({
+    'action.target.name': 'string'
+  }, USER_CUSTOMIZABLE_FIELD_PATHS, VIEW_MODIFIABLE_FIELD_PATHS, ROOT_MODIFIABLE_FIELD_PATHS);
+  modifiableFieldPathsByEvent[RumEventType.LONG_TASK] = tools_assign({}, USER_CUSTOMIZABLE_FIELD_PATHS, VIEW_MODIFIABLE_FIELD_PATHS);
+  var eventRateLimiters = {};
+  eventRateLimiters[RumEventType.ERROR] = createEventRateLimiter(RumEventType.ERROR, configuration.eventRateLimiterThreshold, reportError);
+  eventRateLimiters[RumEventType.ACTION] = createEventRateLimiter(RumEventType.ACTION, configuration.eventRateLimiterThreshold, reportError);
+  lifeCycle.subscribe(LifeCycleEventType.RAW_RUM_EVENT_COLLECTED, function (data) {
+    var startTime = data.startTime;
+    var rawRumEvent = data.rawRumEvent;
+    var savedCommonContext = data.savedCommonContext;
+    var customerContext = data.customerContext;
+    var domainContext = data.domainContext;
+    var viewContext = viewContexts.findView(startTime);
+    var urlContext = urlContexts.findUrl(startTime);
+    var session = sessionManager.findTrackedSession(startTime);
+    if (session && session.isErrorSession && !session.sessionHasError) return;
+    if (session && viewContext && urlContext) {
+      var actionId = actionContexts.findActionId(startTime);
+      var actionIds = actionContexts.findAllActionId(startTime);
+      var commonContext = savedCommonContext || getCommonContext();
+      var rumContext = {
+        _gc: {
+          sdkName: configuration.sdkName,
+          sdkVersion: configuration.sdkVersion,
+          drift: currentDrift(),
+          configuration: {
+            session_sample_rate: round(configuration.sessionSampleRate, 3),
+            session_replay_sample_rate: round(configuration.sessionReplaySampleRate, 3),
+            session_on_error_sample_rate: round(configuration.sessionOnErrorSampleRate, 3),
+            session_replay_on_error_sample_rate: round(configuration.sessionReplayOnErrorSampleRate, 3)
+          }
+        },
+        terminal: {
+          type: 'web'
+        },
+        application: {
+          id: configuration.applicationId
+        },
+        device: deviceInfo,
+        webview: {},
+        env: configuration.env || '',
+        service: viewContext.service || configuration.service || 'browser',
+        version: viewContext.version || configuration.version || '',
+        source: 'browser',
+        date: timeStampNow(),
+        user: {
+          id: userSessionManager.getId(),
+          is_signin: 'F',
+          is_login: false
+        },
+        session: {
+          // must be computed on each event because synthetics instrumentation can be done after sdk execution
+          // cf https://github.com/puppeteer/puppeteer/issues/3667
+          type: getSessionType(),
+          id: session.id,
+          is_forced_session: session.isSessionForced
+        },
+        view: {
+          id: viewContext.id,
+          name: viewContext.name || urlContext.path,
+          url: urlContext.url,
+          referrer: urlContext.referrer,
+          host: urlContext.host,
+          path: urlContext.path,
+          pathGroup: urlContext.pathGroup,
+          pathname: urlContext.pathname,
+          urlQuery: urlContext.urlQuery
+        },
+        action: needToAssembleWithAction(rawRumEvent) && actionId ? {
+          id: actionId,
+          ids: actionIds
+        } : undefined,
+        display: displayContext.get()
+      };
+      var rumEvent = extend2Lev(rumContext, viewContext, rawRumEvent);
+      var serverRumEvent = withSnakeCaseKeys(rumEvent);
+      var context = extend2Lev({}, commonContext.context, viewContext.context, customerContext);
+      if (!isEmptyObject(context)) {
+        serverRumEvent.context = context;
+      }
+      if (!('has_replay' in serverRumEvent.session)) {
+        serverRumEvent.session.has_replay = commonContext.hasReplay;
+      }
+      if (session.errorSessionReplayAllowed) {
+        serverRumEvent.session.has_replay = serverRumEvent.session.has_replay && session.sessionHasError;
+      }
+      if (serverRumEvent.type === 'view') {
+        serverRumEvent.session.sampled_for_error_replay = session.errorSessionReplayAllowed;
+        serverRumEvent.session.sampled_for_error_session = session.isErrorSession;
+        serverRumEvent.session.error_timestamp_for_session = session.sessionErrorTimestamp;
+      }
+      if (!isEmptyObject(commonContext.context.device)) {
+        serverRumEvent.device = extend2Lev(serverRumEvent.device, commonContext.context.device);
+      }
+      if (!isEmptyObject(commonContext.context.webview)) {
+        serverRumEvent.webview = extend2Lev(serverRumEvent.webview, commonContext.context.webview);
+      }
+      if (!isEmptyObject(commonContext.user)) {
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+        serverRumEvent.user = extend2Lev(serverRumEvent.user, {
+          is_signin: 'T',
+          is_login: true
+        }, commonContext.user);
+      }
+      if (shouldSend(serverRumEvent, configuration.beforeSend, domainContext, eventRateLimiters)) {
+        if (isEmptyObject(serverRumEvent.context)) {
+          delete serverRumEvent.context;
+        }
+        lifeCycle.notify(LifeCycleEventType.RUM_EVENT_COLLECTED, serverRumEvent);
+      }
+    }
+  });
+}
+function shouldSend(event, beforeSend, domainContext, eventRateLimiters) {
+  if (beforeSend) {
+    var result = limitModification(event, modifiableFieldPathsByEvent[event.type], function (event) {
+      return beforeSend(event, domainContext);
+    });
+    if (result === false && event.type !== RumEventType.VIEW) {
+      return false;
+    }
+    if (result === false) {
+      display.warn("Can't dismiss view events using beforeSend!");
+    }
+  }
+  var rateLimitReached = false;
+  if (eventRateLimiters[event.type]) {
+    rateLimitReached = eventRateLimiters[event.type].isLimitReached();
+  }
+  return !rateLimitReached;
+}
+function needToAssembleWithAction(event) {
+  return [RumEventType.ERROR, RumEventType.RESOURCE, RumEventType.LONG_TASK].indexOf(event.type) !== -1;
+}
+function getSessionType() {
+  return window._DATAFLUX_SYNTHETICS_BROWSER === undefined ? SessionType.USER : SessionType.SYNTHETICS;
+}
+;// CONCATENATED MODULE: ./src/domain/initViewportObservable.js
+
+var viewportObservable;
+function initViewportObservable() {
+  if (!viewportObservable) {
+    viewportObservable = createViewportObservable();
+  }
+  return viewportObservable;
+}
+function createViewportObservable() {
+  return new Observable(function (observable) {
+    var _throttledUpdateDimension = throttle(function () {
+      observable.notify(getViewportDimension());
+    }, 200);
+    var updateDimension = _throttledUpdateDimension.throttled;
+    return addEventListener(window, DOM_EVENT.RESIZE, updateDimension, {
+      capture: true,
+      passive: true
+    }).stop;
+  });
+}
+
+// excludes the width and height of any rendered classic scrollbar that is fixed to the visual viewport
+function getViewportDimension() {
+  var visual = window.visualViewport;
+  if (visual) {
+    return {
+      width: Number(visual.width * visual.scale),
+      height: Number(visual.height * visual.scale)
+    };
+  }
+  return {
+    width: Number(window.innerWidth || 0),
+    height: Number(window.innerHeight || 0)
+  };
+}
+;// CONCATENATED MODULE: ./src/domain/contexts/displayContext.js
+
+function startDisplayContext() {
+  var viewport = getViewportDimension();
+  var unsubscribeViewport = initViewportObservable().subscribe(function (viewportDimension) {
+    viewport = viewportDimension;
+  }).unsubscribe;
+  return {
+    get: function () {
+      return {
+        viewport: viewport
+      };
+    },
+    stop: unsubscribeViewport
+  };
+}
+;// CONCATENATED MODULE: ./src/domain/contexts/internalContext.js
+/**
+ * Internal context keep returning v1 format
+ * to not break compatibility with logs data format
+ */
+function startInternalContext(applicationId, sessionManager, viewContexts, actionContexts, urlContexts) {
+  return {
+    get: function (startTime) {
+      var viewContext = viewContexts.findView(startTime);
+      var urlContext = urlContexts.findUrl(startTime);
+      var session = sessionManager.findTrackedSession(startTime);
+      if (session && viewContext && urlContext) {
+        var actionId = actionContexts.findActionId(startTime);
+        var actionIds = actionContexts.findAllActionId(startTime);
+        return {
+          application: {
+            id: applicationId
+          },
+          session: {
+            id: session.id
+          },
+          userAction: actionId ? {
+            id: actionId,
+            ids: actionIds
+          } : undefined,
+          view: {
+            id: viewContext.id,
+            name: viewContext.name || urlContext.path,
+            url: urlContext.url,
+            referrer: urlContext.referrer,
+            host: urlContext.host,
+            path: urlContext.path,
+            pathGroup: urlContext.pathGroup,
+            pathname: urlContext.pathname,
+            urlQuery: urlContext.urlQuery
+          }
+        };
+      }
+    }
+  };
+}
+;// CONCATENATED MODULE: ./src/domain/contexts/urlContexts.js
+
+
+/**
+ * We want to attach to an event:
+ * - the url corresponding to its start
+ * - the referrer corresponding to the previous view url (or document referrer for initial view)
+ */
+
+var URL_CONTEXT_TIME_OUT_DELAY = SESSION_TIME_OUT_DELAY;
+function startUrlContexts(lifeCycle, locationChangeObservable, location) {
+  var urlContextHistory = createValueHistory({
+    expireDelay: URL_CONTEXT_TIME_OUT_DELAY
+  });
+  var previousViewUrl;
+  lifeCycle.subscribe(LifeCycleEventType.BEFORE_VIEW_CREATED, function (data) {
+    var viewUrl = location.href;
+    urlContextHistory.add(buildUrlContext({
+      url: viewUrl,
+      location: location,
+      referrer: !previousViewUrl ? document.referrer : previousViewUrl
+    }), data.startClocks.relative);
+    previousViewUrl = viewUrl;
+  });
+  lifeCycle.subscribe(LifeCycleEventType.AFTER_VIEW_ENDED, function (data) {
+    urlContextHistory.closeActive(data.endClocks.relative);
+  });
+  var locationChangeSubscription = locationChangeObservable.subscribe(function (data) {
+    var current = urlContextHistory.find();
+    if (current) {
+      var changeTime = tools_relativeNow();
+      urlContextHistory.closeActive(changeTime);
+      urlContextHistory.add(buildUrlContext({
+        url: data.newLocation.href,
+        location: data.newLocation,
+        referrer: current.referrer
+      }, true), changeTime);
+    }
+  });
+  function buildUrlContext(data) {
+    let isLocationChange = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+    var pathname = data.location.pathname;
+    var path = pathname;
+    var hash = data.location.hash;
+    if (hash && hash.indexOf('#/') === 0) {
+      path = '/' + getPathFromHash(hash);
+    }
+    return {
+      url: data.url,
+      referrer: data.referrer,
+      host: data.location.host,
+      path: path,
+      pathGroup: replaceNumberCharByPath(path),
+      urlQuery: getQueryParamsFromUrl(data.location.href),
+      pathname: pathname
+    };
+  }
+  return {
+    findUrl: function (startTime) {
+      return urlContextHistory.find(startTime);
+    },
+    stop: function () {
+      locationChangeSubscription.unsubscribe();
+      urlContextHistory.stop();
+    }
+  };
+}
+;// CONCATENATED MODULE: ./src/domain/contexts/viewContexts.js
+
+var VIEW_CONTEXT_TIME_OUT_DELAY = SESSION_TIME_OUT_DELAY;
+function startViewContexts(lifeCycle) {
+  var viewContextHistory = createValueHistory({
+    expireDelay: VIEW_CONTEXT_TIME_OUT_DELAY
+  });
+  lifeCycle.subscribe(LifeCycleEventType.BEFORE_VIEW_CREATED, function (view) {
+    viewContextHistory.add(buildViewContext(view), view.startClocks.relative);
+  });
+  lifeCycle.subscribe(LifeCycleEventType.AFTER_VIEW_ENDED, function (data) {
+    viewContextHistory.closeActive(data.endClocks.relative);
+  });
+  lifeCycle.subscribe(LifeCycleEventType.BEFORE_VIEW_UPDATED, viewUpdate => {
+    const currentView = viewContextHistory.find(viewUpdate.startClocks.relative);
+    if (currentView && viewUpdate.name) {
+      currentView.name = viewUpdate.name;
+    }
+    if (currentView && viewUpdate.context) {
+      currentView.context = viewUpdate.context;
+    }
+  });
+  lifeCycle.subscribe(LifeCycleEventType.SESSION_RENEWED, function () {
+    viewContextHistory.reset();
+  });
+  function buildViewContext(view) {
+    return {
+      service: view.service,
+      version: view.version,
+      context: view.context,
+      id: view.id,
+      name: view.name,
+      startClocks: view.startClocks
+    };
+  }
+  return {
+    findView: function (startTime) {
+      return viewContextHistory.find(startTime);
+    },
+    stop: function () {
+      viewContextHistory.stop();
+    }
+  };
+}
+;// CONCATENATED MODULE: ./src/domain/rumEventsCollection/error/trackConsoleError.js
+
+function trackConsoleError(errorObservable) {
+  var subscription = initConsoleObservable([ConsoleApiName.error]).subscribe(function (consoleLog) {
+    errorObservable.notify(consoleLog.error);
+  });
+  return {
+    stop: function () {
+      subscription.unsubscribe();
+    }
+  };
+}
+;// CONCATENATED MODULE: ./src/domain/rumEventsCollection/error/trackReportError.js
+
+function trackReportError(configuration, errorObservable) {
+  var subscription = initReportObservable(configuration, [(RawReportType.cspViolation, RawReportType.intervention)]).subscribe(function (reportError) {
+    errorObservable.notify({
+      startClocks: clocksNow(),
+      message: reportError.message,
+      stack: reportError.stack,
+      type: reportError.subtype,
+      source: errorTools_ErrorSource.REPORT,
+      handling: enums_ErrorHandling.UNHANDLED
+    });
+  });
+  return {
+    stop: function () {
+      subscription.unsubscribe();
+    }
+  };
+}
+;// CONCATENATED MODULE: ./src/domain/rumEventsCollection/error/errorCollection.js
+
+
+
+
+function startErrorCollection(lifeCycle, configuration, sessionManager, pageStateHistory) {
+  var errorObservable = new Observable();
+  trackConsoleError(errorObservable);
+  trackRuntimeError(errorObservable);
+  trackReportError(configuration, errorObservable);
+  var session = sessionManager.findTrackedSession();
+  let hasError = session && session.isErrorSession && session.sessionHasError;
+  if (session && session.isErrorSession) {
+    lifeCycle.subscribe(LifeCycleEventType.SESSION_RENEWED, function () {
+      hasError = false;
+    });
+  }
+  errorObservable.subscribe(function (error) {
+    if (session && session.isErrorSession && !hasError) {
+      sessionManager.setErrorForSession();
+      hasError = true;
+    }
+    lifeCycle.notify(LifeCycleEventType.RAW_ERROR_COLLECTED, {
+      error: error
+    });
+  });
+  return doStartErrorCollection(lifeCycle, pageStateHistory);
+}
+function doStartErrorCollection(lifeCycle, pageStateHistory) {
+  lifeCycle.subscribe(LifeCycleEventType.RAW_ERROR_COLLECTED, function (error) {
+    lifeCycle.notify(LifeCycleEventType.RAW_RUM_EVENT_COLLECTED, tools_assign({
+      customerContext: error.customerContext,
+      savedCommonContext: error.savedCommonContext
+    }, processError(error.error, pageStateHistory)));
+  });
+  return {
+    addError: function (providedError, savedCommonContext) {
+      var error = providedError.error;
+      var stackTrace = error instanceof Error ? computeStackTrace(error) : undefined;
+      var rawError = computeRawError({
+        stackTrace,
+        originalError: error,
+        handlingStack: providedError.handlingStack,
+        startClocks: providedError.startClocks,
+        nonErrorPrefix: NonErrorPrefix.PROVIDED,
+        source: errorTools_ErrorSource.CUSTOM,
+        handling: enums_ErrorHandling.HANDLED
+      });
+      lifeCycle.notify(LifeCycleEventType.RAW_ERROR_COLLECTED, {
+        customerContext: providedError.context,
+        savedCommonContext: savedCommonContext,
+        error: rawError
+      });
+    }
+  };
+}
+function processError(error, pageStateHistory) {
+  var rawRumEvent = {
+    date: error.startClocks.timeStamp,
+    error: {
+      id: UUID(),
+      message: error.message,
+      source: error.source,
+      stack: error.stack,
+      handling_stack: error.handlingStack,
+      type: error.type,
+      handling: error.handling,
+      causes: error.causes,
+      source_type: 'browser'
+    },
+    type: RumEventType.ERROR,
+    view: {
+      in_foreground: pageStateHistory.wasInPageStateAt(PageState.ACTIVE, error.startClocks.relative)
+    }
+  };
+  return {
+    rawRumEvent: rawRumEvent,
+    startTime: error.startClocks.relative,
+    domainContext: {
+      error: error.originalError
+    }
+  };
+}
 ;// CONCATENATED MODULE: ./src/domain/rumEventsCollection/view/trackFirstContentfulPaint.js
 
 
@@ -7514,14 +7557,14 @@ function getSelectorFromElement(targetElement, actionNameAttribute) {
     // parents, and we cannot determine if it's unique in the document.
     return;
   }
-  var targetElementSelector;
-  var currentElement = targetElement;
+  let targetElementSelector;
+  let currentElement = targetElement;
   while (currentElement && currentElement.nodeName !== 'HTML') {
-    var globallyUniqueSelector = findSelector(currentElement, GLOBALLY_UNIQUE_SELECTOR_GETTERS, isSelectorUniqueGlobally, actionNameAttribute, targetElementSelector);
+    const globallyUniqueSelector = findSelector(currentElement, GLOBALLY_UNIQUE_SELECTOR_GETTERS, isSelectorUniqueGlobally, actionNameAttribute, targetElementSelector);
     if (globallyUniqueSelector) {
       return globallyUniqueSelector;
     }
-    var uniqueSelectorAmongChildren = findSelector(currentElement, UNIQUE_AMONG_CHILDREN_SELECTOR_GETTERS, isSelectorUniqueAmongSiblings, actionNameAttribute, targetElementSelector);
+    const uniqueSelectorAmongChildren = findSelector(currentElement, UNIQUE_AMONG_CHILDREN_SELECTOR_GETTERS, isSelectorUniqueAmongSiblings, actionNameAttribute, targetElementSelector);
     targetElementSelector = uniqueSelectorAmongChildren || combineSelector(getPositionSelector(currentElement), targetElementSelector);
     currentElement = currentElement.parentElement;
   }
@@ -7616,7 +7659,6 @@ function getPositionSelector(element) {
     sibling = sibling.nextElementSibling;
   }
   var tagName = cssEscape(element.tagName);
-  // 伪元素需要做特殊处理，没有nth-of-type选择器
   if (/^::/.test(tagName)) {
     return tagName;
   }
@@ -7648,22 +7690,18 @@ function isSelectorUniqueGlobally(element, elementSelector, childSelector) {
  * inaccurately returns false, we'll just fall back to another strategy.
  */
 function isSelectorUniqueAmongSiblings(currentElement, currentElementSelector, childSelector) {
-  var isSiblingMatching;
+  let isSiblingMatching;
   if (childSelector === undefined) {
     // If the child selector is undefined (meaning `currentElement` is the target element, not one
     // of its ancestor), we need to use `matches` to check if the sibling is matching the selector,
     // as `querySelector` only returns a descendant of the element.
-    isSiblingMatching = function isSiblingMatching(sibling) {
-      return sibling.matches(currentElementSelector);
-    };
+    isSiblingMatching = sibling => sibling.matches(currentElementSelector);
   } else {
-    var scopedSelector = supportScopeSelector() ? combineSelector("".concat(currentElementSelector, ":scope"), childSelector) : combineSelector(currentElementSelector, childSelector);
-    isSiblingMatching = function isSiblingMatching(sibling) {
-      return sibling.querySelector(scopedSelector) !== null;
-    };
+    const scopedSelector = supportScopeSelector() ? combineSelector("".concat(currentElementSelector, ":scope"), childSelector) : combineSelector(currentElementSelector, childSelector);
+    isSiblingMatching = sibling => sibling.querySelector(scopedSelector) !== null;
   }
-  var parent = currentElement.parentElement;
-  var sibling = parent.firstElementChild;
+  const parent = currentElement.parentElement;
+  let sibling = parent.firstElementChild;
   while (sibling) {
     if (sibling !== currentElement && isSiblingMatching(sibling)) {
       return false;
@@ -7712,7 +7750,7 @@ function isConnected(element) {
  * Reference implementation: https://github.com/GoogleChrome/web-vitals/blob/master/src/getFID.ts
  */
 function trackFirstInput(configuration, firstHidden, callback) {
-  var performanceFirstInputSubscription = createPerformanceObservable(configuration, {
+  const performanceFirstInputSubscription = createPerformanceObservable(configuration, {
     type: RumPerformanceEntryType.FIRST_INPUT,
     buffered: true
   }).subscribe(function (entries) {
@@ -7735,7 +7773,7 @@ function trackFirstInput(configuration, firstHidden, callback) {
     }
   });
   return {
-    stop: function stop() {
+    stop: function () {
       performanceFirstInputSubscription.unsubscribe();
     }
   };
@@ -7760,7 +7798,7 @@ function getNavigationEntry() {
     decodedBodySize: 0,
     encodedBodySize: 0,
     transferSize: 0,
-    toJSON: function toJSON() {
+    toJSON: function () {
       return tools_assign({}, entry, {
         toJSON: undefined
       });
@@ -7825,7 +7863,7 @@ function waitAfterLoadEvent(callback) {
     });
   });
   return {
-    stop: function stop() {
+    stop: function () {
       _runOnReadyState.stop();
       timer_clearTimeout(timeoutId);
     }
@@ -7879,7 +7917,7 @@ function trackLargestContentfulPaint(configuration, firstHidden, eventTarget, ca
     }
   });
   return {
-    stop: function stop() {
+    stop: function () {
       stopEventListener();
       performanceLcpSubscription.unsubscribe();
     }
@@ -7888,47 +7926,42 @@ function trackLargestContentfulPaint(configuration, firstHidden, eventTarget, ca
 ;// CONCATENATED MODULE: ./src/domain/rumEventsCollection/view/trackFirstHidden.js
 
 
-function trackFirstHidden(eventTarget) {
+function trackFirstHidden(viewStart, eventTarget) {
   if (typeof eventTarget === 'undefined') {
     eventTarget = window;
   }
   if (document.visibilityState === 'hidden') {
     return {
-      getTimeStamp: function getTimeStamp() {
-        return 0;
-      },
+      getTimeStamp: () => 0,
       stop: tools_noop
     };
   }
   if (supportPerformanceTimingEvent(RumPerformanceEntryType.VISIBILITY_STATE)) {
-    var firstHiddenEntry = performance.getEntriesByType(RumPerformanceEntryType.VISIBILITY_STATE).find(function (entry) {
-      return entry.name === 'hidden';
-    });
+    const firstHiddenEntry = performance.getEntriesByType(RumPerformanceEntryType.VISIBILITY_STATE).filter(entry => entry.name === 'hidden').find(entry => entry.startTime >= viewStart.relative);
     if (firstHiddenEntry) {
       return {
-        getTimeStamp: function getTimeStamp() {
-          return firstHiddenEntry.startTime;
-        },
+        getTimeStamp: () => firstHiddenEntry.startTime,
         stop: tools_noop
       };
     }
   }
-  var timeStamp = Infinity;
-  var _addEventListeners = addEventListeners(eventTarget, [DOM_EVENT.PAGE_HIDE, DOM_EVENT.VISIBILITY_CHANGE], function (event) {
-      if (event.type === DOM_EVENT.PAGE_HIDE || document.visibilityState === 'hidden') {
-        timeStamp = event.timeStamp;
-        _stop();
-      }
-    }, {
-      capture: true
-    }),
-    _stop = _addEventListeners.stop;
+  let timeStamp = Infinity;
+  const {
+    stop
+  } = addEventListeners(eventTarget, [DOM_EVENT.PAGE_HIDE, DOM_EVENT.VISIBILITY_CHANGE], event => {
+    if (event.type === DOM_EVENT.PAGE_HIDE || document.visibilityState === 'hidden') {
+      timeStamp = event.timeStamp;
+      stop();
+    }
+  }, {
+    capture: true
+  });
   return {
-    getTimeStamp: function getTimeStamp() {
+    getTimeStamp: function () {
       return timeStamp;
     },
-    stop: function stop() {
-      _stop();
+    stop: function () {
+      stop();
     }
   };
 }
@@ -7940,14 +7973,14 @@ function trackFirstHidden(eventTarget) {
 
 
 var KEEP_TRACKING_TIMINGS_AFTER_VIEW_DELAY = 5 * ONE_MINUTE;
-function trackInitialViewMetrics(configuration, setLoadEvent, scheduleViewUpdate) {
+function trackInitialViewMetrics(configuration, viewStart, setLoadEvent, scheduleViewUpdate) {
   var initialViewMetrics = {};
   var _trackNavigationTimings = trackNavigationTimings(configuration, function (navigationTimings) {
     setLoadEvent(navigationTimings.loadEvent);
     initialViewMetrics.navigationTimings = navigationTimings;
     scheduleViewUpdate();
   });
-  var firstHidden = trackFirstHidden();
+  var firstHidden = trackFirstHidden(viewStart);
   var stopNavigationTracking = _trackNavigationTimings.stop;
   var _trackFirstContentfulPaint = trackFirstContentfulPaint(configuration, firstHidden, function (firstContentfulPaint) {
     initialViewMetrics.firstContentfulPaint = firstContentfulPaint;
@@ -8014,7 +8047,7 @@ function trackScrollMetrics(configuration, viewStart, callback, scrollValues) {
     }
   });
   return {
-    stop: function stop() {
+    stop: function () {
       return subscription.unsubscribe();
     }
   };
@@ -8130,7 +8163,7 @@ function doWaitPageActivityEnd(pageActivityObservable, pageActivityEndCallback, 
       }, PAGE_ACTIVITY_END_DELAY);
     }
   });
-  var stop = function stop() {
+  var stop = function () {
     hasCompleted = true;
     timer_clearTimeout(validationTimeoutId);
     timer_clearTimeout(pageActivityEndTimeoutId);
@@ -8153,7 +8186,7 @@ function createPageActivityObservable(lifeCycle, domMutationObservable, configur
     var subscriptions = [];
     var firstRequestIndex;
     var pendingRequestsCount = 0;
-    subscriptions.push(domMutationObservable.subscribe(function () {
+    subscriptions.push(domMutationObservable.subscribe(() => {
       notifyPageActivity();
     }), createPerformanceObservable(configuration, {
       type: RumPerformanceEntryType.RESOURCE
@@ -8210,11 +8243,11 @@ function trackLoadingTime(lifeCycle, domMutationObservable, configuration, loadT
   var isWaitingForLoadEvent = loadType === ViewLoadingType.INITIAL_LOAD;
   var isWaitingForActivityLoadingTime = true;
   var loadingTimeCandidates = [];
-  var firstHidden = trackFirstHidden();
+  var firstHidden = trackFirstHidden(viewStart);
   function invokeCallbackIfAllCandidatesAreReceived() {
     if (!isWaitingForActivityLoadingTime && !isWaitingForLoadEvent && loadingTimeCandidates.length > 0) {
       var loadingTime = Math.max.apply(Math, loadingTimeCandidates);
-      if (loadingTime < firstHidden.getTimeStamp()) {
+      if (loadingTime < firstHidden.getTimeStamp() - viewStart.relative) {
         callback(loadingTime);
       }
     }
@@ -8228,17 +8261,17 @@ function trackLoadingTime(lifeCycle, domMutationObservable, configuration, loadT
       invokeCallbackIfAllCandidatesAreReceived();
     }
   });
-  var _stop = _waitPageActivityEnd.stop;
+  var stop = _waitPageActivityEnd.stop;
   return {
-    setLoadEvent: function setLoadEvent(loadEvent) {
+    setLoadEvent: function (loadEvent) {
       if (isWaitingForLoadEvent) {
         isWaitingForLoadEvent = false;
         loadingTimeCandidates.push(loadEvent);
         invokeCallbackIfAllCandidatesAreReceived();
       }
     },
-    stop: function stop() {
-      _stop();
+    stop: function () {
+      stop();
       firstHidden.stop();
       if (isWaitingForActivityLoadingTime) {
         isWaitingForActivityLoadingTime = false;
@@ -8313,7 +8346,7 @@ function trackCumulativeLayoutShift(configuration, viewStart, callback) {
     }
   });
   return {
-    stop: function stop() {
+    stop: function () {
       performanceSubscription.unsubscribe();
     }
   };
@@ -8335,7 +8368,7 @@ function slidingSessionWindow() {
   var endTime;
   var maxValue = 0;
   return {
-    update: function update(entry) {
+    update: function (entry) {
       var shouldCreateNewWindow = startTime === undefined || entry.startTime - endTime >= MAX_UPDATE_GAP || entry.startTime - startTime >= 5 * MAX_WINDOW_DURATION;
       var isMaxValue;
       if (shouldCreateNewWindow) {
@@ -8389,7 +8422,7 @@ function initInteractionCountPolyfill() {
   }
   observer = new window.PerformanceObserver(monitor(function (entries) {
     entries.getEntries().forEach(function (e) {
-      var entry = e;
+      const entry = e;
       if (entry.interactionId) {
         minKnownInteractionId = Math.min(minKnownInteractionId, entry.interactionId);
         maxKnownInteractionId = Math.max(maxKnownInteractionId, entry.interactionId);
@@ -8408,25 +8441,25 @@ function initInteractionCountPolyfill() {
  * Returns the `interactionCount` value using the native API (if available)
  * or the polyfill estimate in this module.
  */
-var getInteractionCount = function getInteractionCount() {
+var getInteractionCount = function () {
   return observer ? interactionCountEstimate : window.performance.interactionCount || 0;
 };
 ;// CONCATENATED MODULE: ./src/domain/rumEventsCollection/actions/interactionSelectorCache.js
 
 
 // Maximum duration for click actions
-var CLICK_ACTION_MAX_DURATION = 10 * ONE_SECOND;
-var interactionSelectorCache = new Map();
+const CLICK_ACTION_MAX_DURATION = 10 * ONE_SECOND;
+const interactionSelectorCache = new Map();
 function getInteractionSelector(relativeTimestamp) {
-  var selector = interactionSelectorCache.get(relativeTimestamp);
-  interactionSelectorCache["delete"](relativeTimestamp);
+  const selector = interactionSelectorCache.get(relativeTimestamp);
+  interactionSelectorCache.delete(relativeTimestamp);
   return selector;
 }
 function updateInteractionSelector(relativeTimestamp, selector) {
   interactionSelectorCache.set(relativeTimestamp, selector);
   interactionSelectorCache.forEach(function (_, relativeTimestamp) {
     if (elapsed(relativeTimestamp, relativeNow()) > CLICK_ACTION_MAX_DURATION) {
-      interactionSelectorCache["delete"](relativeTimestamp);
+      interactionSelectorCache.delete(relativeTimestamp);
     }
   });
 }
@@ -8449,7 +8482,7 @@ var MAX_INP_VALUE = 1 * ONE_MINUTE;
 function trackInteractionToNextPaint(configuration, viewStart, viewLoadingType) {
   if (!isInteractionToNextPaintSupported()) {
     return {
-      getInteractionToNextPaint: function getInteractionToNextPaint() {
+      getInteractionToNextPaint: function () {
         return undefined;
       },
       setViewEnd: tools_noop,
@@ -8459,7 +8492,7 @@ function trackInteractionToNextPaint(configuration, viewStart, viewLoadingType) 
   var _trackViewInteractionCount = trackViewInteractionCount(viewLoadingType);
   var getViewInteractionCount = _trackViewInteractionCount.getViewInteractionCount;
   var stopViewInteractionCount = _trackViewInteractionCount.stopViewInteractionCount;
-  var viewEnd = Infinity;
+  let viewEnd = Infinity;
   var longestInteractions = trackLongestInteractions(getViewInteractionCount);
   var interactionToNextPaint = -1;
   var interactionToNextPaintTargetSelector;
@@ -8493,7 +8526,7 @@ function trackInteractionToNextPaint(configuration, viewStart, viewLoadingType) 
     buffered: true
   }).subscribe(handleEntries);
   return {
-    getInteractionToNextPaint: function getInteractionToNextPaint() {
+    getInteractionToNextPaint: function () {
       // If no INP duration where captured because of the performanceObserver 40ms threshold
       // but the view interaction count > 0 then report 0
       if (interactionToNextPaint >= 0) {
@@ -8508,11 +8541,11 @@ function trackInteractionToNextPaint(configuration, viewStart, viewLoadingType) 
         };
       }
     },
-    setViewEnd: function setViewEnd(viewEndTime) {
+    setViewEnd: function (viewEndTime) {
       viewEnd = viewEndTime;
       stopViewInteractionCount();
     },
-    stop: function stop() {
+    stop: function () {
       eventSubscription.unsubscribe();
       firstInputSubscription.unsubscribe();
     }
@@ -8531,7 +8564,7 @@ function trackLongestInteractions(getViewInteractionCount) {
      * - if its duration is long enough, add the performance entry to the list of worst interactions
      * - if an entry with the same interaction id exists and its duration is lower than the new one, then replace it in the list of worst interactions
      */
-    process: function process(entry) {
+    process: function (entry) {
       var interactionIndex = longestInteractions.findIndex(function (interaction) {
         return entry.interactionId === interaction.interactionId;
       });
@@ -8550,7 +8583,7 @@ function trackLongestInteractions(getViewInteractionCount) {
      * Compute the p98 longest interaction.
      * For better performance the computation is based on 10 longest interactions and the interaction count of the current view.
      */
-    estimateP98Interaction: function estimateP98Interaction() {
+    estimateP98Interaction: function () {
       var interactionIndex = Math.min(longestInteractions.length - 1, Math.floor(getViewInteractionCount() / 50));
       return longestInteractions[interactionIndex];
     }
@@ -8566,13 +8599,13 @@ function trackViewInteractionCount(viewLoadingType) {
     return getInteractionCount() - previousInteractionCount;
   }
   return {
-    getViewInteractionCount: function getViewInteractionCount() {
+    getViewInteractionCount: function () {
       if (state.stopped) {
         return state.interactionCount;
       }
       return computeViewInteractionCount();
     },
-    stopViewInteractionCount: function stopViewInteractionCount() {
+    stopViewInteractionCount: function () {
       state = {
         stopped: true,
         interactionCount: computeViewInteractionCount()
@@ -8611,7 +8644,7 @@ function trackCommonViewMetrics(lifeCycle, domMutationObservable, configuration,
   var getInteractionToNextPaint = _trackInteractionToNextPaint.getInteractionToNextPaint;
   var setViewEnd = _trackInteractionToNextPaint.setViewEnd;
   return {
-    stop: function stop() {
+    stop: function () {
       stopLoadingTimeTracking();
       stopCLSTracking();
       stopScrollMetricsTracking();
@@ -8619,7 +8652,7 @@ function trackCommonViewMetrics(lifeCycle, domMutationObservable, configuration,
     stopINPTracking: stopINPTracking,
     setLoadEvent: setLoadEvent,
     setViewEnd: setViewEnd,
-    getCommonViewMetrics: function getCommonViewMetrics() {
+    getCommonViewMetrics: function () {
       commonViewMetrics.interactionToNextPaint = getInteractionToNextPaint();
       return commonViewMetrics;
     }
@@ -8668,7 +8701,7 @@ function trackEventCounts(data) {
     }
   });
   return {
-    stop: function stop() {
+    stop: function () {
       subscription.unsubscribe();
     },
     eventCounts: eventCounts
@@ -8679,7 +8712,7 @@ function trackEventCounts(data) {
 function trackViewEventCounts(lifeCycle, viewId, onChange) {
   var _trackEventCounts = trackEventCounts({
     lifeCycle: lifeCycle,
-    isChildEvent: function isChildEvent(event) {
+    isChildEvent: function (event) {
       return event.view.id === viewId;
     },
     onChange: onChange
@@ -8703,7 +8736,7 @@ function trackViews(location, lifeCycle, domMutationObservable, configuration, l
     var newlyCreatedView = newView(lifeCycle, domMutationObservable, configuration, location, loadingType, startClocks, viewOptions);
     activeViews.add(newlyCreatedView);
     newlyCreatedView.stopObservable.subscribe(function () {
-      activeViews["delete"](newlyCreatedView);
+      activeViews.delete(newlyCreatedView);
     });
     return newlyCreatedView;
   }
@@ -8749,31 +8782,29 @@ function trackViews(location, lifeCycle, domMutationObservable, configuration, l
     });
   }
   return {
-    addTiming: function addTiming(name, time) {
+    addTiming: function (name, time) {
       if (typeof time === 'undefined') {
         time = timeStampNow();
       }
       currentView.addTiming(name, time);
     },
-    startView: function startView(options, startClocks) {
+    startView: function (options, startClocks) {
       currentView.end({
         endClocks: startClocks
       });
       currentView = startNewView(ViewLoadingType.ROUTE_CHANGE, startClocks, options);
     },
-    setViewContext: function setViewContext(context) {
+    setViewContext: context => {
       currentView.contextManager.setContext(context);
     },
-    setViewContextProperty: function setViewContextProperty(key, value) {
+    setViewContextProperty: (key, value) => {
       currentView.contextManager.setContextProperty(key, value);
     },
-    setViewName: function setViewName(name) {
+    setViewName: name => {
       currentView.setViewName(name);
     },
-    getViewContext: function getViewContext() {
-      return currentView.contextManager.getContext();
-    },
-    stop: function stop() {
+    getViewContext: () => currentView.contextManager.getContext(),
+    stop: function () {
       if (locationChangeSubscription) {
         locationChangeSubscription.unsubscribe();
       }
@@ -8795,7 +8826,7 @@ function newView(lifeCycle, domMutationObservable, configuration, initialLocatio
   var documentVersion = 0;
   var endClocks;
   var location = shallowClone(initialLocation);
-  var contextManager = createContextManager();
+  const contextManager = createContextManager();
   var sessionIsActive = true;
   var name;
   var service;
@@ -8832,7 +8863,7 @@ function newView(lifeCycle, domMutationObservable, configuration, initialLocatio
   var getCommonViewMetrics = _trackCommonViewMetrics.getCommonViewMetrics;
   var stopINPTracking = _trackCommonViewMetrics.stopINPTracking;
   var setViewEnd = _trackCommonViewMetrics.setViewEnd;
-  var _trackInitialViewTimings = loadingType === ViewLoadingType.INITIAL_LOAD ? trackInitialViewMetrics(configuration, setLoadEvent, scheduleViewUpdate) : {
+  var _trackInitialViewTimings = loadingType === ViewLoadingType.INITIAL_LOAD ? trackInitialViewMetrics(configuration, startClocks, setLoadEvent, scheduleViewUpdate) : {
     stop: tools_noop,
     initialViewMetrics: {}
   };
@@ -8844,7 +8875,7 @@ function newView(lifeCycle, domMutationObservable, configuration, initialLocatio
 
   // Session keep alive
   var keepAliveIntervalId = timer_setInterval(triggerViewUpdate, SESSION_KEEP_ALIVE_INTERVAL);
-  var pageMayExitSubscription = lifeCycle.subscribe(LifeCycleEventType.PAGE_EXITED, function (pageMayExitEvent) {
+  const pageMayExitSubscription = lifeCycle.subscribe(LifeCycleEventType.PAGE_EXITED, pageMayExitEvent => {
     if (pageMayExitEvent.reason === PageExitReason.UNLOADING) {
       triggerViewUpdate();
     }
@@ -8854,10 +8885,10 @@ function newView(lifeCycle, domMutationObservable, configuration, initialLocatio
   contextManager.changeObservable.subscribe(scheduleViewUpdate);
   function triggerBeforeViewUpdate() {
     lifeCycle.notify(LifeCycleEventType.BEFORE_VIEW_UPDATED, {
-      id: id,
-      name: name,
+      id,
+      name,
       context: contextManager.getContext(),
-      startClocks: startClocks
+      startClocks
     });
   }
   function scheduleViewUpdate() {
@@ -8894,7 +8925,7 @@ function newView(lifeCycle, domMutationObservable, configuration, initialLocatio
     version: version,
     contextManager: contextManager,
     stopObservable: stopObservable,
-    end: function end(options) {
+    end: function (options) {
       if (endClocks) {
         // view already ended
         return;
@@ -8908,21 +8939,21 @@ function newView(lifeCycle, domMutationObservable, configuration, initialLocatio
         endClocks: endClocks
       });
       timer_clearInterval(keepAliveIntervalId);
-      // setViewEnd(endClocks.relative)
-      // stopCommonViewMetricsTracking()
+      setViewEnd(endClocks.relative);
+      stopCommonViewMetricsTracking();
       pageMayExitSubscription.unsubscribe();
       triggerViewUpdate();
       timer_setTimeout(function () {
         result.stop();
       }, KEEP_TRACKING_AFTER_VIEW_DELAY);
     },
-    stop: function stop() {
+    stop: function () {
       stopInitialViewMetricsTracking();
       stopEventCountsTracking();
       stopINPTracking();
       stopObservable.notify();
     },
-    addTiming: function addTiming(name, time) {
+    addTiming: function (name, time) {
       if (endClocks) {
         return;
       }
@@ -8930,7 +8961,7 @@ function newView(lifeCycle, domMutationObservable, configuration, initialLocatio
       customTimings[sanitizeTiming(name)] = relativeTime;
       scheduleViewUpdate();
     },
-    setViewName: function setViewName(updatedName) {
+    setViewName(updatedName) {
       name = updatedName;
       triggerViewUpdate();
     }
@@ -8975,7 +9006,7 @@ function computePerformanceViewDetails(navigationTimings) {
   var details = {};
   if (isNumber(responseEnd) && isNumber(fetchStart) && responseEnd !== fetchStart && responseEnd > fetchStart) {
     details.fpt = toServerDuration(responseEnd - fetchStart);
-    var apdexLevel = parseInt((responseEnd - fetchStart) / 1000); // 秒数取整
+    var apdexLevel = parseInt((responseEnd - fetchStart) / 1000);
     details.apdexLevel = apdexLevel > 9 ? 9 : apdexLevel;
   }
   if (isNumber(domInteractive) && isNumber(fetchStart) && domInteractive !== fetchStart && domInteractive > fetchStart) {
@@ -9003,7 +9034,8 @@ function processViewUpdate(view, configuration, recorderApi, pageStateHistory) {
     _gc: {
       document_version: view.documentVersion,
       // replay_stats: replayStats,
-      page_states: pageStates
+      page_states: pageStates,
+      view_update_time: view.documentVersion
     },
     date: view.startClocks.timeStamp,
     type: RumEventType.VIEW,
@@ -9098,7 +9130,7 @@ function clearTracingIfNeeded(context) {
 function startTracer(configuration, sessionManager) {
   return {
     clearTracingIfNeeded: clearTracingIfNeeded,
-    traceFetch: function traceFetch(context) {
+    traceFetch: function (context) {
       return injectHeadersIfTracingAllowed(configuration, context, sessionManager, function (tracingHeaders) {
         if (context.input instanceof Request && (!context.init || !context.init.headers)) {
           context.input = new Request(context.input);
@@ -9122,7 +9154,6 @@ function startTracer(configuration, sessionManager) {
             });
           }
           // context.init.headers = headers.concat(objectEntries(tracingHeaders))
-          // 转换成对象，兼容部分
           var headersMap = {};
           each(headers.concat(objectEntries(tracingHeaders)), function (header) {
             headersMap[header[0]] = header[1];
@@ -9131,7 +9162,7 @@ function startTracer(configuration, sessionManager) {
         }
       });
     },
-    traceXhr: function traceXhr(context, xhr) {
+    traceXhr: function (context, xhr) {
       return injectHeadersIfTracingAllowed(configuration, context, sessionManager, function (tracingHeaders) {
         each(tracingHeaders, function (value, name) {
           xhr.setRequestHeader(name, value);
@@ -9248,13 +9279,14 @@ function trackXhr(lifeCycle, configuration, tracer) {
           url: context.url,
           xhr: context.xhr,
           isAborted: context.isAborted,
+          requestHeaderContexts: context.requestHeaderContexts,
           handlingStack: context.handlingStack
         });
         break;
     }
   });
   return {
-    stop: function stop() {
+    stop: function () {
       return subscription.unsubscribe();
     }
   };
@@ -9276,6 +9308,7 @@ function trackFetch(lifeCycle, configuration, tracer) {
         break;
       case 'resolve':
         waitForResponseToComplete(context, function (duration) {
+          var _context$init;
           tracer.clearTracingIfNeeded(context);
           lifeCycle.notify(LifeCycleEventType.REQUEST_COMPLETED, {
             duration: duration,
@@ -9287,6 +9320,7 @@ function trackFetch(lifeCycle, configuration, tracer) {
             status: context.status,
             traceId: context.traceId,
             traceSampled: context.traceSampled,
+            requestHeaderContexts: (_context$init = context.init) === null || _context$init === void 0 ? void 0 : _context$init.headers,
             type: RequestType.FETCH,
             url: context.url,
             response: context.response,
@@ -9300,7 +9334,7 @@ function trackFetch(lifeCycle, configuration, tracer) {
     }
   });
   return {
-    stop: function stop() {
+    stop: function () {
       return subscription.unsubscribe();
     }
   };
@@ -9361,12 +9395,11 @@ function matchRequestResourceEntry(request) {
       duration: request.duration
     }));
   });
-  var lastEntry = undefined;
+  let lastEntry = undefined;
   if (candidates.length > 1) {
-    // 取值和 request startTime 间隔更接近的
-    var startTimeDuration = Number.MAX_SAFE_INTEGER;
-    candidates.forEach(function (entry) {
-      var _startTimeDuration = Math.abs(entry.startTime - request.startClocks.relative);
+    let startTimeDuration = Number.MAX_SAFE_INTEGER;
+    candidates.forEach(entry => {
+      const _startTimeDuration = Math.abs(entry.startTime - request.startClocks.relative);
       if (_startTimeDuration < startTimeDuration) {
         startTimeDuration = _startTimeDuration;
         lastEntry = entry;
@@ -9399,7 +9432,7 @@ function retrieveInitialDocumentResourceTiming(configuration, callback) {
     var entry = tools_assign(getNavigationEntry().toJSON(), {
       entryType: RumPerformanceEntryType.RESOURCE,
       initiatorType: FAKE_INITIAL_DOCUMENT,
-      toJSON: function toJSON() {
+      toJSON: function () {
         return tools_assign({}, entry, {
           toJSON: undefined
         });
@@ -9431,7 +9464,7 @@ function startResourceCollection(lifeCycle, configuration, pageStateHistory, tas
     type: RumPerformanceEntryType.RESOURCE,
     buffered: true
   }).subscribe(function (entries) {
-    var loop = function loop(entry) {
+    var loop = function (entry) {
       if (!isResourceEntryRequestType(entry) && !isResourceUrlLimit(entry.name, configuration.resourceUrlLimit)) {
         handleResource(function () {
           return processResourceEntry(entry, configuration);
@@ -9450,15 +9483,22 @@ function startResourceCollection(lifeCycle, configuration, pageStateHistory, tas
   });
   function handleResource(computeRawEvent) {
     taskQueue.push(function () {
-      var rawEvent = computeRawEvent();
+      const rawEvent = computeRawEvent();
       if (rawEvent) {
         lifeCycle.notify(LifeCycleEventType.RAW_RUM_EVENT_COLLECTED, rawEvent);
       }
     });
   }
   return {
-    stop: function stop() {
+    stop: function () {
       performanceResourceSubscription.unsubscribe();
+    },
+    addResource: (resource, savedCommonContext) => {
+      handleResource(function () {
+        return extend({
+          savedCommonContext: savedCommonContext
+        }, processCustomResource(resource));
+      });
     }
   };
 }
@@ -9495,6 +9535,7 @@ function processRequest(request, pageStateHistory) {
     domainContext: {
       performanceEntry: matchingTiming,
       xhr: request.xhr,
+      requestHeaderContexts: request.requestHeaderContexts,
       response: request.response,
       requestInput: request.input,
       requestInit: request.init,
@@ -9533,6 +9574,24 @@ function processResourceEntry(entry, configuration) {
     rawRumEvent: resourceEvent,
     domainContext: {
       performanceEntry: entry
+    }
+  };
+}
+function processCustomResource(resource) {
+  var resourceEvent = {
+    date: resource.startClocks.timeStamp,
+    resource: {
+      id: UUID(),
+      type: resource.type
+    },
+    type: RumEventType.RESOURCE
+  };
+  return {
+    customerContext: resource.context,
+    startTime: resource.startClocks.relative,
+    rawRumEvent: resourceEvent,
+    domainContext: {
+      resource: resource
     }
   };
 }
@@ -9602,13 +9661,13 @@ function startRum(configuration, recorderApi, customerDataTrackerManager, getCom
   var lifeCycle = new LifeCycle();
   // var telemetry = startRumTelemetry(configuration)
 
-  var reportError = function reportError(error) {
+  var reportError = function (error) {
     lifeCycle.notify(LifeCycleEventType.RAW_ERROR_COLLECTED, {
       error: error
     });
   };
   var pageExitObservable = createPageExitObservable();
-  pageExitObservable.subscribe(function (event) {
+  var pageExitSubscription = pageExitObservable.subscribe(function (event) {
     lifeCycle.notify(LifeCycleEventType.PAGE_EXITED, event);
   });
   cleanupTasks.push(function () {
@@ -9653,16 +9712,18 @@ function startRum(configuration, recorderApi, customerDataTrackerManager, getCom
   //     }
   //   }
   // })
-  var _startViewCollection = startViewCollection(lifeCycle, configuration, location, domMutationObservable, locationChangeObservable, pageStateHistory, recorderApi, initialViewOptions),
-    addTiming = _startViewCollection.addTiming,
-    startView = _startViewCollection.startView,
-    setViewName = _startViewCollection.setViewName,
-    setViewContext = _startViewCollection.setViewContext,
-    setViewContextProperty = _startViewCollection.setViewContextProperty,
-    getViewContext = _startViewCollection.getViewContext,
-    stopViewCollection = _startViewCollection.stop;
+  const {
+    addTiming,
+    startView,
+    setViewName,
+    setViewContext,
+    setViewContextProperty,
+    getViewContext,
+    stop: stopViewCollection
+  } = startViewCollection(lifeCycle, configuration, location, domMutationObservable, locationChangeObservable, pageStateHistory, recorderApi, initialViewOptions);
   cleanupTasks.push(stopViewCollection);
-  var _startResourceCollection = startResourceCollection(lifeCycle, configuration, pageStateHistory);
+  const _startResourceCollection = startResourceCollection(lifeCycle, configuration, pageStateHistory);
+  var addResource = _startResourceCollection.addResource;
   cleanupTasks.push(_startResourceCollection.stop);
   // if (
   //   PerformanceObserver.supportedEntryTypes &&
@@ -9684,23 +9745,27 @@ function startRum(configuration, recorderApi, customerDataTrackerManager, getCom
   startRequestCollection(lifeCycle, configuration, session);
   var internalContext = startInternalContext(configuration.applicationId, session, viewContexts, actionContexts, urlContexts);
   return {
+    addResource: addResource,
     addAction: addAction,
     addError: addError,
     addTiming: addTiming,
     configuration: configuration,
-    startView: startView,
-    setViewContext: setViewContext,
-    setViewContextProperty: setViewContextProperty,
-    getViewContext: getViewContext,
-    setViewName: setViewName,
+    startView,
+    setViewContext,
+    setViewContextProperty,
+    getViewContext,
+    setViewName,
     lifeCycle: lifeCycle,
     viewContexts: viewContexts,
     session: session,
-    stopSession: function stopSession() {
+    setForcedSession: function () {
+      session.setForcedSession();
+    },
+    stopSession: function () {
       session.expire();
     },
     getInternalContext: internalContext.get,
-    stop: function stop() {
+    stop: function () {
       cleanupTasks.forEach(function (task) {
         task();
       });
@@ -9732,7 +9797,7 @@ function startRumEventCollection(lifeCycle, configuration, location, sessionMana
     pageStateHistory: pageStateHistory,
     addAction: addAction,
     actionContexts: actionContexts,
-    stop: function stop() {
+    stop: function () {
       displayContext.stop();
       pageStateHistory.stop();
       urlContexts.stop();
@@ -9750,7 +9815,7 @@ function buildCommonContext(globalContextManager, userContextManager, recorderAp
 }
 ;// CONCATENATED MODULE: ./src/boot/buildEnv.js
 var buildEnv = {
-  sdkVersion: "3.2.24",
+  sdkVersion: "3.2.42",
   sdkName: 'df_web_rum_sdk'
 };
 ;// CONCATENATED MODULE: ./src/domain/configuration.js
@@ -9946,14 +10011,18 @@ function validateAndBuildTracingOptions(initConfiguration) {
 ;// CONCATENATED MODULE: ./src/boot/perStartRum.js
 
 
+// import { getType } from '@cloudcare/browser-core/src/helper/tools'
+
 function createPreStartStrategy(rumPublicApiOptions, getCommonContext, doStartRum) {
   var ignoreInitIfSyntheticsWillInjectRum = rumPublicApiOptions.ignoreInitIfSyntheticsWillInjectRum;
   // var startDeflateWorker = rumPublicApiOptions.startDeflateWorker
   var bufferApiCalls = createBoundedBuffer();
+  // var remoteConfigrationCallbacks = createBoundedBuffer()
   var firstStartViewCall;
   var deflateWorker;
   var cachedInitConfiguration;
   var cachedConfiguration;
+  // var cachedRemoteConfiguration
   function tryStartRum() {
     if (!cachedInitConfiguration || !cachedConfiguration) {
       return;
@@ -9975,7 +10044,7 @@ function createPreStartStrategy(rumPublicApiOptions, getCommonContext, doStartRu
     var startRumResult = doStartRum(cachedConfiguration, deflateWorker, initialViewOptions);
     bufferApiCalls.drain(startRumResult);
   }
-  function doInit(initConfiguration) {
+  function doInit(initConfiguration, remoteConfiguration) {
     // var eventBridgeAvailable = canUseEventBridge()
     // if (eventBridgeAvailable) {
     //   initConfiguration = overrideInitConfigurationForBridge(initConfiguration)
@@ -9983,6 +10052,8 @@ function createPreStartStrategy(rumPublicApiOptions, getCommonContext, doStartRu
 
     // Update the exposed initConfiguration to reflect the bridge and remote configuration overrides
     cachedInitConfiguration = initConfiguration;
+    // cachedRemoteConfiguration = remoteConfiguration
+    // remoteConfigrationCallbacks.drain(cachedRemoteConfiguration)
     // addTelemetryConfiguration(deepClone(initConfiguration))
     if (cachedConfiguration) {
       displayAlreadyInitializedError('DATAFLUX_RUM', initConfiguration);
@@ -10029,7 +10100,7 @@ function createPreStartStrategy(rumPublicApiOptions, getCommonContext, doStartRu
     tryStartRum();
   }
   return {
-    init: function init(initConfiguration) {
+    init: function (initConfiguration) {
       if (!initConfiguration) {
         display.error('Missing configuration');
         return;
@@ -10038,7 +10109,6 @@ function createPreStartStrategy(rumPublicApiOptions, getCommonContext, doStartRu
 
       // Expose the initial configuration regardless of initialization success.
       cachedInitConfiguration = initConfiguration;
-
       // If we are in a Synthetics test configured to automatically inject a RUM instance, we want
       // to completely discard the customer application RUM instance by ignoring their init() call.
       // But, we should not ignore the init() call from the Synthetics-injected RUM instance, so the
@@ -10052,12 +10122,22 @@ function createPreStartStrategy(rumPublicApiOptions, getCommonContext, doStartRu
         doInit(initConfiguration);
       }
     },
-    getInitConfiguration: function getInitConfiguration() {
+    getInitConfiguration: function () {
       return cachedInitConfiguration;
     },
+    // getRemoteConfiguration: function (callback) {
+    //   if (getType(callback) === 'function') {
+    //     if (cachedRemoteConfiguration) {
+    //       callback(cachedRemoteConfiguration)
+    //     } else {
+    //       remoteConfigrationCallbacks.add(callback)
+    //     }
+    //   }
+    // },
     getInternalContext: tools_noop,
     stopSession: tools_noop,
-    addTiming: function addTiming(name, time) {
+    setForcedSession: tools_noop,
+    addTiming: function (name, time) {
       if (time === undefined) {
         time = timeStampNow();
       }
@@ -10065,11 +10145,11 @@ function createPreStartStrategy(rumPublicApiOptions, getCommonContext, doStartRu
         startRumResult.addTiming(name, time);
       });
     },
-    startView: function startView(options, startClocks) {
+    startView: function (options, startClocks) {
       if (startClocks === undefined) {
         startClocks = clocksNow();
       }
-      var callback = function callback(startRumResult) {
+      const callback = function (startRumResult) {
         startRumResult.startView(options, startClocks);
       };
       bufferApiCalls.add(callback);
@@ -10081,23 +10161,25 @@ function createPreStartStrategy(rumPublicApiOptions, getCommonContext, doStartRu
         tryStartRum();
       }
     },
-    setViewName: function setViewName(name) {
+    setViewName(name) {
+      bufferApiCalls.add(startRumResult => startRumResult.setViewName(name));
+    },
+    setViewContext(context) {
+      bufferApiCalls.add(startRumResult => startRumResult.setViewContext(context));
+    },
+    setViewContextProperty(key, value) {
+      bufferApiCalls.add(startRumResult => startRumResult.setViewContextProperty(key, value));
+    },
+    getViewContext: () => {},
+    addTypeAction: function (action, type, commonContext) {
+      if (commonContext === undefined) {
+        commonContext = getCommonContext();
+      }
       bufferApiCalls.add(function (startRumResult) {
-        return startRumResult.setViewName(name);
+        startRumResult.addTypeAction(action, type, commonContext);
       });
     },
-    setViewContext: function setViewContext(context) {
-      bufferApiCalls.add(function (startRumResult) {
-        return startRumResult.setViewContext(context);
-      });
-    },
-    setViewContextProperty: function setViewContextProperty(key, value) {
-      bufferApiCalls.add(function (startRumResult) {
-        return startRumResult.setViewContextProperty(key, value);
-      });
-    },
-    getViewContext: function getViewContext() {},
-    addAction: function addAction(action, commonContext) {
+    addAction: function (action, commonContext) {
       if (commonContext === undefined) {
         commonContext = getCommonContext();
       }
@@ -10105,7 +10187,15 @@ function createPreStartStrategy(rumPublicApiOptions, getCommonContext, doStartRu
         startRumResult.addAction(action, commonContext);
       });
     },
-    addError: function addError(providedError, commonContext) {
+    addResource: function (resource, commonContext) {
+      if (commonContext === undefined) {
+        commonContext = getCommonContext();
+      }
+      bufferApiCalls.add(function (startRumResult) {
+        startRumResult.addResource(resource, commonContext);
+      });
+    },
+    addError: function (providedError, commonContext) {
       if (commonContext === undefined) {
         commonContext = getCommonContext();
       }
@@ -10130,17 +10220,16 @@ function createPreStartStrategy(rumPublicApiOptions, getCommonContext, doStartRu
 
 
 
-
 var RUM_STORAGE_KEY = 'rum';
 function makeRumPublicApi(startRumImpl, recorderApi, options) {
   if (options === undefined) {
     options = {};
   }
-  var customerDataTrackerManager = createCustomerDataTrackerManager(CustomerDataCompressionStatus.Unknown);
-  var globalContextManager = createContextManager('global', {
+  const customerDataTrackerManager = createCustomerDataTrackerManager(CustomerDataCompressionStatus.Unknown);
+  const globalContextManager = createContextManager('global', {
     customerDataTracker: customerDataTrackerManager.getOrCreateTracker(CustomerDataType.GlobalContext)
   });
-  var userContextManager = createContextManager('user', {
+  const userContextManager = createContextManager('user', {
     customerDataTracker: customerDataTrackerManager.getOrCreateTracker(CustomerDataType.User),
     propertiesConfig: {
       id: {
@@ -10157,7 +10246,7 @@ function makeRumPublicApi(startRumImpl, recorderApi, options) {
   function getCommonContext() {
     return buildCommonContext(globalContextManager, userContextManager, recorderApi);
   }
-  var strategy = createPreStartStrategy(options, getCommonContext, function doStartRum(configuration, deflateWorker, initialViewOptions) {
+  let strategy = createPreStartStrategy(options, getCommonContext, function doStartRum(configuration, deflateWorker, initialViewOptions) {
     if (configuration.storeContextsToLocal) {
       storeContextManager(configuration, globalContextManager, RUM_STORAGE_KEY, CustomerDataType.GlobalContext);
       storeContextManager(configuration, userContextManager, RUM_STORAGE_KEY, CustomerDataType.User);
@@ -10177,8 +10266,8 @@ function makeRumPublicApi(startRumImpl, recorderApi, options) {
     strategy = createPostStartStrategy(strategy, startRumResult);
     return startRumResult;
   });
-  var startView = monitor(function (options) {
-    var sanitizedOptions = typeof_typeof(options) === 'object' ? options : {
+  const startView = monitor(function (options) {
+    const sanitizedOptions = typeof options === 'object' ? options : {
       name: options
     };
     strategy.startView(sanitizedOptions);
@@ -10191,19 +10280,19 @@ function makeRumPublicApi(startRumImpl, recorderApi, options) {
     init: monitor(function (initConfiguration) {
       strategy.init(initConfiguration);
     }),
-    setViewName: monitor(function (name) {
+    setViewName: monitor(name => {
       strategy.setViewName(name);
       // addTelemetryUsage({ feature: 'set-view-name' })
     }),
-    setViewContext: monitor(function (context) {
+    setViewContext: monitor(context => {
       strategy.setViewContext(context);
       // addTelemetryUsage({ feature: 'set-view-context' })
     }),
-    setViewContextProperty: monitor(function (key, value) {
+    setViewContextProperty: monitor((key, value) => {
       strategy.setViewContextProperty(key, value);
       // addTelemetryUsage({ feature: 'set-view-context-property' })
     }),
-    getViewContext: monitor(function () {
+    getViewContext: monitor(() => {
       // addTelemetryUsage({ feature: 'set-view-context-property' })
       return strategy.getViewContext();
     }),
@@ -10245,14 +10334,43 @@ function makeRumPublicApi(startRumImpl, recorderApi, options) {
     getInitConfiguration: monitor(function () {
       return deepClone(strategy.initConfiguration);
     }),
+    // getRemoteConfiguration: monitor(function (callback) {
+    //   return strategy.getRemoteConfiguration(callback)
+    // }),
     getInternalContext: monitor(function (startTime) {
       return strategy.getInternalContext(startTime);
     }),
-    addDebugSession: monitor(function (id) {}),
-    clearDebugSession: monitor(function () {}),
-    getDebugSession: monitor(function () {}),
+    // addDebugSession: monitor(function (id) {}),
+    // clearDebugSession: monitor(function () {}),
+    // getDebugSession: monitor(function () {}),
+    addResource: monitor(function (context) {
+      const handlingStack = createHandlingStack();
+      callMonitored(function () {
+        strategy.addResource({
+          context: sanitize(context),
+          startClocks: clocksNow(),
+          type: ResourceType.CUSTOM,
+          handlingStack: handlingStack
+        });
+        // addTelemetryUsage({ feature: 'add-resource' })
+      });
+    }),
+    addTypeAction: monitor(function (name, type, context) {
+      const handlingStack = createHandlingStack();
+      callMonitored(function () {
+        const sourceType = sanitize(type);
+        strategy.addAction({
+          name: sanitize(name),
+          context: sanitize(context),
+          startClocks: clocksNow(),
+          type: getType(sourceType) === 'string' ? sourceType : ActionType.CUSTOM,
+          handlingStack: handlingStack
+        });
+        // addTelemetryUsage({ feature: 'add-type-action' })
+      });
+    }),
     addAction: monitor(function (name, context) {
-      var handlingStack = createHandlingStack();
+      const handlingStack = createHandlingStack();
       callMonitored(function () {
         strategy.addAction({
           name: sanitize(name),
@@ -10268,9 +10386,9 @@ function makeRumPublicApi(startRumImpl, recorderApi, options) {
       var handlingStack = createHandlingStack();
       callMonitored(function () {
         strategy.addError({
-          error: error,
+          error,
           // Do not sanitize error here, it is needed unserialized by computeRawError()
-          handlingStack: handlingStack,
+          handlingStack,
           context: sanitize(context),
           startClocks: clocksNow()
         });
@@ -10310,6 +10428,12 @@ function makeRumPublicApi(startRumImpl, recorderApi, options) {
     stopSession: monitor(function () {
       strategy.stopSession();
       // addTelemetryUsage({ feature: 'stop-session' })
+    }),
+    setForcedSession: monitor(function () {
+      strategy.setForcedSession();
+      addTelemetryUsage({
+        feature: 'set-forced-session'
+      });
     })
     // startSessionReplayRecording: monitor(function (options) {
     //   recorderApi.start(options)
@@ -10318,13 +10442,14 @@ function makeRumPublicApi(startRumImpl, recorderApi, options) {
     //     force: options && options.force
     //   })
     // }),
-    // stopSessionReplayRecording: monitor(recorderApi.stop)
+    // stopSessionReplayRecording: monitor(recorderApi.stop),
+    // takeSubsequentFullSnapshot: monitor(recorderApi.takeSubsequentFullSnapshot)
   });
   return rumPublicApi;
 }
 function createPostStartStrategy(preStartStrategy, startRumResult) {
   return tools_assign({
-    init: function init(initConfiguration) {
+    init: function (initConfiguration) {
       displayAlreadyInitializedError('DATAFLUX_RUM', initConfiguration);
     },
     initConfiguration: preStartStrategy.getInitConfiguration()
