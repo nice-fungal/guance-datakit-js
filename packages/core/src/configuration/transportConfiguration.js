@@ -1,4 +1,4 @@
-import { isFunction, isBoolean, some } from '../helper/tools'
+import { isArray, isFunction, isBoolean, some } from '../helper/tools'
 var TRIM_REGIX = /^\s+|\s+$/g
 var typeMap = {
   rum: '/rum',
@@ -37,7 +37,17 @@ export function computeTransportConfiguration(initConfiguration) {
   var isIntakeUrl = function (url) {
     return false
   }
+
   if (
+    'isIntakeUrl' in initConfiguration &&
+    isArray(initConfiguration.isIntakeUrl)
+  ) {
+    isIntakeUrl = function (url) {
+                    return some(initConfiguration.isIntakeUrl, function (takeUrl) {
+                      return url.indexOf(takeUrl) === 0
+                    })
+                  }
+  } else if (
     'isIntakeUrl' in initConfiguration &&
     isFunction(initConfiguration.isIntakeUrl) &&
     isBoolean(initConfiguration.isIntakeUrl())
