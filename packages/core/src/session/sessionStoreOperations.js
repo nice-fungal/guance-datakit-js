@@ -7,7 +7,7 @@ import {
   elapsed
 } from '../helper/tools'
 import { expandSessionState, isSessionInExpiredState } from './sessionState'
-import { addTelemetryDebug } from '../telemetry/telemetry'
+// import { addTelemetryDebug } from '../telemetry/telemetry'
 export const LOCK_RETRY_DELAY = 10
 export const LOCK_MAX_TRIES = 100
 
@@ -44,9 +44,9 @@ export function processSessionStoreOperations(
     return
   }
   if (isLockEnabled && numberOfRetries >= LOCK_MAX_TRIES) {
-    addTelemetryDebug('Aborted session operation after max lock retries', {
-      currentStore: retrieveStore()
-    })
+    // addTelemetryDebug('Aborted session operation after max lock retries', {
+    //   currentStore: retrieveStore()
+    // })
     next(sessionStoreStrategy)
     return
   }

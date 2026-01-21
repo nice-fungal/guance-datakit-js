@@ -1,7 +1,7 @@
 import {
   addEventListener,
   concatBuffers,
-  addTelemetryDebug,
+  // addTelemetryDebug,
   assign
 } from '@cloudcare/browser-core'
 export var DeflateEncoderStreamId = {
@@ -41,7 +41,7 @@ export function createDeflateEncoder(worker, streamId) {
         }
       } else if (nextPendingAction.id < workerResponse.id) {
         removeMessageListener()
-        addTelemetryDebug('Worker responses received out of order.')
+        // addTelemetryDebug('Worker responses received out of order.')
       }
     }
   })

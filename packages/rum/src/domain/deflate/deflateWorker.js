@@ -3,7 +3,7 @@ import {
   includes,
   setTimeout,
   addEventListener,
-  addTelemetryError,
+  // addTelemetryError,
   ONE_SECOND
 } from '@cloudcare/browser-core'
 
@@ -160,7 +160,7 @@ function onError(configuration, source, error, streamId) {
       }
       display.error(baseMessage)
     } else {
-      addTelemetryError(error)
+      // addTelemetryError(error)
     }
     if (state.status === DeflateWorkerStatus.Loading) {
       state.initializationFailureCallbacks.forEach(function (callback) {
@@ -169,11 +169,11 @@ function onError(configuration, source, error, streamId) {
     }
     state = { status: DeflateWorkerStatus.Error }
   } else {
-    addTelemetryError(error, {
-      worker_version:
-        state.status === DeflateWorkerStatus.Initialized && state.version,
-      stream_id: streamId
-    })
+    // addTelemetryError(error, {
+    //   worker_version:
+    //     state.status === DeflateWorkerStatus.Initialized && state.version,
+    //   stream_id: streamId
+    // })
   }
 }
 function isMessageCspRelated(message) {
