@@ -24,7 +24,7 @@ export function createPreStartStrategy(
 ) {
   var ignoreInitIfSyntheticsWillInjectRum =
     rumPublicApiOptions.ignoreInitIfSyntheticsWillInjectRum
-  var startDeflateWorker = rumPublicApiOptions.startDeflateWorker
+  // var startDeflateWorker = rumPublicApiOptions.startDeflateWorker
   var bufferApiCalls = createBoundedBuffer()
   // var remoteConfigrationCallbacks = createBoundedBuffer()
   var firstStartViewCall
@@ -91,25 +91,25 @@ export function createPreStartStrategy(
       return
     }
 
-    if (
-      configuration.compressIntakeRequests &&
-      !configuration.sendContentTypeByJson &&
-      !eventBridgeAvailable &&
-      startDeflateWorker
-    ) {
-      deflateWorker = startDeflateWorker(
-        configuration,
-        'RUM',
-        // Worker initialization can fail asynchronously, especially in Firefox where even CSP
-        // issues are reported asynchronously. For now, the SDK will continue its execution even if
-        // data won't be sent to Datadog. We could improve this behavior in the future.
-        noop
-      )
-      if (!deflateWorker) {
-        // `startDeflateWorker` should have logged an error message explaining the issue
-        return
-      }
-    }
+    // if (
+    //   configuration.compressIntakeRequests &&
+    //   !configuration.sendContentTypeByJson &&
+    //   !eventBridgeAvailable &&
+    //   startDeflateWorker
+    // ) {
+    //   deflateWorker = startDeflateWorker(
+    //     configuration,
+    //     'RUM',
+    //     // Worker initialization can fail asynchronously, especially in Firefox where even CSP
+    //     // issues are reported asynchronously. For now, the SDK will continue its execution even if
+    //     // data won't be sent to Datadog. We could improve this behavior in the future.
+    //     noop
+    //   )
+    //   if (!deflateWorker) {
+    //     // `startDeflateWorker` should have logged an error message explaining the issue
+    //     return
+    //   }
+    // }
 
     cachedConfiguration = configuration
     // Instrumuent fetch to track network requests
