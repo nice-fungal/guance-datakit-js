@@ -1,7 +1,7 @@
 import { display } from './display'
 import { setTimeout, clearTimeout } from './timer'
 var ArrayProto = Array.prototype
-var FuncProto = Function.prototype
+// var FuncProto = Function.prototype
 var ObjProto = Object.prototype
 var slice = ArrayProto.slice
 var toString = ObjProto.toString
@@ -331,16 +331,16 @@ export var safeJSONParse = function (str) {
   return val
 }
 
-export var encodeDates = function (obj) {
-  each(obj, function (v, k) {
-    if (isDate(v)) {
-      obj[k] = formatDate(v)
-    } else if (isObject(v)) {
-      obj[k] = encodeDates(v)
-    }
-  })
-  return obj
-}
+// export var encodeDates = function (obj) {
+//   each(obj, function (v, k) {
+//     if (isDate(v)) {
+//       obj[k] = formatDate(v)
+//     } else if (isObject(v)) {
+//       obj[k] = encodeDates(v)
+//     }
+//   })
+//   return obj
+// }
 export var mediaQueriesSupported = function () {
   return (
     typeof window.matchMedia !== 'undefined' ||
@@ -425,61 +425,61 @@ export var hashCode = function (str) {
   }
   return hash
 }
-export var formatDate = function (d) {
-  function pad(n) {
-    return n < 10 ? '0' + n : n
-  }
+// export var formatDate = function (d) {
+//   function pad(n) {
+//     return n < 10 ? '0' + n : n
+//   }
 
-  return (
-    d.getFullYear() +
-    '-' +
-    pad(d.getMonth() + 1) +
-    '-' +
-    pad(d.getDate()) +
-    ' ' +
-    pad(d.getHours()) +
-    ':' +
-    pad(d.getMinutes()) +
-    ':' +
-    pad(d.getSeconds()) +
-    '.' +
-    pad(d.getMilliseconds())
-  )
-}
-export var searchObjDate = function (o) {
-  if (isObject(o)) {
-    each(o, function (a, b) {
-      if (isObject(a)) {
-        searchObjDate(o[b])
-      } else {
-        if (isDate(a)) {
-          o[b] = formatDate(a)
-        }
-      }
-    })
-  }
-}
-export var formatJsonString = function (obj) {
-  try {
-    return JSON.stringify(obj, null, '  ')
-  } catch (e) {
-    return JSON.stringify(obj)
-  }
-}
+//   return (
+//     d.getFullYear() +
+//     '-' +
+//     pad(d.getMonth() + 1) +
+//     '-' +
+//     pad(d.getDate()) +
+//     ' ' +
+//     pad(d.getHours()) +
+//     ':' +
+//     pad(d.getMinutes()) +
+//     ':' +
+//     pad(d.getSeconds()) +
+//     '.' +
+//     pad(d.getMilliseconds())
+//   )
+// }
+// export var searchObjDate = function (o) {
+//   if (isObject(o)) {
+//     each(o, function (a, b) {
+//       if (isObject(a)) {
+//         searchObjDate(o[b])
+//       } else {
+//         if (isDate(a)) {
+//           o[b] = formatDate(a)
+//         }
+//       }
+//     })
+//   }
+// }
+// export var formatJsonString = function (obj) {
+//   try {
+//     return JSON.stringify(obj, null, '  ')
+//   } catch (e) {
+//     return JSON.stringify(obj)
+//   }
+// }
 
-export var searchObjString = function (o) {
-  if (isObject(o)) {
-    each(o, function (a, b) {
-      if (isObject(a)) {
-        searchObjString(o[b])
-      } else {
-        if (isString(a)) {
-          o[b] = formatString(a)
-        }
-      }
-    })
-  }
-}
+// export var searchObjString = function (o) {
+//   if (isObject(o)) {
+//     each(o, function (a, b) {
+//       if (isObject(a)) {
+//         searchObjString(o[b])
+//       } else {
+//         if (isString(a)) {
+//           o[b] = formatString(a)
+//         }
+//       }
+//     })
+//   }
+// }
 export var unique = function (ar) {
   var temp,
     n = [],
@@ -728,77 +728,77 @@ export function elementMatches(element, selector) {
   return false
 }
 
-export var localStorage = {
-  get: function (name) {
-    return window.localStorage.getItem(name)
-  },
+// export var localStorage = {
+//   get: function (name) {
+//     return window.localStorage.getItem(name)
+//   },
 
-  parse: function (name) {
-    var storedValue
-    try {
-      storedValue = JSON.parse(localStorage.get(name)) || null
-    } catch (err) {
-      sd.log(err)
-    }
-    return storedValue
-  },
+//   parse: function (name) {
+//     var storedValue
+//     try {
+//       storedValue = JSON.parse(localStorage.get(name)) || null
+//     } catch (err) {
+//       sd.log(err)
+//     }
+//     return storedValue
+//   },
 
-  set: function (name, value) {
-    window.localStorage.setItem(name, value)
-  },
+//   set: function (name, value) {
+//     window.localStorage.setItem(name, value)
+//   },
 
-  remove: function (name) {
-    window.localStorage.removeItem(name)
-  },
+//   remove: function (name) {
+//     window.localStorage.removeItem(name)
+//   },
 
-  isSupport: function () {
-    var supported = true
-    try {
-      var key = '__sensorsdatasupport__'
-      var val = 'testIsSupportStorage'
-      localStorage.set(key, val)
-      if (localStorage.get(key) !== val) {
-        supported = false
-      }
-      localStorage.remove(key)
-    } catch (err) {
-      supported = false
-    }
-    return supported
-  }
-}
-export var sessionStorage = {
-  isSupport: function () {
-    var supported = true
+//   isSupport: function () {
+//     var supported = true
+//     try {
+//       var key = '__sensorsdatasupport__'
+//       var val = 'testIsSupportStorage'
+//       localStorage.set(key, val)
+//       if (localStorage.get(key) !== val) {
+//         supported = false
+//       }
+//       localStorage.remove(key)
+//     } catch (err) {
+//       supported = false
+//     }
+//     return supported
+//   }
+// }
+// export var sessionStorage = {
+//   isSupport: function () {
+//     var supported = true
 
-    var key = '__sensorsdatasupport__'
-    var val = 'testIsSupportStorage'
-    try {
-      if (sessionStorage && sessionStorage.setItem) {
-        sessionStorage.setItem(key, val)
-        sessionStorage.removeItem(key, val)
-        supported = true
-      } else {
-        supported = false
-      }
-    } catch (e) {
-      supported = false
-    }
-    return supported
-  }
-}
-export var isSupportCors = function () {
-  if (typeof window.XMLHttpRequest === 'undefined') {
-    return false
-  }
-  if ('withCredentials' in new XMLHttpRequest()) {
-    return true
-  } else if (typeof XDomainRequest !== 'undefined') {
-    return true
-  } else {
-    return false
-  }
-}
+//     var key = '__sensorsdatasupport__'
+//     var val = 'testIsSupportStorage'
+//     try {
+//       if (sessionStorage && sessionStorage.setItem) {
+//         sessionStorage.setItem(key, val)
+//         sessionStorage.removeItem(key, val)
+//         supported = true
+//       } else {
+//         supported = false
+//       }
+//     } catch (e) {
+//       supported = false
+//     }
+//     return supported
+//   }
+// }
+// export var isSupportCors = function () {
+//   if (typeof window.XMLHttpRequest === 'undefined') {
+//     return false
+//   }
+//   if ('withCredentials' in new XMLHttpRequest()) {
+//     return true
+//   } else if (typeof XDomainRequest !== 'undefined') {
+//     return true
+//   } else {
+//     return false
+//   }
+// }
 export var xhr = function (cors) {
   if (cors) {
     if (
