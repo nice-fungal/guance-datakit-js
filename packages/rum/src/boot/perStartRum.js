@@ -11,11 +11,11 @@ import {
   addTelemetryConfiguration,
   initFetchObservable,
   deepClone,
-  fetchAndApplyRemoteConfiguration,
+  // fetchAndApplyRemoteConfiguration,
   getEventBridge
 } from '@cloudcare/browser-core'
 import { validateAndBuildRumConfiguration } from '../domain/configuration'
-import { getType } from '@cloudcare/browser-core/src/helper/tools'
+// import { getType } from '@cloudcare/browser-core/src/helper/tools'
 
 export function createPreStartStrategy(
   rumPublicApiOptions,
@@ -26,14 +26,14 @@ export function createPreStartStrategy(
     rumPublicApiOptions.ignoreInitIfSyntheticsWillInjectRum
   var startDeflateWorker = rumPublicApiOptions.startDeflateWorker
   var bufferApiCalls = createBoundedBuffer()
-  var remoteConfigrationCallbacks = createBoundedBuffer()
+  // var remoteConfigrationCallbacks = createBoundedBuffer()
   var firstStartViewCall
 
   var deflateWorker
 
   var cachedInitConfiguration
   var cachedConfiguration
-  var cachedRemoteConfiguration
+  // var cachedRemoteConfiguration
   function tryStartRum() {
     if (!cachedInitConfiguration || !cachedConfiguration) {
       return
@@ -139,7 +139,7 @@ export function createPreStartStrategy(
         return
       }
       if (initConfiguration.remoteConfiguration) {
-        fetchAndApplyRemoteConfiguration(initConfiguration, doInit)
+        // fetchAndApplyRemoteConfiguration(initConfiguration, doInit)
       } else {
         doInit(initConfiguration)
       }

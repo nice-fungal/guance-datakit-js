@@ -180,9 +180,9 @@ export function makeRumPublicApi(startRumImpl, recorderApi, options) {
     getInitConfiguration: monitor(function () {
       return deepClone(strategy.initConfiguration)
     }),
-    getRemoteConfiguration: monitor(function (callback) {
-      return strategy.getRemoteConfiguration(callback)
-    }),
+    // getRemoteConfiguration: monitor(function (callback) {
+    //   return strategy.getRemoteConfiguration(callback)
+    // }),
     getInternalContext: monitor(function (startTime) {
       return strategy.getInternalContext(startTime)
     }),
