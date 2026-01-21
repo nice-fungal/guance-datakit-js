@@ -1,0 +1,14 @@
+cover 99%
+not ie > 0
+not ie_mob > 0
+not samsung > 0
+not opera > 0
+not kaios > 0
+not op_mini all
+not op_mob > 0
+not chrome < 67
+not firefox < 69
+not edge < 81
+not safari < 11
+not ios_saf < 11
+not android < 5
