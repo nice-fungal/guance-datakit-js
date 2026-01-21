@@ -137,37 +137,37 @@ export function makeRumPublicApi(startRumImpl, recorderApi, options) {
       addTelemetryUsage({ feature: 'set-view-context-property' })
       return strategy.getViewContext()
     }),
-    /** @deprecated: use setGlobalContextProperty instead */
-    addRumGlobalContext: monitor(function (key, value) {
-      globalContextManager.setContextProperty(key, value)
-      addTelemetryUsage({ feature: 'set-global-context' })
-    }),
+    // /** @deprecated: use setGlobalContextProperty instead */
+    // addRumGlobalContext: monitor(function (key, value) {
+    //   globalContextManager.setContextProperty(key, value)
+    //   addTelemetryUsage({ feature: 'set-global-context' })
+    // }),
     setGlobalContextProperty: monitor(function (key, value) {
       globalContextManager.setContextProperty(key, value)
       addTelemetryUsage({ feature: 'set-global-context' })
     }),
 
-    /** @deprecated: use removeGlobalContextProperty instead */
-    removeRumGlobalContext: monitor(function (key) {
-      return globalContextManager.removeContextProperty(key)
-    }),
+    // /** @deprecated: use removeGlobalContextProperty instead */
+    // removeRumGlobalContext: monitor(function (key) {
+    //   return globalContextManager.removeContextProperty(key)
+    // }),
     removeGlobalContextProperty: monitor(function (key) {
       return globalContextManager.removeContextProperty(key)
     }),
 
-    /** @deprecated: use getGlobalContext instead */
-    getRumGlobalContext: monitor(function () {
-      return globalContextManager.getContext()
-    }),
+    // /** @deprecated: use getGlobalContext instead */
+    // getRumGlobalContext: monitor(function () {
+    //   return globalContextManager.getContext()
+    // }),
     getGlobalContext: monitor(function () {
       return globalContextManager.getContext()
     }),
 
-    /** @deprecated: use setGlobalContext instead */
-    setRumGlobalContext: monitor(function (context) {
-      globalContextManager.setContext(context)
-      addTelemetryUsage({ feature: 'set-global-context' })
-    }),
+    // /** @deprecated: use setGlobalContext instead */
+    // setRumGlobalContext: monitor(function (context) {
+    //   globalContextManager.setContext(context)
+    //   addTelemetryUsage({ feature: 'set-global-context' })
+    // }),
     setGlobalContext: monitor(function (context) {
       globalContextManager.setContext(context)
       addTelemetryUsage({ feature: 'set-global-context' })
@@ -186,9 +186,9 @@ export function makeRumPublicApi(startRumImpl, recorderApi, options) {
     getInternalContext: monitor(function (startTime) {
       return strategy.getInternalContext(startTime)
     }),
-    addDebugSession: monitor(function (id) {}),
-    clearDebugSession: monitor(function () {}),
-    getDebugSession: monitor(function () {}),
+    // addDebugSession: monitor(function (id) {}),
+    // clearDebugSession: monitor(function () {}),
+    // getDebugSession: monitor(function () {}),
     addResource: monitor(function (context) {
       const handlingStack = createHandlingStack()
       callMonitored(function () {
@@ -265,10 +265,10 @@ export function makeRumPublicApi(startRumImpl, recorderApi, options) {
       return userContextManager.removeContextProperty(key)
     }),
 
-    /** @deprecated: renamed to clearUser */
-    removeUser: monitor(function () {
-      return userContextManager.clearContext()
-    }),
+    // /** @deprecated: renamed to clearUser */
+    // removeUser: monitor(function () {
+    //   return userContextManager.clearContext()
+    // }),
     clearUser: monitor(function () {
       return userContextManager.clearContext()
     }),
